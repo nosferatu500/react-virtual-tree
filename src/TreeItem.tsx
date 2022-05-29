@@ -1,8 +1,8 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { TreeItemChildren } from './TreeItemChildren';
 import { TreeItemIndex } from './types';
-import { useViewState } from './useViewState';
-import { createTreeItemRenderContext, createTreeItemRenderContextDependencies } from './utils';
+import { useViewState } from './hooks/useViewState';
+import { createTreeInformation, createTreeInformationDependencies, createTreeItemRenderContext, createTreeItemRenderContextDependencies } from './utils';
 import { TreeIdContext } from './VirtualTree';
 import { VirtualTreeContext } from './VirtualTreeContext';
 
@@ -22,6 +22,11 @@ export const TreeItem = <T extends any>(props: {
         createTreeItemRenderContextDependencies(item, virtualTreeContext, treeId)
     );
 
+    const meta = useMemo(
+        () => createTreeInformation(virtualTreeContext, treeId),
+        createTreeInformationDependencies(virtualTreeContext, treeId),
+    );
+
     if (item === undefined) {
         if (!hasBeenRequested) {
             setHasBeenRequested(true);
@@ -30,12 +35,9 @@ export const TreeItem = <T extends any>(props: {
         return null;
     }
 
-    return (
-        <>
-            {virtualTreeContext.renderItem(virtualTreeContext.items[props.itemIndex], props.depth, renderContext)}
-            {item.children?.length > 0 && isExpanded && item.children && (
-                <TreeItemChildren depth={props.depth + 1} parentId={props.itemIndex} children={item.children} />
-            )}
-        </>
-    )
+    const children = item.children.length > 0 && isExpanded && item.children && (
+        <TreeItemChildren depth={props.depth + 1} parentId={props.itemIndex} children={item.children} />
+    );
+
+    return virtualTreeContext.renderItem(virtualTreeContext.items[props.itemIndex], props.depth, children, renderContext, meta);
 } 

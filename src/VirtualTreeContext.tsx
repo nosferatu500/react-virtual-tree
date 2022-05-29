@@ -8,14 +8,17 @@ export const VirtualForest = <T extends any>(props: PropsWithChildren<VirtualFor
     const [trees, setTrees] = useState<Record<string, Tree>>({});
     const [draggingItems, setDraggingItems] = useState<TreeItem<T>[]>();
     const [draggingPosition, setDraggingPosition] = useState<DraggingPosition>();
-
+    const [activeTree, setActiveTree] = useState<string>();
     const [itemHeight, setItemHeight] = useState(4);
 
     useEffect(() => {
         const dragEndEventListener = () => {
-            console.log("MOUSE UP")
             setDraggingPosition(undefined);
             setDraggingItems(undefined);
+
+            if (draggingItems && draggingPosition && props.onDrop) {
+                props.onDrop(draggingItems, draggingPosition);
+            }
         };
 
         window.addEventListener('dragend', dragEndEventListener);
@@ -23,16 +26,18 @@ export const VirtualForest = <T extends any>(props: PropsWithChildren<VirtualFor
         return () => {
             window.removeEventListener('dragend', dragEndEventListener);
         }
-    }, [])
+    }, [draggingPosition, draggingItems, props.onDrop])
 
     return (
         // @ts-ignore
         <VirtualTreeContext.Provider value={{
             ...createDefaultRenderer(props),
             ...props,
+            activeTreeId: activeTree,
             draggingPosition: draggingPosition,
             draggingItems: draggingItems,
             itemHeight: itemHeight,
+            setActiveTree: setActiveTree,
             addTree: (tree) => {
                 setTrees({ ...trees, [tree.treeId]: tree });
                 props.onAddTree?.(tree);
@@ -49,10 +54,6 @@ export const VirtualForest = <T extends any>(props: PropsWithChildren<VirtualFor
             },
             onDragAtPosition: (position) => {
                 setDraggingPosition(position);
-
-                if (position) {
-                    console.log(`Dragging in tree ${position.treeId} at item ${position.targetItem} at index ${position.childIndex}, linear index ${position.linearIndex}`);
-                }
             },
         }}>
             {props.children}

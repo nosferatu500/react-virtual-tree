@@ -1,15 +1,23 @@
-.rvt-tree-root {}
+.rvt-tree-root {
+    font-family: sans-serif;
+}
+
+.rvt-tree-root-focus {
+    outline: 3px solid rgb(118, 221, 246);
+}
 
 .rvt-tree-child-list {}
 
-.rvt-tree-item-button.rvt-tree-item-button-hasChildren:before {
-    content: '🞂';
+.rvt-tree-item-button:before {
+    content: '';
     width: 20px;
     display: inline-block;
     text-align: left;
     padding-bottom: 4px;
 }
-
+.rvt-tree-item-button.rbt-tree-item-button-hasChildren:before {
+    content: '🞂';
+}
 .rvt-tree-item-button-expanded.rvt-tree-item-button-hasChildren:before {
     content: '🞃';
 }
@@ -20,25 +28,30 @@
     font-size: inherit;
     border: none;
     width: 100%;
+    height: 25px;
     text-align: left;
+    color: inherit;
+    border-bottom: 1px solid black;
 }
 
 .rvt-tree-item-li {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 25px;
-    border-bottom: 1px solid black;
+    font-size: .8rem;
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
-.rvt-tree-item-li-selected {
+.rvt-tree-root:not(.rvt-tree-root-focus) .rvt-tree-item-button-selected {
+    background-color: rgb(161, 161, 161);
+    color: #fff;
+
+}
+.rvt-tree-root.rvt-tree-root-focus .rvt-tree-item-button-selected {
     background-color: rgb(12, 181, 252);
+    color: #fff;
 }
 
-.rvt-tree-item-li-dragging-over {
+.rvt-tree-item-button-dragging-over {
     background-color: rgb(142, 222, 255);
 }
 

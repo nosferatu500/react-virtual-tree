@@ -5,12 +5,10 @@ import { classnames } from '../utils';
 export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProps => {
     return {
         renderItemTitle: renderer.renderItemTitle,
-        renderItem: (item, depth, context) => {
+        renderItem: (item, depth, children, context) => {
             return (
                 <li
-                    {...context.containerProps as any}
                     role="none"
-                    style={{ paddingLeft: `${depth * (renderer.renderDepthOffset ?? 10)}px` }}
                     className={classnames(
                         'rvt-tree-item-li',
                         item.children.length > 0 && 'rvt-tree-item-li-hasChildren',
@@ -20,8 +18,11 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     )}
                 >
                     <button
-                        role="treeitem"
+                        {...context.itemContainerProps as any}
                         {...context.elementProps as any}
+                        role="treeitem"
+                        tabIndex={-1}
+                        style={{ paddingLeft: `${(depth + 1) * (renderer.renderDepthOffset ?? 10)}px` }}
                         className={classnames(
                             'rvt-tree-item-button',
                             item.children.length > 0 && 'rvt-tree-item-button-hasChildren',
@@ -32,6 +33,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     >
                         {renderer.renderItemTitle(item, context)}
                     </button>
+                    {children}
                 </li>
             )
         },
@@ -44,21 +46,33 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
         renderDraggingItemTitle: items => {
             return <div />;
         },
-        renderTreeContainer: (children, containerProps) => {
-            return <div {...containerProps}>{children}</div>
+        renderTreeContainer: (children, containerProps, meta) => {
+            return (
+                <div
+                    {...containerProps}
+                    className={classnames(
+                        'rvt-tree-root',
+                        meta.isFocused && 'rvt-tree-root-focus',
+                        meta.isRenaming && 'rvt-tree-root-renaming',
+                        meta.areItemsSelected && 'rvt-tree-root-itemsselected',
+                    )}
+                >
+                    {children}
+                </div>
+            );
         },
         renderDragBetweenLine: (draggingPosition) => {
             return (
-              <div
-                style={{ left: `${draggingPosition.depth * (renderer.renderDepthOffset ?? 10)}px` }}
-                className={classnames(
-                  'rvt-tree-drag-between-line',
-                  draggingPosition.linePosition === 'top' && 'rvt-tree-drag-between-line-top',
-                  draggingPosition.linePosition === 'bottom' && 'rvt-tree-drag-between-line-bottom',
-                )}
-              />
+                <div
+                    style={{ left: `${draggingPosition.depth * (renderer.renderDepthOffset ?? 10)}px` }}
+                    className={classnames(
+                        'rvt-tree-drag-between-line',
+                        draggingPosition.targetType === 'between-items' && draggingPosition.linePosition === 'top' && 'rvt-tree-drag-between-line-top',
+                        draggingPosition.targetType === 'between-items' && draggingPosition.linePosition === 'bottom' && 'rvt-tree-drag-between-line-bottom',
+                    )}
+                />
             );
-          },
+        },
         renderDepthOffset: 4,
     }
 }

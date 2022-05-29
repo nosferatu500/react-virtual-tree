@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from './types';
 import { VirtualForest } from './VirtualTreeContext';
 
 const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvider> => ({
     ...provider,
-    componentDidUpdate: provider.componentDidUpdate ?? (() => { }),
+    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => { } })),
     getItems: provider.getItems ?? (itemIds => Promise.all(itemIds.map(id => provider.getItem(id)))),
-    onRenameItem: provider.onRenameItem ?? (() => { }),
+    onRenameItem: provider.onRenameItem ?? (async () => { }),
+    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => { }),
 });
 
 export const VirtualForestWrapper = <T extends any>(props: VirtualForestWrapperProps<T>) => {
@@ -23,10 +24,20 @@ export const VirtualForestWrapper = <T extends any>(props: VirtualForestWrapperP
             ...oldState,
             [treeId]: {
                 ...oldState[treeId],
-                ...constructNewState(oldState[treeId]),
+                ...constructNewState(oldState[treeId] ?? {}),
             }
         }));
     }
+
+    useEffect(() => {
+        const { dispose } = dataProvider.componentDidUpdate(changedItemIds => {
+            dataProvider.getItems(changedItemIds).then(items => {
+                writeItems(items.map(item => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
+            });
+        });
+
+        return dispose;
+    })
 
     return (
         <VirtualForest
@@ -49,10 +60,43 @@ export const VirtualForestWrapper = <T extends any>(props: VirtualForestWrapperP
                 dataProvider.onRenameItem(item, name);
                 updateState(treeId, old => ({ ...old, renamingItem: undefined }));
             }}
+            onDrop={async (items, target) => {
+                for (const item of items) {
+                    const parent = Object.values(currentItems).find(potentialParent => potentialParent.children?.includes(item.index));
+                    const newParent = currentItems[target.parentItem];
+
+                    if (!parent) {
+                        throw Error(`Could not find parent of item "${item.index}"`);
+                    }
+
+                    if (!parent.children) {
+                        throw Error(`Parent "${parent.index}" of item "${item.index}" did not have any children`);
+                    }
+
+                    if (target.targetType === 'item') {
+                        if (target.targetItem === parent.index) {
+                            // NOOP
+                        } else {
+                            await dataProvider.onChangeItemChildren(parent.index, parent.children.filter(child => child !== item.index));
+                            await dataProvider.onChangeItemChildren(target.targetItem, [...currentItems[target.targetItem].children ?? [], item.index]);
+                        }
+                    } else {
+                        const isOldItemPriorToNewItem = ((newParent.children ?? []).findIndex(child => child === item.index) ?? Infinity) <= target.childIndex;
+                        const newParentChildren = [...newParent.children ?? []].filter(child => child !== item.index);
+                        newParentChildren.splice(target.childIndex - (isOldItemPriorToNewItem ? 1 : 0), 0, item.index);
+                        // newParentChildren.splice(target.childIndex, 0, item.index);
+                        if (target.parentItem === parent.index) {
+                            await dataProvider.onChangeItemChildren(target.parentItem, newParentChildren);
+                        } else {
+                            await dataProvider.onChangeItemChildren(parent.index, parent.children.filter(child => child !== item.index));
+                            await dataProvider.onChangeItemChildren(target.parentItem, newParentChildren);
+                        }
+                    }
+
+                }
+            }}
             onMissingItems={itemIds => {
-                console.log(`Retrieving items ${itemIds.join(', ')}`)
                 dataProvider.getItems(itemIds).then(items => {
-                    console.log(`Retrieved ${items.map(i => i.index).join(', ')}`)
                     writeItems(items.map(item => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
                 });
             }}

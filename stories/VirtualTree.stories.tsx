@@ -84,4 +84,55 @@ export const SingleTree = () => (
   >
     <VirtualTree treeId="tree-1" rootItem="root" />
   </VirtualForestWrapper>
-)
+);
+
+export const SingleTreeAllCollapsed = () => (
+  <VirtualForestWrapper
+    dataProvider={new DataProvider(demoContent.data.items)}
+    viewState={{
+      ['tree-1']: {
+      }
+    }}
+    {...demoRenderer}
+  >
+    <VirtualTree treeId="tree-1" rootItem="root" />
+  </VirtualForestWrapper>
+);
+
+export const MultipleTrees = () => (
+  <VirtualForestWrapper
+    dataProvider={new DataProvider(demoContent.data.items)}
+    viewState={{
+      ['tree-1']: {
+      }
+    }}
+    {...demoRenderer}
+  >
+    <div style={{
+      display: 'flex',
+      backgroundColor: '#eee',
+      justifyContent: 'space-evenly',
+      alignItems: 'baseline',
+      padding: '20px 0',
+    }}>
+      <div style={{
+        width: '28%',
+        backgroundColor: 'white',
+      }}>
+        <VirtualTree treeId="tree-1" rootItem="root" />
+      </div>
+      <div style={{
+        width: '28%',
+        backgroundColor: 'white',
+      }}>
+        <VirtualTree treeId="tree-2" rootItem="root" />
+      </div>
+      <div style={{
+        width: '28%',
+        backgroundColor: 'white',
+      }}>
+        <VirtualTree treeId="tree-3" rootItem="root" />
+      </div>
+    </div>
+  </VirtualForestWrapper>
+); 
