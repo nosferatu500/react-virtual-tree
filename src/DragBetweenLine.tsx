@@ -11,8 +11,7 @@ export const DragBetweenLine: React.FC<{
     const shouldDisplay =
         virtualTreeContext.draggingPosition &&
         virtualTreeContext.draggingPosition.treeId === props.treeId &&
-        virtualTreeContext.draggingPosition.childIndex !== undefined &&
-        virtualTreeContext.draggingPosition.linearIndex !== undefined;
+        virtualTreeContext.draggingPosition.targetType === 'between-items';
 
     if (!shouldDisplay) {
         return null;

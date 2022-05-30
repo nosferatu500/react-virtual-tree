@@ -13,7 +13,6 @@
     width: 20px;
     display: inline-block;
     text-align: left;
-    padding-bottom: 4px;
 }
 .rvt-tree-item-button.rbt-tree-item-button-hasChildren:before {
     content: '🞂';

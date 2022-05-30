@@ -9,7 +9,7 @@ import { VirtualTreeContext } from './VirtualTreeContext';
 export const TreeItem = <T extends any>(props: {
     itemIndex: TreeItemIndex;
     depth: number;
-}) => {
+}): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
     const treeId = useContext(TreeIdContext);
     const virtualTreeContext = useContext(VirtualTreeContext);
@@ -32,12 +32,12 @@ export const TreeItem = <T extends any>(props: {
             setHasBeenRequested(true);
             virtualTreeContext.onMissingItems?.([props.itemIndex]);
         }
-        return null;
+        return null as any;
     }
 
     const children = item.children.length > 0 && isExpanded && item.children && (
         <TreeItemChildren depth={props.depth + 1} parentId={props.itemIndex} children={item.children} />
     );
 
-    return virtualTreeContext.renderItem(virtualTreeContext.items[props.itemIndex], props.depth, children, renderContext, meta);
+    return virtualTreeContext.renderItem(virtualTreeContext.items[props.itemIndex], props.depth, children, renderContext, meta) || null as any;
 } 

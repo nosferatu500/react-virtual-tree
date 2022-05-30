@@ -1,10 +1,6 @@
 import React from 'react';
 import { Meta } from '@storybook/react';
-import { VirtualForest } from '../src';
-import { DataSource, TreeItem, TreeItemRenderContext, TreeRenderProps } from '../src/types';
-import { VirtualTree } from '../src/VirtualTree';
-import { VirtualForestWrapper } from '../src/VirtualForestWrapper';
-import { DataProvider } from '../src/static/DataProvider';
+import { VirtualForest, VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem, TreeItemRenderContext, TreeRenderProps } from '../src';
 
 const demoRenderer: TreeRenderProps<string> = {
   renderItemTitle(item: TreeItem<string>, context: TreeItemRenderContext): string {

@@ -16,7 +16,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'react-virtual-tree',
       formats: ['es', 'umd'],
-      fileName: (format) => `react-virtual-tree.${format}.js`
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

@@ -1,6 +1,7 @@
 import React from 'react';
 import { TreeRenderProps } from '../types';
 import { classnames } from '../utils';
+import "./style.css";
 
 export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProps => {
     return {

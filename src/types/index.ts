@@ -1,8 +1,8 @@
-import React, { ButtonHTMLAttributes, InputHTMLAttributes, PropsWithChildren } from "react";
+import React, { ButtonHTMLAttributes, HTMLProps, InputHTMLAttributes, PropsWithChildren } from "react";
 
-type TreeItemIndex = string | number;
+export type TreeItemIndex = string | number;
 
-type TreeItem<T = any> = {
+export type TreeItem<T = any> = {
     index: TreeItemIndex;
     data: T;
     children: Array<TreeItemIndex>;
@@ -15,7 +15,7 @@ type TreePosition = {
     index: number;
 };
 
-type TreeItemActions = {
+export type TreeItemActions = {
     expandItem: () => void;
     collapseItem: () => void;
     toggleExpandedState: () => void;
@@ -25,7 +25,7 @@ type TreeItemActions = {
     startDragging: () => void;
 };
 
-type TreeItemRenderFlags = {
+export type TreeItemRenderFlags = {
     isSelected?: boolean;
     isExpanded?: boolean;
     isFocused?: boolean;
@@ -34,19 +34,19 @@ type TreeItemRenderFlags = {
     isDraggingOverParent?: boolean;
 };
 
-type TreeItemRenderContext = {
+export type TreeItemRenderContext = {
     elementProps: HTMLProps<any>;
     itemContainerProps: HTMLProps<any>;
 } & TreeItemActions &
     TreeItemRenderFlags;
 
-type TreeMeta = {
+export type TreeMeta = {
     areItemsSelected?: boolean;
     isRenaming?: boolean;
     isFocused?: boolean;
 };
 
-type TreeRenderProps<T = any> = {
+export type TreeRenderProps<T = any> = {
     renderItem?: (
         item: TreeItem<T>,
         depth: number,
@@ -75,7 +75,7 @@ type TreeCapabilities = {
     selectItemOnClick?: boolean;
 };
 
-type IndividualTreeViewState = {
+export type IndividualTreeViewState = {
     renamingItem?: TreeItemIndex;
     selectedItems?: TreeItemIndex[];
     expandedItems?: TreeItemIndex[];
@@ -87,7 +87,7 @@ type TreeViewState = {
     [treeId: string]: IndividualTreeViewState | undefined;
 };
 
-type DataSource<T = any> = {
+export type DataSource<T = any> = {
     items: Record<TreeItemIndex, TreeItem<T>>;
 };
 
@@ -108,14 +108,14 @@ type TreeChangeHandlers<T = any> = {
     onMissingItems?: (itemIds: TreeItemIndex[]) => void;
 };
 
-type VirtualForestProps<T = any> = {
+export type VirtualForestProps<T = any> = {
     viewState: TreeViewState;
 } & TreeRenderProps<T> &
     TreeCapabilities &
     TreeChangeHandlers<T> &
     DataSource<T>;
 
-type VirtualTreeContextProps<T = any> = {
+export type VirtualTreeContextProps<T = any> = {
     activeTreeId?: string;
     draggingItems?: TreeItem<T>[];
     draggingPosition?: DraggingPosition;
@@ -128,7 +128,7 @@ type VirtualTreeContextProps<T = any> = {
 } & VirtualForestProps<T> &
     Required<TreeRenderProps<T>>;
 
-type DraggingPosition = {
+export type DraggingPosition = {
     treeId: string;
     parentItem: TreeItemIndex;
     linearIndex?: number;
@@ -145,7 +145,7 @@ type DraggingPosition = {
       }
 );
 
-type VirtualForestWrapperProps<T = any> = PropsWithChildren<
+export type VirtualForestWrapperProps<T = any> = PropsWithChildren<
     {
         viewState: TreeViewState;
     } & TreeRenderProps<T> &
@@ -153,18 +153,18 @@ type VirtualForestWrapperProps<T = any> = PropsWithChildren<
         ImplicitDataSource<T>
 >;
 
-type Tree<T = any> = {
+export type Tree<T = any> = {
     treeId: string;
     rootItem: string;
 };
 
-type TreeProps<T = any> = Tree<T> & Partial<TreeRenderProps<T>>;
+export type TreeProps<T = any> = Tree<T> & Partial<TreeRenderProps<T>>;
 
-type Disposable = {
+export type Disposable = {
     dispose: () => void;
 };
 
-type TreeDataProvider<T = any> = {
+export type TreeDataProvider<T = any> = {
     componentDidUpdate?: (listener: (changedItemIds: TreeItemIndex[]) => void) => Disposable;
     getItem: (itemId: TreeItemIndex) => Promise<TreeItem>;
     getItems?: (itemIds: TreeItemIndex[]) => Promise<TreeItem[]>;
