@@ -2,7 +2,7 @@ import React from 'react';
 import { TreeItem } from './TreeItem';
 import { TreeItemIndex } from './types';
 
-export const TreeItemChildren = <T extends any>(props: {
+export const TreeItemChildren = (props: {
     children: TreeItemIndex[];
     depth: number;
     parentId: TreeItemIndex;

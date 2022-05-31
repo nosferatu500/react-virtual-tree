@@ -2,9 +2,9 @@ import React from 'react';
 import { Meta } from '@storybook/react';
 import { VirtualForest, VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem, TreeItemRenderContext, TreeRenderProps } from '../src';
 
-const demoRenderer: TreeRenderProps<string> = {
-  renderItemTitle(item: TreeItem<string>, context: TreeItemRenderContext): string {
-    return item.data;
+const demoRenderer: TreeRenderProps = {
+  renderItemTitle(item: TreeItem, context: TreeItemRenderContext): string {
+    return item.title;
   },
 };
 
@@ -13,49 +13,57 @@ const demoContent: { data: DataSource } = {
     items: {
       root: {
         index: 'root',
-        data: 'root',
+        title: 'root',
+        isFolder: true,
         children: ['child1', 'child2'],
         canMove: true,
       },
       child1: {
         index: 'child1',
-        data: 'child1',
+        title: 'child1',
+        isFolder: true,
         children: ['child11'],
         canMove: true,
       },
       child2: {
         index: 'child2',
-        data: 'child2',
+        title: 'child2',
+        isFolder: true,
         children: ['child21'],
         canMove: true,
       },
       child21: {
         index: 'child21',
-        data: 'child21',
+        title: 'child21',
+        isFolder: false,
         children: [],
         canMove: true,
       },
       child11: {
         index: 'child11',
-        data: 'child11',
+        title: 'child11',
+        isFolder: true,
         children: ['child111', 'child112'],
         canMove: true,
       },
       child111: {
         index: 'child111',
-        data: 'child111',
+        title: 'child111',
+        isFolder: false,
         children: [],
         canMove: true,
       },
       child112: {
         index: 'child112',
-        data: 'child112',
+        title: 'child112',
+        isFolder: true,
         children: ['child1121'],
         canMove: true,
       },
       child1121: {
         index: 'child1121',
-        data: 'child1121',
+        title: 'child1121',
+        isFolder: false,
         children: [],
         canMove: true,
       },

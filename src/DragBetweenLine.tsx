@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { HTMLProps, useContext } from "react";
 import { TreeRenderContext } from "./VirtualTree";
 import { VirtualTreeContext } from "./VirtualTreeContext";
 
@@ -17,6 +17,10 @@ export const DragBetweenLine: React.FC<{
         return null;
     }
 
+    const lineProps: HTMLProps<any> = {
+        onDragOver: e => e.preventDefault(), // Allow dropping
+    }
+
     return (
         <div style={{
             position: 'absolute',
@@ -24,7 +28,7 @@ export const DragBetweenLine: React.FC<{
             right: '0',
             top: `${((virtualTreeContext.draggingPosition?.linearIndex ?? 0)) * virtualTreeContext.itemHeight}px`
         }}>
-            {renderer.renderDragBetweenLine(virtualTreeContext.draggingPosition!)}
+            {renderer.renderDragBetweenLine(virtualTreeContext.draggingPosition!, lineProps)}
         </div>
     );
 };

@@ -4,9 +4,9 @@ import { VirtualForestProps, Tree, TreeItem, VirtualTreeContextProps, DraggingPo
 
 export const VirtualTreeContext = React.createContext<VirtualTreeContextProps>(null as any);
 
-export const VirtualForest = <T extends any>(props: PropsWithChildren<VirtualForestProps<T>>) => {
+export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
     const [trees, setTrees] = useState<Record<string, Tree>>({});
-    const [draggingItems, setDraggingItems] = useState<TreeItem<T>[]>();
+    const [draggingItems, setDraggingItems] = useState<TreeItem[]>();
     const [draggingPosition, setDraggingPosition] = useState<DraggingPosition>();
     const [activeTree, setActiveTree] = useState<string>();
     const [itemHeight, setItemHeight] = useState(4);

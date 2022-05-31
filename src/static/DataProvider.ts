@@ -1,11 +1,11 @@
 import { EventEmitter } from "../EventManager/EventEmitter";
 import { DataSource, Disposable, TreeDataProvider, TreeItem, TreeItemIndex } from "../types";
 
-export class DataProvider<T = any> implements TreeDataProvider {
+export class DataProvider implements TreeDataProvider {
     private data: DataSource;
     private componentDidUpdateEmitter = new EventEmitter<TreeItemIndex[]>();
 
-    constructor(items: Record<TreeItemIndex, TreeItem<T>>) {
+    constructor(items: Record<TreeItemIndex, TreeItem>) {
         this.data = { items };
     }
 

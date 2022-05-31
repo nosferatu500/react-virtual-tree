@@ -12,7 +12,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     role="none"
                     className={classnames(
                         'rvt-tree-item-li',
-                        item.children.length > 0 && 'rvt-tree-item-li-hasChildren',
+                        item.isFolder && 'rvt-tree-item-li-folder',
                         context.isSelected && 'rvt-tree-item-li-selected',
                         context.isExpanded && 'rvt-tree-item-li-expanded',
                         context.isDraggingOver && 'rvt-tree-item-li-dragging-over',
@@ -26,7 +26,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                         style={{ paddingLeft: `${(depth + 1) * (renderer.renderDepthOffset ?? 10)}px` }}
                         className={classnames(
                             'rvt-tree-item-button',
-                            item.children.length > 0 && 'rvt-tree-item-button-hasChildren',
+                            item.isFolder && 'rvt-tree-item-button-folder',
                             context.isSelected && 'rvt-tree-item-button-selected',
                             context.isExpanded && 'rvt-tree-item-button-expanded',
                             context.isDraggingOver && 'rvt-tree-item-button-dragging-over',
@@ -62,9 +62,10 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                 </div>
             );
         },
-        renderDragBetweenLine: (draggingPosition) => {
+        renderDragBetweenLine: (draggingPosition, lineProps) => {
             return (
                 <div
+                    {...lineProps}
                     style={{ left: `${draggingPosition.depth * (renderer.renderDepthOffset ?? 10)}px` }}
                     className={classnames(
                         'rvt-tree-drag-between-line',

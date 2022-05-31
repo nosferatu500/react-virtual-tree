@@ -13,10 +13,10 @@ import {
 
 export const classnames = (...classNames: (string | boolean | undefined)[]) => classNames.filter(Boolean).join(" ");
 
-export const getItemsLinearly = <T>(
+export const getItemsLinearly = (
     rootItem: TreeItemIndex,
     viewState: IndividualTreeViewState,
-    items: Record<TreeItemIndex, TreeItem<T>>,
+    items: Record<TreeItemIndex, TreeItem>,
     depth = 0
 ): Array<{ item: TreeItemIndex; depth: number }> => {
     let itemIds: Array<{ item: TreeItemIndex; depth: number }> = [];
@@ -24,7 +24,7 @@ export const getItemsLinearly = <T>(
     for (const itemId of items[rootItem].children ?? []) {
         const item = items[itemId];
         itemIds.push({ item: itemId, depth: depth });
-        if (item.children.length > 0 && !!item.children && viewState.expandedItems?.includes(itemId)) {
+        if (item.isFolder && !!item.children && viewState.expandedItems?.includes(itemId)) {
             itemIds.push(...getItemsLinearly(itemId, viewState, items, depth + 1));
         }
     }
@@ -32,8 +32,8 @@ export const getItemsLinearly = <T>(
     return itemIds;
 };
 
-export const createTreeItemRenderContext = <T>(
-    item: TreeItem<T>,
+export const createTreeItemRenderContext = (
+    item: TreeItem,
     context: VirtualTreeContextProps,
     treeId: string
 ): TreeItemRenderContext => {
@@ -107,14 +107,14 @@ export const createTreeItemRenderContext = <T>(
                     actions.addToSelectedItems();
                 }
             } else {
-                if (item.children.length > 0) {
+                if (item.isFolder) {
                     actions.toggleExpandedState();
                 }
                 actions.selectItem();
             }
         },
         onDoubleClick: () => {
-            if (item.children.length > 0) {
+            if (item.isFolder) {
                 // actions.toggleExpandedState();
             } else {
                 context.onPrimaryAction?.(item, treeId);
@@ -125,9 +125,17 @@ export const createTreeItemRenderContext = <T>(
         onDragStart: (e) => {
             e.dataTransfer.dropEffect = "copy";
             actions.startDragging();
+            // e.stopPropagation();
+        },
+        onDrag: (e) => {
+            // e.stopPropagation();
+        },
+        onDragEnd: (e) => {
+            // e.stopPropagation();
         },
         onDragOver: (e) => {
             e.preventDefault(); // Allow drop
+            // e.stopPropagation();
         },
     };
 
@@ -145,8 +153,8 @@ export const createTreeItemRenderContext = <T>(
     };
 };
 
-export const createTreeItemRenderContextDependencies = <T>(
-    item: TreeItem<T> | undefined,
+export const createTreeItemRenderContextDependencies = (
+    item: TreeItem | undefined,
     context: VirtualForestProps,
     treeId: string
 ) => [
@@ -157,13 +165,13 @@ export const createTreeItemRenderContextDependencies = <T>(
     treeId,
 ];
 
-export const createTreeInformation = <T>(context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
+export const createTreeInformation = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
     isFocused: context.activeTreeId === treeId,
     isRenaming: context.viewState[treeId]?.renamingItem !== undefined,
     areItemsSelected: (context.viewState[treeId]?.selectedItems?.length ?? 0) > 0,
 });
 
-export const createTreeInformationDependencies = <T>(context: VirtualTreeContextProps, treeId: string) => [
+export const createTreeInformationDependencies = (context: VirtualTreeContextProps, treeId: string) => [
     context.activeTreeId,
     context.viewState[treeId]?.renamingItem,
     context.viewState[treeId]?.selectedItems,

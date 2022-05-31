@@ -10,12 +10,12 @@ const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvid
     onChangeItemChildren: provider.onChangeItemChildren ?? (async () => { }),
 });
 
-export const VirtualForestWrapper = <T extends any>(props: VirtualForestWrapperProps<T>) => {
-    const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem<T>>>({});
+export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
+    const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>({});
     const [viewState, setViewState] = useState(props.viewState);
     const dataProvider = createDataProvider(props.dataProvider);
 
-    const writeItems = useMemo(() => (newItems: Record<TreeItemIndex, TreeItem<T>>) => {
+    const writeItems = useMemo(() => (newItems: Record<TreeItemIndex, TreeItem>) => {
         setCurrentItems(oldItems => ({ ...oldItems, ...newItems }));
     }, []);
 

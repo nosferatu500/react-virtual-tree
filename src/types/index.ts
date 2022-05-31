@@ -2,9 +2,10 @@ import React, { ButtonHTMLAttributes, HTMLProps, InputHTMLAttributes, PropsWithC
 
 export type TreeItemIndex = string | number;
 
-export type TreeItem<T = any> = {
+export type TreeItem = {
     index: TreeItemIndex;
-    data: T;
+    title: string;
+    isFolder: boolean;
     children: Array<TreeItemIndex>;
     canMove?: boolean;
 };
@@ -46,29 +47,29 @@ export type TreeMeta = {
     isFocused?: boolean;
 };
 
-export type TreeRenderProps<T = any> = {
+export type TreeRenderProps = {
     renderItem?: (
-        item: TreeItem<T>,
+        item: TreeItem,
         depth: number,
         children: React.ReactNode | null,
         context: TreeItemRenderContext,
         meta: TreeMeta
     ) => React.ReactNode;
-    renderItemTitle: (item: TreeItem<T>, context: TreeItemRenderContext) => string;
+    renderItemTitle: (item: TreeItem, context: TreeItemRenderContext) => string;
     renderRenameInput?: (
-        item: TreeItem<T>,
+        item: TreeItem,
         inputProps: Partial<InputHTMLAttributes<HTMLInputElement>>,
         submitButtonProps: Partial<ButtonHTMLAttributes<HTMLButtonElement>>
     ) => React.ReactNode;
-    renderDraggingItem?: (items: Array<TreeItem<T>>) => React.ReactNode;
-    renderDraggingItemTitle?: (items: Array<TreeItem<T>>) => React.ReactNode;
+    renderDraggingItem?: (items: Array<TreeItem>) => React.ReactNode;
+    renderDraggingItemTitle?: (items: Array<TreeItem>) => React.ReactNode;
     renderDepthOffset?: number;
     renderTreeContainer?: (
         children: React.ReactNode,
         containerProps: HTMLProps<any>,
         meta: TreeMeta
     ) => React.ReactNode;
-    renderDragBetweenLine?: (draggingPosition: DraggingPosition) => React.ReactNode;
+    renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
 };
 
 type TreeCapabilities = {
@@ -87,46 +88,46 @@ type TreeViewState = {
     [treeId: string]: IndividualTreeViewState | undefined;
 };
 
-export type DataSource<T = any> = {
-    items: Record<TreeItemIndex, TreeItem<T>>;
+export type DataSource = {
+    items: Record<TreeItemIndex, TreeItem>;
 };
 
-type ImplicitDataSource<T = any> = {
-    dataProvider: TreeDataProvider<T>;
+type ImplicitDataSource = {
+    dataProvider: TreeDataProvider;
 };
 
-type TreeChangeHandlers<T = any> = {
-    onStartRenamingItem?: (item: TreeItem<T>, treeId: string) => void;
-    onCollapseItem?: (item: TreeItem<T>, treeId: string) => void;
-    onExpandItem?: (item: TreeItem<T>, treeId: string) => void;
-    onRenameItem?: (item: TreeItem<T>, name: string, treeId: string) => void;
+type TreeChangeHandlers = {
+    onStartRenamingItem?: (item: TreeItem, treeId: string) => void;
+    onCollapseItem?: (item: TreeItem, treeId: string) => void;
+    onExpandItem?: (item: TreeItem, treeId: string) => void;
+    onRenameItem?: (item: TreeItem, name: string, treeId: string) => void;
     onSelectItems?: (items: TreeItemIndex[], treeId: string) => void;
-    onDrop?: (items: TreeItem<T>[], target: DraggingPosition) => void;
-    onPrimaryAction?: (items: TreeItem<T>, treeId: string) => void;
+    onDrop?: (items: TreeItem[], target: DraggingPosition) => void;
+    onPrimaryAction?: (items: TreeItem, treeId: string) => void;
     onAddTree?: (tree: Tree) => void;
     onRemoveTree?: (tree: Tree) => void;
     onMissingItems?: (itemIds: TreeItemIndex[]) => void;
 };
 
-export type VirtualForestProps<T = any> = {
+export type VirtualForestProps = {
     viewState: TreeViewState;
-} & TreeRenderProps<T> &
+} & TreeRenderProps &
     TreeCapabilities &
-    TreeChangeHandlers<T> &
-    DataSource<T>;
+    TreeChangeHandlers &
+    DataSource;
 
-export type VirtualTreeContextProps<T = any> = {
+export type VirtualTreeContextProps = {
     activeTreeId?: string;
-    draggingItems?: TreeItem<T>[];
+    draggingItems?: TreeItem[];
     draggingPosition?: DraggingPosition;
     itemHeight: number;
-    addTree: (tree: Tree<T>) => void;
+    addTree: (tree: Tree) => void;
     removeTree: (treeId: string) => void;
     setActiveTree: (treeId: string | undefined) => void;
-    onStartDragItems: (items: TreeItem<T>[], treeId: string) => void;
+    onStartDragItems: (items: TreeItem[], treeId: string) => void;
     onDragAtPosition: (position: DraggingPosition | undefined) => void;
-} & VirtualForestProps<T> &
-    Required<TreeRenderProps<T>>;
+} & VirtualForestProps &
+    Required<TreeRenderProps>;
 
 export type DraggingPosition = {
     treeId: string;
@@ -145,30 +146,30 @@ export type DraggingPosition = {
       }
 );
 
-export type VirtualForestWrapperProps<T = any> = PropsWithChildren<
+export type VirtualForestWrapperProps = PropsWithChildren<
     {
         viewState: TreeViewState;
-    } & TreeRenderProps<T> &
+    } & TreeRenderProps &
         TreeCapabilities &
-        ImplicitDataSource<T>
+        ImplicitDataSource
 >;
 
-export type Tree<T = any> = {
+export type Tree = {
     treeId: string;
     rootItem: string;
 };
 
-export type TreeProps<T = any> = Tree<T> & Partial<TreeRenderProps<T>>;
+export type TreeProps = Tree & Partial<TreeRenderProps>;
 
 export type Disposable = {
     dispose: () => void;
 };
 
-export type TreeDataProvider<T = any> = {
+export type TreeDataProvider = {
     componentDidUpdate?: (listener: (changedItemIds: TreeItemIndex[]) => void) => Disposable;
     getItem: (itemId: TreeItemIndex) => Promise<TreeItem>;
     getItems?: (itemIds: TreeItemIndex[]) => Promise<TreeItem[]>;
-    onRenameItem?: (item: TreeItem<T>, name: string) => Promise<void>;
+    onRenameItem?: (item: TreeItem, name: string) => Promise<void>;
     onChangeItemChildren?: (itemId: TreeItemIndex, newChildren: TreeItemIndex[]) => Promise<void>;
 };
 

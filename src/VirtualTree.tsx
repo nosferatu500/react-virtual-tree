@@ -9,7 +9,7 @@ import { VirtualTreeContext } from './VirtualTreeContext';
 export const TreeRenderContext = React.createContext<Required<TreeRenderProps>>(null as any);
 export const TreeIdContext = React.createContext<string>('__no_tree');
 
-export const VirtualTree = <T extends any>(props: TreeProps<T>) => {
+export const VirtualTree = (props: TreeProps) => {
     const virtualTreeContext = useContext(VirtualTreeContext);
     const renderer = useMemo<Required<TreeRenderProps>>(() => ({ ...virtualTreeContext, ...props }), [props, virtualTreeContext]);
     const rootItem = virtualTreeContext.items[props.rootItem];

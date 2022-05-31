@@ -6,7 +6,7 @@ import { createTreeInformation, createTreeInformationDependencies, createTreeIte
 import { TreeIdContext } from './VirtualTree';
 import { VirtualTreeContext } from './VirtualTreeContext';
 
-export const TreeItem = <T extends any>(props: {
+export const TreeItem = (props: {
     itemIndex: TreeItemIndex;
     depth: number;
 }): JSX.Element => {
@@ -35,7 +35,7 @@ export const TreeItem = <T extends any>(props: {
         return null as any;
     }
 
-    const children = item.children.length > 0 && isExpanded && item.children && (
+    const children = item.isFolder && isExpanded && item.children && (
         <TreeItemChildren depth={props.depth + 1} parentId={props.itemIndex} children={item.children} />
     );
 

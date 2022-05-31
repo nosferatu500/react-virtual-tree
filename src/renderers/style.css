@@ -14,10 +14,10 @@
     display: inline-block;
     text-align: left;
 }
-.rvt-tree-item-button.rbt-tree-item-button-hasChildren:before {
+.rvt-tree-item-button.rbt-tree-item-button-folder:before {
     content: '🞂';
 }
-.rvt-tree-item-button-expanded.rvt-tree-item-button-hasChildren:before {
+.rvt-tree-item-button-expanded.rvt-tree-item-button-folder:before {
     content: '🞃';
 }
 
