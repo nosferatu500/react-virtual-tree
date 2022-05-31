@@ -39,7 +39,5 @@ export const useFocusWithin = (
         deps
     );
 
-    console.log({ focusWithin });
-
     return focusWithin;
 };

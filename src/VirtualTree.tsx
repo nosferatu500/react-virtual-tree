@@ -1,6 +1,8 @@
 import React, { HTMLProps, useContext, useEffect, useMemo, useRef } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DragBetweenLine } from './DragBetweenLine';
-// import { useFocusWithin } from './hooks/useFocusWithin';
+import { useFocusWithin } from './hooks/useFocusWithin';
 import { TreeItemChildren } from './TreeItemChildren';
 import { TreeProps, TreeRenderProps } from './types';
 import { createTreeInformation, createTreeInformationDependencies, getItemsLinearly } from './utils';
@@ -25,18 +27,18 @@ export const VirtualTree = (props: TreeProps) => {
         return () => virtualTreeContext.removeTree(props.treeId);
     }, [props.treeId, props.rootItem]);
 
-    // useFocusWithin(containerRef.current, () => {
-    //     virtualTreeContext.setActiveTree(props.treeId)
-    // }, () => {
-    //     if (virtualTreeContext.activeTreeId === props.treeId) {
-    //         virtualTreeContext.setActiveTree(undefined);
-    //     }
-    // }, [virtualTreeContext.activeTreeId, props.treeId]);
+    useFocusWithin(containerRef.current, () => {
+        virtualTreeContext.setActiveTree(props.treeId)
+    }, () => {
+        if (virtualTreeContext.activeTreeId === props.treeId) {
+            virtualTreeContext.setActiveTree(undefined);
+        }
+    }, [virtualTreeContext.activeTreeId, props.treeId]);
 
     const meta = useMemo(
         () => createTreeInformation(virtualTreeContext, props.treeId),
         createTreeInformationDependencies(virtualTreeContext, props.treeId),
-    ); // share with tree children
+    );
 
     if (rootItem === undefined) {
         virtualTreeContext.onMissingItems?.([props.rootItem]);
@@ -154,7 +156,9 @@ export const VirtualTree = (props: TreeProps) => {
     return (
         <TreeRenderContext.Provider value={renderer}>
             <TreeIdContext.Provider value={props.treeId}>
-                {renderer.renderTreeContainer(treeChildren, containerProps, meta)}
+                <DndProvider backend={HTML5Backend}>
+                    {renderer.renderTreeContainer(treeChildren, containerProps, meta)}
+                </DndProvider>
             </TreeIdContext.Provider>
         </TreeRenderContext.Provider>
     );

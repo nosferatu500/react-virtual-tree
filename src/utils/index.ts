@@ -39,12 +39,6 @@ export const createTreeItemRenderContext = (
 ): TreeItemRenderContext => {
     const viewState = context.viewState[treeId];
 
-    const canDrag =
-        (viewState?.selectedItems?.length ?? 0) > 0
-            ? viewState?.selectedItems?.map((item) => context.items[item]?.canMove).reduce((a, b) => a && b, true) ??
-              false
-            : item.canMove;
-
     const actions: TreeItemActions = {
         collapseItem: () => {
             context.onCollapseItem?.(item, treeId);
@@ -68,21 +62,6 @@ export const createTreeItemRenderContext = (
         unselectItem: () => {
             context.onSelectItems?.(viewState?.selectedItems?.filter((id) => id !== item.index) ?? [], treeId);
         },
-        startDragging: () => {
-            let selectedItems = viewState?.selectedItems ?? [];
-
-            if (!selectedItems.includes(item.index)) {
-                selectedItems = [item.index];
-                context.onSelectItems?.(selectedItems, treeId);
-            }
-
-            if (canDrag) {
-                context.onStartDragItems(
-                    selectedItems.map((id) => context.items[id]),
-                    treeId
-                );
-            }
-        },
     };
 
     const renderContext: TreeItemRenderFlags = {
@@ -100,7 +79,7 @@ export const createTreeItemRenderContext = (
 
     const elementProps: HTMLProps<HTMLElement> = {
         onClick: (e) => {
-            if (e.ctrlKey) {
+            if (e.ctrlKey || e.metaKey) {
                 if (renderContext.isSelected) {
                     actions.unselectItem();
                 } else {
@@ -120,22 +99,6 @@ export const createTreeItemRenderContext = (
                 context.onPrimaryAction?.(item, treeId);
             }
             // actions.selectItem();
-        },
-        draggable: canDrag,
-        onDragStart: (e) => {
-            e.dataTransfer.dropEffect = "copy";
-            actions.startDragging();
-            // e.stopPropagation();
-        },
-        onDrag: (e) => {
-            // e.stopPropagation();
-        },
-        onDragEnd: (e) => {
-            // e.stopPropagation();
-        },
-        onDragOver: (e) => {
-            e.preventDefault(); // Allow drop
-            // e.stopPropagation();
         },
     };
 
@@ -158,12 +121,12 @@ export const createTreeItemRenderContextDependencies = (
     context: VirtualForestProps,
     treeId: string
 ) => [
-    context,
-    context.viewState[treeId]?.expandedItems,
-    context.viewState[treeId]?.selectedItems,
-    item?.index ?? "___no_item",
-    treeId,
-];
+        context,
+        context.viewState[treeId]?.expandedItems,
+        context.viewState[treeId]?.selectedItems,
+        item?.index ?? "___no_item",
+        treeId,
+    ];
 
 export const createTreeInformation = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
     isFocused: context.activeTreeId === treeId,

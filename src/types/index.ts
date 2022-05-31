@@ -23,7 +23,6 @@ export type TreeItemActions = {
     selectItem: () => void;
     unselectItem: () => void;
     addToSelectedItems: () => void;
-    startDragging: () => void;
 };
 
 export type TreeItemRenderFlags = {
@@ -49,7 +48,9 @@ export type TreeMeta = {
 
 export type TreeRenderProps = {
     renderItem?: (
+        ref: React.RefObject<HTMLDivElement>,
         item: TreeItem,
+        style: any,
         depth: number,
         children: React.ReactNode | null,
         context: TreeItemRenderContext,
