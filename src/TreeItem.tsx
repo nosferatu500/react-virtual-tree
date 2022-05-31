@@ -19,11 +19,11 @@ export const TreeItem = (props: {
 
     const ref = useRef<HTMLDivElement>(null)
 
-    const selectedItems = viewState?.selectedItems?.map(item => context.items[item]);
+    const selectedItems = viewState?.selectedItems?.map(item => context.items[item]) ?? [];
 
-    const canDrag = (selectedItems &&
-        selectedItems.length > 0 &&
-        context.allowDragAndDrop &&
+    // const canDrag = (selectedItems &&
+    //     selectedItems.length > 0 &&
+    const canDrag = (context.allowDragAndDrop &&
         (context.canDrag?.(selectedItems) ?? true) &&
         (
             selectedItems

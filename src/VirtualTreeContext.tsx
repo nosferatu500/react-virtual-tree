@@ -37,7 +37,10 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
             draggingPosition: draggingPosition,
             draggingItems: draggingItems,
             itemHeight: itemHeight,
-            setActiveTree: setActiveTree,
+            setActiveTree: treeId => {
+                console.log("setActiveTree", treeId)
+                setActiveTree(treeId);
+              },
             addTree: (tree) => {
                 setTrees({ ...trees, [tree.treeId]: tree });
                 props.onAddTree?.(tree);

@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import { DragBetweenLine } from './DragBetweenLine';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { TreeItemChildren } from './TreeItemChildren';
-import { TreeProps, TreeRenderProps } from './types';
+import { DraggingPosition, TreeProps, TreeRenderProps } from './types';
 import { createTreeInformation, createTreeInformationDependencies, getItemsLinearly } from './utils';
 import { VirtualTreeContext } from './VirtualTreeContext';
 
@@ -44,6 +44,10 @@ export const VirtualTree = (props: TreeProps) => {
         },
 
         hover(item: any, monitor) {
+            if (!context.allowDragAndDrop) {
+                return;
+            }
+
             if (!ref.current) {
                 return
             }
@@ -66,9 +70,11 @@ export const VirtualTree = (props: TreeProps) => {
             let linearIndex = Math.floor(hoveringPosition);
             let offset: 'top' | 'bottom' | undefined = undefined;
 
-            if (hoveringPosition % 1 < 0.2) {
+            const lineThreshold = (context.allowDropOnItemWithChildren || context.allowDropOnItemWithoutChildren) ? 0.2 : 0.5;
+
+            if (hoveringPosition % 1 < lineThreshold) {
                 offset = 'top';
-            } else if (hoveringPosition % 1 > 0.8) {
+            } else if (hoveringPosition % 1 > 1 - lineThreshold) {
                 offset = 'bottom';
             }
 
@@ -89,7 +95,25 @@ export const VirtualTree = (props: TreeProps) => {
                     return;
                 }
 
-                const depth = linearItems[linearIndex].depth;
+                const targetItem = linearItems[linearIndex];
+                const depth = targetItem.depth;
+                const targetItemData = context.items[targetItem.item];
+
+                if (!offset && !context.allowDropOnItemWithoutChildren && !targetItemData.isFolder) {
+                    context.onDragAtPosition(undefined);
+                    return;
+                }
+
+                if (!offset && !context.allowDropOnItemWithChildren && targetItemData.isFolder) {
+                    context.onDragAtPosition(undefined);
+                    return;
+                }
+
+                if (offset && !context.allowReorderingItems) {
+                    context.onDragAtPosition(undefined);
+                    return;
+                }
+
                 let parentLinearIndex = linearIndex;
                 for (; !!linearItems[parentLinearIndex] && linearItems[parentLinearIndex].depth !== depth - 1; parentLinearIndex--);
 
@@ -100,7 +124,7 @@ export const VirtualTree = (props: TreeProps) => {
                     parentLinearIndex = 0;
                 }
 
-                if (context.viewState[props.treeId]?.selectedItems?.includes(linearItems[linearIndex].item)) {
+                if (context.viewState[props.treeId]?.selectedItems?.includes(targetItem.item)) {
                     return;
                 }
 
@@ -109,26 +133,36 @@ export const VirtualTree = (props: TreeProps) => {
                     linearIndex -= 1;
                 }
 
+                let draggingPosition: DraggingPosition;
+
                 if (offset) {
-                    context.onDragAtPosition({
+                    draggingPosition = {
                         targetType: 'between-items',
                         treeId: props.treeId,
                         parentItem: parent.item,
-                        depth: linearItems[linearIndex].depth,
+                        depth: targetItem.depth,
                         linearIndex: linearIndex + (offset === 'top' ? 0 : 1),
                         childIndex: linearIndex - parentLinearIndex - 1 + (offset === 'top' ? 0 : 1),
                         linePosition: offset,
-                    });
+                    };
                 } else {
-                    context.onDragAtPosition({
+                    draggingPosition = {
                         targetType: 'item',
                         treeId: props.treeId,
                         parentItem: parent.item,
-                        targetItem: linearItems[linearIndex].item,
-                        depth: linearItems[linearIndex].depth,
+                        targetItem: targetItem.item,
+                        depth: targetItem.depth,
                         linearIndex: linearIndex,
-                    })
+                    }
                 }
+
+                if (context.canDropAt && (!context.draggingItems
+                    || !context.canDropAt(context.draggingItems, draggingPosition))) {
+                        context.onDragAtPosition(undefined);
+                    return;
+                  }
+
+                context.onDragAtPosition(draggingPosition);
 
                 context.setActiveTree(props.treeId);
 
