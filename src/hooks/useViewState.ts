@@ -4,6 +4,6 @@ import { VirtualTreeContext } from "../VirtualTreeContext";
 
 export const useViewState = () => {
     const treeId = useContext(TreeIdContext);
-    const virtualTreeContext = useContext(VirtualTreeContext);
-    return virtualTreeContext.viewState[treeId] ?? {};
+    const context = useContext(VirtualTreeContext);
+    return context.viewState[treeId] ?? {};
 };

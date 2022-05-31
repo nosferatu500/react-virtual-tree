@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from './types';
 import { VirtualForest } from './VirtualTreeContext';
 
@@ -101,7 +103,9 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                 });
             }}
         >
-            {props.children}
+            <DndProvider backend={HTML5Backend}>
+                {props.children}
+            </DndProvider>
         </VirtualForest>
     );
 }

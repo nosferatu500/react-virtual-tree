@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useHtmlElementEventListener } from "./useHtmlElementEventListener";
 
 export const useFocusWithin = (
-    element: HTMLElement | undefined,
+    element: HTMLElement | undefined | null,
     onFocusIn?: () => void,
     onFocusOut?: () => void,
     deps: any[] = []

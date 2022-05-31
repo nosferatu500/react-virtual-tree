@@ -78,6 +78,9 @@ export default {
 
 export const SingleTree = () => (
   <VirtualForestWrapper
+    allowDragAndDrop={true}
+    allowDropOnItemWithChildren={true}
+    allowReorderingItems={true}
     dataProvider={new DataProvider(demoContent.data.items)}
     viewState={{
       ['tree-1']: {
@@ -92,6 +95,9 @@ export const SingleTree = () => (
 
 export const SingleTreeAllCollapsed = () => (
   <VirtualForestWrapper
+    allowDragAndDrop={true}
+    allowDropOnItemWithChildren={true}
+    allowReorderingItems={true}
     dataProvider={new DataProvider(demoContent.data.items)}
     viewState={{
       ['tree-1']: {
@@ -105,6 +111,9 @@ export const SingleTreeAllCollapsed = () => (
 
 export const MultipleTrees = () => (
   <VirtualForestWrapper
+    allowDragAndDrop={true}
+    allowDropOnItemWithChildren={true}
+    allowReorderingItems={true}
     dataProvider={new DataProvider(demoContent.data.items)}
     viewState={{
       ['tree-1']: {
@@ -140,3 +149,33 @@ export const MultipleTrees = () => (
     </div>
   </VirtualForestWrapper>
 ); 
+
+export const NoDragAndDrop = () => (
+  <VirtualForestWrapper
+    dataProvider={new DataProvider(demoContent.data.items)}
+    viewState={{
+      ['tree-1']: {
+        expandedItems: ['child1', 'child11', 'child2']
+      }
+    }}
+    {...demoRenderer}
+  >
+    <VirtualTree treeId="tree-1" rootItem="root" />
+  </VirtualForestWrapper>
+);
+
+export const NoReorderingAllowed = () => (
+  <VirtualForestWrapper
+    allowDragAndDrop={true}
+    allowDropOnItemWithChildren={true}
+    dataProvider={new DataProvider(demoContent.data.items)}
+    viewState={{
+      ['tree-1']: {
+        expandedItems: ['child1', 'child11', 'child2']
+      }
+    }}
+    {...demoRenderer}
+  >
+    <VirtualTree treeId="tree-1" rootItem="root" />
+  </VirtualForestWrapper>
+);

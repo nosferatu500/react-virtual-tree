@@ -48,10 +48,11 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
         renderDraggingItemTitle: items => {
             return <div />;
         },
-        renderTreeContainer: (children, containerProps, meta) => {
+        renderTreeContainer: (ref, children, meta) => {
             return (
                 <div
-                    {...containerProps}
+                    ref={ref}
+                    style={{ position: 'relative' }}
                     className={classnames(
                         'rvt-tree-root',
                         meta.isFocused && 'rvt-tree-root-focus',

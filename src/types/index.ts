@@ -66,15 +66,20 @@ export type TreeRenderProps = {
     renderDraggingItemTitle?: (items: Array<TreeItem>) => React.ReactNode;
     renderDepthOffset?: number;
     renderTreeContainer?: (
+        ref: React.RefObject<HTMLDivElement>,
         children: React.ReactNode,
-        containerProps: HTMLProps<any>,
         meta: TreeMeta
     ) => React.ReactNode;
     renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
 };
 
 type TreeCapabilities = {
-    selectItemOnClick?: boolean;
+    allowDragAndDrop?: boolean;
+    allowDropOnItemWithChildren?: boolean;
+    allowDropOnItemWithoutChildren?: boolean;
+    allowReorderingItems?: boolean;
+    canDrag?: (items: TreeItem[]) => boolean;
+    canDropAt?: (items: TreeItem[], target: DraggingPosition) => boolean;
 };
 
 export type IndividualTreeViewState = {

@@ -121,12 +121,12 @@ export const createTreeItemRenderContextDependencies = (
     context: VirtualForestProps,
     treeId: string
 ) => [
-        context,
-        context.viewState[treeId]?.expandedItems,
-        context.viewState[treeId]?.selectedItems,
-        item?.index ?? "___no_item",
-        treeId,
-    ];
+    context,
+    context.viewState[treeId]?.expandedItems,
+    context.viewState[treeId]?.selectedItems,
+    item?.index ?? "___no_item",
+    treeId,
+];
 
 export const createTreeInformation = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
     isFocused: context.activeTreeId === treeId,

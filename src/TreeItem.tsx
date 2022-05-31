@@ -13,17 +13,23 @@ export const TreeItem = (props: {
 }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
     const treeId = useContext(TreeIdContext);
-    const virtualTreeContext = useContext(VirtualTreeContext);
+    const context = useContext(VirtualTreeContext);
     const viewState = useViewState();
-    const item = virtualTreeContext.items[props.itemIndex];
+    const item = context.items[props.itemIndex];
 
     const ref = useRef<HTMLDivElement>(null)
 
-    const canDrag =
-        (viewState?.selectedItems?.length ?? 0) > 0
-            ? viewState?.selectedItems?.map((item) => virtualTreeContext.items[item]?.canMove).reduce((a, b) => a && b, true) ??
-            false
-            : item?.canMove || false;
+    const selectedItems = viewState?.selectedItems?.map(item => context.items[item]);
+
+    const canDrag = (selectedItems &&
+        selectedItems.length > 0 &&
+        context.allowDragAndDrop &&
+        (context.canDrag?.(selectedItems) ?? true) &&
+        (
+            selectedItems
+                .map(item => item.canMove ?? true)
+                .reduce((a, b) => a && b, true)
+        )) ?? false;
 
     const [, drop] = useDrop({
         accept: "rvt-item",
@@ -32,18 +38,16 @@ export const TreeItem = (props: {
                 handlerId: monitor.getHandlerId(),
             }
         },
+
         // hover(item: any, monitor) {
         //     if (!ref.current) {
         //         return
         //     }
         // },
-        drop(draggedItem: any, monitor) {
-            console.log({ item })
-            console.log({ draggedItem })
-            console.log("{ monitor }", monitor.getDropResult())
 
+        // drop(draggedItem: any, monitor) {
 
-        }
+        // }
     })
 
     const [{ isDragging }, drag] = useDrag({
@@ -64,11 +68,11 @@ export const TreeItem = (props: {
 
             if (!selectedItems.includes(draggedItem.index)) {
                 selectedItems = [draggedItem.index];
-                virtualTreeContext.onSelectItems?.(selectedItems, treeId);
+                context.onSelectItems?.(selectedItems, treeId);
             }
 
-            virtualTreeContext.onStartDragItems(
-                selectedItems.map((id) => virtualTreeContext.items[id]),
+            context.onStartDragItems(
+                selectedItems.map((id) => context.items[id]),
                 treeId
             );
         }
@@ -79,19 +83,19 @@ export const TreeItem = (props: {
 
     const isExpanded = useMemo(() => viewState.expandedItems?.includes(props.itemIndex), [props.itemIndex, viewState.expandedItems]);
     const renderContext = useMemo(
-        () => item && createTreeItemRenderContext(item, virtualTreeContext, treeId),
-        createTreeItemRenderContextDependencies(item, virtualTreeContext, treeId)
+        () => item && createTreeItemRenderContext(item, context, treeId),
+        createTreeItemRenderContextDependencies(item, context, treeId)
     );
 
     const meta = useMemo(
-        () => createTreeInformation(virtualTreeContext, treeId),
-        createTreeInformationDependencies(virtualTreeContext, treeId),
+        () => createTreeInformation(context, treeId),
+        createTreeInformationDependencies(context, treeId),
     );
 
     if (item === undefined) {
         if (!hasBeenRequested) {
             setHasBeenRequested(true);
-            virtualTreeContext.onMissingItems?.([props.itemIndex]);
+            context.onMissingItems?.([props.itemIndex]);
         }
         return null as any;
     }
@@ -104,5 +108,5 @@ export const TreeItem = (props: {
         opacity,
     }
 
-    return virtualTreeContext.renderItem(ref, virtualTreeContext.items[props.itemIndex], itemStyle, props.depth, children, renderContext, meta) || null as any;
+    return context.renderItem(ref, context.items[props.itemIndex], itemStyle, props.depth, children, renderContext, meta) || null as any;
 } 

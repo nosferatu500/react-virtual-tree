@@ -1,6 +1,5 @@
-import React, { HTMLProps, useContext, useEffect, useMemo, useRef } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import { useDrop } from 'react-dnd';
 import { DragBetweenLine } from './DragBetweenLine';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { TreeItemChildren } from './TreeItemChildren';
@@ -12,36 +11,144 @@ export const TreeRenderContext = React.createContext<Required<TreeRenderProps>>(
 export const TreeIdContext = React.createContext<string>('__no_tree');
 
 export const VirtualTree = (props: TreeProps) => {
-    const virtualTreeContext = useContext(VirtualTreeContext);
-    const renderer = useMemo<Required<TreeRenderProps>>(() => ({ ...virtualTreeContext, ...props }), [props, virtualTreeContext]);
-    const rootItem = virtualTreeContext.items[props.rootItem];
-    const containerRef = useRef<HTMLElement>();
+    const context = useContext(VirtualTreeContext);
+    const renderer = useMemo<Required<TreeRenderProps>>(() => ({ ...context, ...props }), [props, context]);
+    const rootItem = context.items[props.rootItem];
     const lastHoverCode = useRef<string>();
 
+    const ref = useRef<HTMLDivElement>(null)
+
     useEffect(() => {
-        virtualTreeContext.addTree({
+        context.addTree({
             treeId: props.treeId,
             rootItem: props.rootItem
         });
 
-        return () => virtualTreeContext.removeTree(props.treeId);
+        return () => context.removeTree(props.treeId);
     }, [props.treeId, props.rootItem]);
 
-    useFocusWithin(containerRef.current, () => {
-        virtualTreeContext.setActiveTree(props.treeId)
+    useFocusWithin(ref.current, () => {
+        context.setActiveTree(props.treeId)
     }, () => {
-        if (virtualTreeContext.activeTreeId === props.treeId) {
-            virtualTreeContext.setActiveTree(undefined);
+        if (context.activeTreeId === props.treeId) {
+            context.setActiveTree(undefined);
         }
-    }, [virtualTreeContext.activeTreeId, props.treeId]);
+    }, [context.activeTreeId, props.treeId]);
+
+    const [, drop] = useDrop({
+        accept: "rvt-item",
+        collect(monitor) {
+            return {
+                handlerId: monitor.getHandlerId(),
+            }
+        },
+
+        hover(item: any, monitor) {
+            if (!ref.current) {
+                return
+            }
+
+            const clientOffset = monitor.getClientOffset();
+            const clientX = (clientOffset?.x ?? -1)
+            const clientY = (clientOffset?.y ?? -1)
+
+            if (clientX < 0 || clientY < 0) {
+                return;
+            }
+
+            const hoverBoundingRect = ref.current.getBoundingClientRect();
+            const outsideContainer = clientX < hoverBoundingRect.left
+                || clientX > hoverBoundingRect.right
+                || clientY < hoverBoundingRect.top
+                || clientY > hoverBoundingRect.bottom;
+
+            const hoveringPosition = (clientY - hoverBoundingRect.top) / context.itemHeight;
+            let linearIndex = Math.floor(hoveringPosition);
+            let offset: 'top' | 'bottom' | undefined = undefined;
+
+            if (hoveringPosition % 1 < 0.2) {
+                offset = 'top';
+            } else if (hoveringPosition % 1 > 0.8) {
+                offset = 'bottom';
+            }
+
+            const hoveringCode = outsideContainer ? 'outside' : `${linearIndex}${offset ?? ''}`;
+
+            if (lastHoverCode.current !== hoveringCode) {
+                lastHoverCode.current = hoveringCode;
+
+                if (outsideContainer) {
+                    context.onDragAtPosition(undefined);
+                    return;
+                }
+
+                const linearItems = getItemsLinearly(props.rootItem, context.viewState[props.treeId] ?? {}, context.items);
+
+                if (linearIndex < 0 || linearIndex >= linearItems.length) {
+                    context.onDragAtPosition(undefined);
+                    return;
+                }
+
+                const depth = linearItems[linearIndex].depth;
+                let parentLinearIndex = linearIndex;
+                for (; !!linearItems[parentLinearIndex] && linearItems[parentLinearIndex].depth !== depth - 1; parentLinearIndex--);
+
+                let parent = linearItems[parentLinearIndex];
+
+                if (!parent) {
+                    parent = { item: props.rootItem, depth: 0 };
+                    parentLinearIndex = 0;
+                }
+
+                if (context.viewState[props.treeId]?.selectedItems?.includes(linearItems[linearIndex].item)) {
+                    return;
+                }
+
+                if (offset === 'top' && depth === (linearItems[linearIndex - 1]?.depth ?? -1)) {
+                    offset = 'bottom';
+                    linearIndex -= 1;
+                }
+
+                if (offset) {
+                    context.onDragAtPosition({
+                        targetType: 'between-items',
+                        treeId: props.treeId,
+                        parentItem: parent.item,
+                        depth: linearItems[linearIndex].depth,
+                        linearIndex: linearIndex + (offset === 'top' ? 0 : 1),
+                        childIndex: linearIndex - parentLinearIndex - 1 + (offset === 'top' ? 0 : 1),
+                        linePosition: offset,
+                    });
+                } else {
+                    context.onDragAtPosition({
+                        targetType: 'item',
+                        treeId: props.treeId,
+                        parentItem: parent.item,
+                        targetItem: linearItems[linearIndex].item,
+                        depth: linearItems[linearIndex].depth,
+                        linearIndex: linearIndex,
+                    })
+                }
+
+                context.setActiveTree(props.treeId);
+
+                if (context.draggingItems && context.onSelectItems && context.activeTreeId !== props.treeId) {
+                    context.onSelectItems(context.draggingItems.map(item => item.index), props.treeId);
+                }
+            }
+        },
+
+        // drop(draggedItem: any, monitor) {
+        // }
+    })
 
     const meta = useMemo(
-        () => createTreeInformation(virtualTreeContext, props.treeId),
-        createTreeInformationDependencies(virtualTreeContext, props.treeId),
+        () => createTreeInformation(context, props.treeId),
+        createTreeInformationDependencies(context, props.treeId),
     );
 
     if (rootItem === undefined) {
-        virtualTreeContext.onMissingItems?.([props.rootItem]);
+        context.onMissingItems?.([props.rootItem]);
         return null;
     }
 
@@ -58,107 +165,12 @@ export const VirtualTree = (props: TreeProps) => {
         </>
     );
 
-    const containerProps: HTMLProps<any> = {
-        onDragOver: e => {
-            if (!containerRef.current) {
-                return;
-            }
-
-            if (e.clientX < 0 || e.clientY < 0) {
-                return;
-            }
-
-            const treeBb = containerRef.current.getBoundingClientRect();
-            const outsideContainer = e.clientX < treeBb.left
-                || e.clientX > treeBb.right
-                || e.clientY < treeBb.top
-                || e.clientY > treeBb.bottom;
-
-            const hoveringPosition = (e.clientY - /*containerRef.current!.offsetTop*/ treeBb.top) / virtualTreeContext.itemHeight;
-            let linearIndex = Math.floor(hoveringPosition);
-            let offset: 'top' | 'bottom' | undefined = undefined;
-
-            if (hoveringPosition % 1 < 0.2) {
-                offset = 'top';
-            } else if (hoveringPosition % 1 > 0.8) {
-                offset = 'bottom';
-            }
-
-            const hoveringCode = outsideContainer ? 'outside' : `${linearIndex}${offset ?? ''}`;
-
-            if (lastHoverCode.current !== hoveringCode) {
-                lastHoverCode.current = hoveringCode;
-
-                if (outsideContainer) {
-                    virtualTreeContext.onDragAtPosition(undefined);
-                    return;
-                }
-
-                const linearItems = getItemsLinearly(props.rootItem, virtualTreeContext.viewState[props.treeId] ?? {}, virtualTreeContext.items);
-
-                if (linearIndex < 0 || linearIndex >= linearItems.length) {
-                    virtualTreeContext.onDragAtPosition(undefined);
-                    return;
-                }
-
-                const depth = linearItems[linearIndex].depth;
-                let parentLinearIndex = linearIndex;
-                for (; !!linearItems[parentLinearIndex] && linearItems[parentLinearIndex].depth !== depth - 1; parentLinearIndex--);
-
-                let parent = linearItems[parentLinearIndex];
-
-                if (!parent) {
-                    parent = { item: props.rootItem, depth: 0 };
-                    parentLinearIndex = 0;
-                }
-
-                if (virtualTreeContext.viewState[props.treeId]?.selectedItems?.includes(linearItems[linearIndex].item)) {
-                    return;
-                }
-
-                if (offset === 'top' && depth === (linearItems[linearIndex - 1]?.depth ?? -1)) {
-                    offset = 'bottom';
-                    linearIndex -= 1;
-                }
-
-                if (offset) {
-                    virtualTreeContext.onDragAtPosition({
-                        targetType: 'between-items',
-                        treeId: props.treeId,
-                        parentItem: parent.item,
-                        depth: linearItems[linearIndex].depth,
-                        linearIndex: linearIndex + (offset === 'top' ? 0 : 1),
-                        childIndex: linearIndex - parentLinearIndex - 1 + (offset === 'top' ? 0 : 1),
-                        linePosition: offset,
-                    });
-                } else {
-                    virtualTreeContext.onDragAtPosition({
-                        targetType: 'item',
-                        treeId: props.treeId,
-                        parentItem: parent.item,
-                        targetItem: linearItems[linearIndex].item,
-                        depth: linearItems[linearIndex].depth,
-                        linearIndex: linearIndex,
-                    })
-                }
-
-                virtualTreeContext.setActiveTree(props.treeId);
-
-                if (virtualTreeContext.draggingItems && virtualTreeContext.onSelectItems && virtualTreeContext.activeTreeId !== props.treeId) {
-                    virtualTreeContext.onSelectItems(virtualTreeContext.draggingItems.map(item => item.index), props.treeId);
-                }
-            }
-        },
-        ref: containerRef,
-        style: { position: 'relative' }
-    };
+    drop(ref)
 
     return (
         <TreeRenderContext.Provider value={renderer}>
             <TreeIdContext.Provider value={props.treeId}>
-                <DndProvider backend={HTML5Backend}>
-                    {renderer.renderTreeContainer(treeChildren, containerProps, meta)}
-                </DndProvider>
+                {renderer.renderTreeContainer(ref, treeChildren, meta)}
             </TreeIdContext.Provider>
         </TreeRenderContext.Provider>
     );
