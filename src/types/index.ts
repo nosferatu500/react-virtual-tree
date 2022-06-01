@@ -65,7 +65,6 @@ export type TreeRenderProps = {
         meta: TreeMeta
     ) => React.ReactNode;
     renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
-    onClick?: (item: TreeItem) => void;
 };
 
 type TreeCapabilities = {
@@ -159,6 +158,7 @@ export type VirtualForestWrapperProps = PropsWithChildren<
         viewState: TreeViewState;
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
         onReorder?: (params: onReorderParams) => void;
+        onClick?: (item: TreeItem) => void;
     } & TreeRenderProps &
         TreeCapabilities &
         ImplicitDataSource

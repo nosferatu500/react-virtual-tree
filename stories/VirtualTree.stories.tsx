@@ -99,7 +99,7 @@ export const SingleTree = () => {
             onReorder={(data) => {
                 console.log({ data });
             }}
-            onClick={(item) => console.log(item)}
+            onClick={(item: TreeItem) => console.log(item)}
             viewState={{
                 ["tree-1"]: {
                     expandedItems: ["child1", "child11", "child2"],

@@ -32,11 +32,6 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                             context.isExpanded && "rvt-tree-item-button-expanded",
                             context.isDraggingOver && "rvt-tree-item-button-dragging-over"
                         )}
-                        onClick={() => {
-                            if (renderer.onClick) {
-                                renderer.onClick(item);
-                            }
-                        }}
                     >
                         {renderer.renderItemTitle(item, context)}
                     </button>

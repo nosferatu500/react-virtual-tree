@@ -91,6 +91,10 @@ export const createTreeItemRenderContext = (
                 }
                 actions.selectItem();
             }
+
+            if (context.onClick) {
+                context.onClick(item);
+            }
         },
         onDoubleClick: () => {
             if (item.isFolder) {
