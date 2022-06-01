@@ -10,6 +10,7 @@ const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvid
     getItems: provider.getItems ?? (itemIds => Promise.all(itemIds.map(id => provider.getItem(id)))),
     onRenameItem: provider.onRenameItem ?? (async () => { }),
     onChangeItemChildren: provider.onChangeItemChildren ?? (async () => { }),
+    getData: provider.getData ?? (() => { }),
 });
 
 export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
@@ -94,8 +95,12 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                             await dataProvider.onChangeItemChildren(target.parentItem, newParentChildren);
                         }
                     }
-
                 }
+
+                if (props.onChange) {
+                    props.onChange(dataProvider.getData());
+                }
+
             }}
             onMissingItems={itemIds => {
                 dataProvider.getItems(itemIds).then(items => {

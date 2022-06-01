@@ -155,6 +155,7 @@ export type DraggingPosition = {
 export type VirtualForestWrapperProps = PropsWithChildren<
     {
         viewState: TreeViewState;
+        onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
     } & TreeRenderProps &
         TreeCapabilities &
         ImplicitDataSource
@@ -173,6 +174,7 @@ export type Disposable = {
 
 export type TreeDataProvider = {
     componentDidUpdate?: (listener: (changedItemIds: TreeItemIndex[]) => void) => Disposable;
+    getData: () => Record<TreeItemIndex, TreeItem>;
     getItem: (itemId: TreeItemIndex) => Promise<TreeItem>;
     getItems?: (itemIds: TreeItemIndex[]) => Promise<TreeItem[]>;
     onRenameItem?: (item: TreeItem, name: string) => Promise<void>;

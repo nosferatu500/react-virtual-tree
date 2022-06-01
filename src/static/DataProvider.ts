@@ -18,6 +18,10 @@ export class DataProvider implements TreeDataProvider {
         return this.data.items[itemId];
     }
 
+    public getData() {
+        return this.data.items;
+    }
+
     public async onChangeItemChildren(itemId: TreeItemIndex, newChildren: TreeItemIndex[]): Promise<void> {
         this.data.items[itemId].children = newChildren;
         this.componentDidUpdateEmitter.emit([itemId]);
