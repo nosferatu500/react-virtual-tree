@@ -127,8 +127,8 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
 
                         if (props.onReorder) {
                             props.onReorder({
-                                sourceId: target.parentItem as string,
-                                targetId: parent.index as string,
+                                sourceId: parent.index as string,
+                                targetId: target.parentItem as string,
                                 itemId: item.index as string,
                                 newItemIndex,
                             });

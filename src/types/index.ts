@@ -121,6 +121,7 @@ export type VirtualTreeContextProps = {
     draggingItems?: TreeItem[];
     draggingPosition?: DraggingPosition;
     itemHeight: number;
+    onClick?: (item: TreeItem) => void;
     addTree: (tree: Tree) => void;
     removeTree: (treeId: string) => void;
     setActiveTree: (treeId: string | undefined) => void;
