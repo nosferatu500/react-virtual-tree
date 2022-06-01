@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import withScrolling, { createHorizontalStrength, createVerticalStrength } from "@nosferatu500/react-dnd-scrollzone";
+import withScrolling from "@nosferatu500/react-dnd-scrollzone";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from "./types";
@@ -13,6 +13,15 @@ const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvid
     onChangeItemChildren: provider.onChangeItemChildren ?? (async () => {}),
     getData: provider.getData ?? (() => {}),
 });
+
+const ScrollingComponent = withScrolling(
+    React.forwardRef((props, ref) => {
+        // @ts-ignore
+        const { dragDropManager, ...otherProps } = props;
+        // @ts-ignore
+        return <div ref={ref} {...otherProps} />;
+    })
+);
 
 export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
     const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>({});
@@ -48,18 +57,6 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
 
         return dispose;
     });
-
-    const ScrollingComponent = withScrolling(
-        React.forwardRef((props, ref) => {
-            // @ts-ignore
-            const { dragDropManager, ...otherProps } = props;
-            // @ts-ignore
-            return <div ref={ref} {...otherProps} />;
-        })
-    );
-
-    const verticalStrength = createVerticalStrength(150);
-    const horizontalStrength = createHorizontalStrength(150);
 
     return (
         <VirtualForest
@@ -166,11 +163,10 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                         height: props.containerSize.height,
                         overflow: "scroll",
                     }}
-                    verticalStrength={verticalStrength}
-                    horizontalStrength={horizontalStrength}
                 >
                     {props.children}
                 </ScrollingComponent>
+                {/* {props.children} */}
             </DndProvider>
         </VirtualForest>
     );
