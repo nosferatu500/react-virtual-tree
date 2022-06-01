@@ -67,6 +67,8 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                 updateState(treeId, (old) => ({ ...old, expandedItems: [...(old.expandedItems ?? []), item.index] }));
             }}
             onCollapseItem={(item, treeId) => {
+                if (!props.allowCollapse) return;
+
                 updateState(treeId, (old) => ({
                     ...old,
                     expandedItems: old.expandedItems?.filter((id) => id !== item.index),

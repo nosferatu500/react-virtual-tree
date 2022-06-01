@@ -158,6 +158,7 @@ export type VirtualForestWrapperProps = PropsWithChildren<
     {
         viewState: TreeViewState;
         containerSize: { width: number; height: number };
+        allowCollapse?: boolean;
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
         onReorder?: (params: onReorderParams) => void;
         onClick?: (item: TreeItem) => void;
