@@ -157,6 +157,7 @@ type onReorderParams = {
 export type VirtualForestWrapperProps = PropsWithChildren<
     {
         viewState: TreeViewState;
+        containerSize: { width: number; height: number };
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
         onReorder?: (params: onReorderParams) => void;
         onClick?: (item: TreeItem) => void;

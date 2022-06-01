@@ -94,6 +94,7 @@ export const SingleTree = () => {
             allowDragAndDrop={true}
             allowDropOnItemWithChildren={true}
             allowReorderingItems={true}
+            containerSize={{ width: 300, height: 300 }}
             dataProvider={new DataProvider(data)}
             onChange={setData}
             onReorder={(data) => {
