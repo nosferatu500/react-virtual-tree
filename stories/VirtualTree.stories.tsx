@@ -1,106 +1,116 @@
-import React, { useRef, useState } from 'react';
-import { Meta } from '@storybook/react';
-import { VirtualForest, VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem, TreeItemRenderContext, TreeRenderProps } from '../src';
+import React, { useRef, useState } from "react";
+import { Meta } from "@storybook/react";
+import {
+    VirtualForest,
+    VirtualTree,
+    VirtualForestWrapper,
+    DataProvider,
+    DataSource,
+    TreeItem,
+    TreeItemRenderContext,
+    TreeRenderProps,
+} from "../src";
 
 const demoRenderer: TreeRenderProps = {
-  renderItemTitle(item: TreeItem, context: TreeItemRenderContext): string {
-    return item.title;
-  },
+    renderItemTitle(item: TreeItem, context: TreeItemRenderContext): string {
+        return item.title;
+    },
 };
 
 const demoContent: { data: DataSource } = {
-  data: {
-    items: {
-      root: {
-        index: 'root',
-        title: 'root',
-        isFolder: true,
-        children: ['child1', 'child2'],
-        canMove: true,
-      },
-      child1: {
-        index: 'child1',
-        title: 'child1',
-        isFolder: true,
-        children: ['child11'],
-        canMove: true,
-      },
-      child2: {
-        index: 'child2',
-        title: 'child2',
-        isFolder: true,
-        children: ['child21'],
-        canMove: true,
-      },
-      child21: {
-        index: 'child21',
-        title: 'child21',
-        isFolder: false,
-        children: [],
-        canMove: true,
-      },
-      child11: {
-        index: 'child11',
-        title: 'child11',
-        isFolder: true,
-        children: ['child111', 'child112'],
-        canMove: true,
-      },
-      child111: {
-        index: 'child111',
-        title: 'child111',
-        isFolder: false,
-        children: [],
-        canMove: true,
-      },
-      child112: {
-        index: 'child112',
-        title: 'child112',
-        isFolder: true,
-        children: ['child1121'],
-        canMove: true,
-      },
-      child1121: {
-        index: 'child1121',
-        title: 'child1121',
-        isFolder: false,
-        children: [],
-        canMove: true,
-      },
-    }
-  }
+    data: {
+        items: {
+            root: {
+                index: "root",
+                title: "root",
+                isFolder: true,
+                children: ["child1", "child2"],
+                canMove: true,
+            },
+            child1: {
+                index: "child1",
+                title: "child1",
+                isFolder: true,
+                children: ["child11"],
+                canMove: false,
+            },
+            child2: {
+                index: "child2",
+                title: "child2",
+                isFolder: true,
+                children: ["child21"],
+                canMove: false,
+            },
+            child21: {
+                index: "child21",
+                title: "child21",
+                isFolder: false,
+                children: [],
+                canMove: true,
+            },
+            child11: {
+                index: "child11",
+                title: "child11",
+                isFolder: true,
+                children: ["child111", "child112"],
+                canMove: true,
+            },
+            child111: {
+                index: "child111",
+                title: "child111",
+                isFolder: false,
+                children: [],
+                canMove: true,
+            },
+            child112: {
+                index: "child112",
+                title: "child112",
+                isFolder: true,
+                children: ["child1121"],
+                canMove: true,
+            },
+            child1121: {
+                index: "child1121",
+                title: "child1121",
+                isFolder: false,
+                children: [],
+                canMove: true,
+            },
+        },
+    },
 };
 
 export default {
-  title: 'Tree',
-  component: VirtualForest,
+    title: "Tree",
+    component: VirtualForest,
 } as Meta;
 
 export const SingleTree = () => {
-  const ref = useRef(demoContent.data.items)
-  const [data, setData] = useState<any>(ref.current)
-  
-  return (
+    const ref = useRef(demoContent.data.items);
+    const [data, setData] = useState<any>(ref.current);
 
-    <VirtualForestWrapper
-      allowDragAndDrop={true}
-      allowDropOnItemWithChildren={true}
-      allowReorderingItems={true}
-      dataProvider={new DataProvider(data)}
-      onChange={setData}
-      viewState={{
-        ['tree-1']: {
-          expandedItems: ['child1', 'child11', 'child2']
-        }
-      }}
-      {...demoRenderer}
-    >
-      <VirtualTree treeId="tree-1" rootItem="root" />
-    </VirtualForestWrapper>
-  );
-}
-
-
+    return (
+        <VirtualForestWrapper
+            allowDragAndDrop={true}
+            allowDropOnItemWithChildren={true}
+            allowReorderingItems={true}
+            dataProvider={new DataProvider(data)}
+            onChange={setData}
+            onReorder={(data) => {
+                console.log({ data });
+            }}
+            onClick={(item) => console.log(item)}
+            viewState={{
+                ["tree-1"]: {
+                    expandedItems: ["child1", "child11", "child2"],
+                },
+            }}
+            {...demoRenderer}
+        >
+            <VirtualTree treeId="tree-1" rootItem="root" />
+        </VirtualForestWrapper>
+    );
+};
 
 // export const SingleTreeAllCollapsed = () => (
 //   <VirtualForestWrapper

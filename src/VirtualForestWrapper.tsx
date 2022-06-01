@@ -1,16 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from './types';
-import { VirtualForest } from './VirtualTreeContext';
+import React, { useEffect, useMemo, useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from "./types";
+import { VirtualForest } from "./VirtualTreeContext";
 
 const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvider> => ({
     ...provider,
-    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => { } })),
-    getItems: provider.getItems ?? (itemIds => Promise.all(itemIds.map(id => provider.getItem(id)))),
-    onRenameItem: provider.onRenameItem ?? (async () => { }),
-    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => { }),
-    getData: provider.getData ?? (() => { }),
+    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => {} })),
+    getItems: provider.getItems ?? ((itemIds) => Promise.all(itemIds.map((id) => provider.getItem(id)))),
+    onRenameItem: provider.onRenameItem ?? (async () => {}),
+    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => {}),
+    getData: provider.getData ?? (() => {}),
 });
 
 export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
@@ -18,29 +18,35 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
     const [viewState, setViewState] = useState(props.viewState);
     const dataProvider = createDataProvider(props.dataProvider);
 
-    const writeItems = useMemo(() => (newItems: Record<TreeItemIndex, TreeItem>) => {
-        setCurrentItems(oldItems => ({ ...oldItems, ...newItems }));
-    }, []);
+    const writeItems = useMemo(
+        () => (newItems: Record<TreeItemIndex, TreeItem>) => {
+            setCurrentItems((oldItems) => ({ ...oldItems, ...newItems }));
+        },
+        []
+    );
 
-    const updateState = (treeId: string, constructNewState: (oldState: IndividualTreeViewState) => Partial<IndividualTreeViewState>) => {
-        setViewState(oldState => ({
+    const updateState = (
+        treeId: string,
+        constructNewState: (oldState: IndividualTreeViewState) => Partial<IndividualTreeViewState>
+    ) => {
+        setViewState((oldState) => ({
             ...oldState,
             [treeId]: {
                 ...oldState[treeId],
                 ...constructNewState(oldState[treeId] ?? {}),
-            }
+            },
         }));
-    }
+    };
 
     useEffect(() => {
-        const { dispose } = dataProvider.componentDidUpdate(changedItemIds => {
-            dataProvider.getItems(changedItemIds).then(items => {
-                writeItems(items.map(item => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
+        const { dispose } = dataProvider.componentDidUpdate((changedItemIds) => {
+            dataProvider.getItems(changedItemIds).then((items) => {
+                writeItems(items.map((item) => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
             });
         });
 
         return dispose;
-    })
+    });
 
     return (
         <VirtualForest
@@ -48,24 +54,29 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
             viewState={viewState}
             items={currentItems}
             onExpandItem={(item, treeId) => {
-                updateState(treeId, old => ({ ...old, expandedItems: [...old.expandedItems ?? [], item.index] }));
+                updateState(treeId, (old) => ({ ...old, expandedItems: [...(old.expandedItems ?? []), item.index] }));
             }}
             onCollapseItem={(item, treeId) => {
-                updateState(treeId, old => ({ ...old, expandedItems: old.expandedItems?.filter(id => id !== item.index) }));
+                updateState(treeId, (old) => ({
+                    ...old,
+                    expandedItems: old.expandedItems?.filter((id) => id !== item.index),
+                }));
             }}
             onSelectItems={(items, treeId) => {
-                updateState(treeId, old => ({ ...old, selectedItems: items }));
+                updateState(treeId, (old) => ({ ...old, selectedItems: items }));
             }}
             onStartRenamingItem={(item, treeId) => {
-                updateState(treeId, old => ({ ...old, renamingItem: item.index }));
+                updateState(treeId, (old) => ({ ...old, renamingItem: item.index }));
             }}
             onRenameItem={(item, name, treeId) => {
                 dataProvider.onRenameItem(item, name);
-                updateState(treeId, old => ({ ...old, renamingItem: undefined }));
+                updateState(treeId, (old) => ({ ...old, renamingItem: undefined }));
             }}
             onDrop={async (items, target) => {
                 for (const item of items) {
-                    const parent = Object.values(currentItems).find(potentialParent => potentialParent.children?.includes(item.index));
+                    const parent = Object.values(currentItems).find((potentialParent) =>
+                        potentialParent.children?.includes(item.index)
+                    );
                     const newParent = currentItems[target.parentItem];
 
                     if (!parent) {
@@ -76,23 +87,51 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                         throw Error(`Parent "${parent.index}" of item "${item.index}" did not have any children`);
                     }
 
-                    if (target.targetType === 'item') {
+                    if (target.targetType === "item") {
                         if (target.targetItem === parent.index) {
                             // NOOP
                         } else {
-                            await dataProvider.onChangeItemChildren(parent.index, parent.children.filter(child => child !== item.index));
-                            await dataProvider.onChangeItemChildren(target.targetItem, [...currentItems[target.targetItem].children ?? [], item.index]);
+                            await dataProvider.onChangeItemChildren(
+                                parent.index,
+                                parent.children.filter((child) => child !== item.index)
+                            );
+                            await dataProvider.onChangeItemChildren(target.targetItem, [
+                                ...(currentItems[target.targetItem].children ?? []),
+                                item.index,
+                            ]);
                         }
                     } else {
-                        const newParentChildren = [...newParent.children ?? []].filter(child => child !== item.index);
+                        const newParentChildren = [...(newParent.children ?? [])].filter(
+                            (child) => child !== item.index
+                        );
+                        let newItemIndex = 0;
+
                         if (target.parentItem === parent.index) {
-                            const isOldItemPriorToNewItem = ((newParent.children ?? []).findIndex(child => child === item.index) ?? Infinity) <= target.childIndex;
-                            newParentChildren.splice(target.childIndex - (isOldItemPriorToNewItem ? 1 : 0), 0, item.index);
+                            const isOldItemPriorToNewItem =
+                                ((newParent.children ?? []).findIndex((child) => child === item.index) ?? Infinity) <
+                                target.childIndex;
+                            newItemIndex = target.childIndex - (isOldItemPriorToNewItem ? 1 : 0);
+
+                            newParentChildren.splice(newItemIndex, 0, item.index);
                             await dataProvider.onChangeItemChildren(target.parentItem, newParentChildren);
                         } else {
-                            newParentChildren.splice(target.childIndex, 0, item.index);
-                            await dataProvider.onChangeItemChildren(parent.index, parent.children.filter(child => child !== item.index));
+                            newItemIndex = target.childIndex;
+
+                            newParentChildren.splice(newItemIndex, 0, item.index);
+                            await dataProvider.onChangeItemChildren(
+                                parent.index,
+                                parent.children.filter((child) => child !== item.index)
+                            );
                             await dataProvider.onChangeItemChildren(target.parentItem, newParentChildren);
+                        }
+
+                        if (props.onReorder) {
+                            props.onReorder({
+                                sourceId: target.parentItem as string,
+                                targetId: parent.index as string,
+                                itemId: item.index as string,
+                                newItemIndex,
+                            });
                         }
                     }
                 }
@@ -100,17 +139,14 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                 if (props.onChange) {
                     props.onChange(dataProvider.getData());
                 }
-
             }}
-            onMissingItems={itemIds => {
-                dataProvider.getItems(itemIds).then(items => {
-                    writeItems(items.map(item => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
+            onMissingItems={(itemIds) => {
+                dataProvider.getItems(itemIds).then((items) => {
+                    writeItems(items.map((item) => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
                 });
             }}
         >
-            <DndProvider backend={HTML5Backend}>
-                {props.children}
-            </DndProvider>
+            <DndProvider backend={HTML5Backend}>{props.children}</DndProvider>
         </VirtualForest>
     );
-}
+};

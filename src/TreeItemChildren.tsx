@@ -1,27 +1,13 @@
-import React from 'react';
-import { TreeItem } from './TreeItem';
-import { TreeItemIndex } from './types';
+import React from "react";
+import { TreeItem } from "./TreeItem";
+import { TreeItemIndex } from "./types";
 
-export const TreeItemChildren = (props: {
-    children: TreeItemIndex[];
-    depth: number;
-    parentId: TreeItemIndex;
-}) => {
+export const TreeItemChildren = (props: { children: TreeItemIndex[]; depth: number; parentId: TreeItemIndex }) => {
     let childElements: JSX.Element[] = [];
 
     for (const child of props.children) {
-        childElements.push(
-            <TreeItem
-                key={child}
-                itemIndex={child}
-                depth={props.depth}
-            />
-        );
+        childElements.push(<TreeItem key={child} itemIndex={child} depth={props.depth} />);
     }
 
-    return (
-        <>
-            {childElements}
-        </>
-    );
-}
+    return <>{childElements}</>;
+};

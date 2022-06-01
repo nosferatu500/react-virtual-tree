@@ -10,12 +10,6 @@ export type TreeItem = {
     canMove?: boolean;
 };
 
-type TreePosition = {
-    treeId: string;
-    parent: TreeItemIndex;
-    index: number;
-};
-
 export type TreeItemActions = {
     expandItem: () => void;
     collapseItem: () => void;
@@ -71,6 +65,7 @@ export type TreeRenderProps = {
         meta: TreeMeta
     ) => React.ReactNode;
     renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
+    onClick?: (item: TreeItem) => void;
 };
 
 type TreeCapabilities = {
@@ -152,10 +147,18 @@ export type DraggingPosition = {
       }
 );
 
+type onReorderParams = {
+    sourceId: string;
+    targetId: string;
+    itemId: string;
+    newItemIndex: number;
+};
+
 export type VirtualForestWrapperProps = PropsWithChildren<
     {
         viewState: TreeViewState;
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
+        onReorder?: (params: onReorderParams) => void;
     } & TreeRenderProps &
         TreeCapabilities &
         ImplicitDataSource

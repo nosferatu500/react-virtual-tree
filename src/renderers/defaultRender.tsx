@@ -1,63 +1,68 @@
-import React from 'react';
-import { TreeRenderProps } from '../types';
-import { classnames } from '../utils';
+import React from "react";
+import { TreeRenderProps } from "../types";
+import { classnames } from "../utils";
 import "./style.css";
 
 export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProps => {
     return {
         renderItemTitle: renderer.renderItemTitle,
-        renderItem: (ref, item, style, depth, children, context) => {
+        renderItem: (ref, item, style, depth, children, context, info) => {
             return (
                 <li
                     role="none"
                     className={classnames(
-                        'rvt-tree-item-li',
-                        item.isFolder && 'rvt-tree-item-li-folder',
-                        context.isSelected && 'rvt-tree-item-li-selected',
-                        context.isExpanded && 'rvt-tree-item-li-expanded',
-                        context.isDraggingOver && 'rvt-tree-item-li-dragging-over',
+                        "rvt-tree-item-li",
+                        item.isFolder && "rvt-tree-item-li-folder",
+                        context.isSelected && "rvt-tree-item-li-selected",
+                        context.isExpanded && "rvt-tree-item-li-expanded",
+                        context.isDraggingOver && "rvt-tree-item-li-dragging-over"
                     )}
                 >
                     <button
                         ref={ref}
-                        {...context.itemContainerProps as any}
-                        {...context.elementProps as any}
+                        {...(context.itemContainerProps as any)}
+                        {...(context.elementProps as any)}
                         role="treeitem"
                         tabIndex={-1}
                         style={{ paddingLeft: `${(depth + 1) * (renderer.renderDepthOffset ?? 10)}px`, ...style }}
                         className={classnames(
-                            'rvt-tree-item-button',
-                            item.isFolder && 'rvt-tree-item-button-folder',
-                            context.isSelected && 'rvt-tree-item-button-selected',
-                            context.isExpanded && 'rvt-tree-item-button-expanded',
-                            context.isDraggingOver && 'rvt-tree-item-button-dragging-over',
+                            "rvt-tree-item-button",
+                            item.isFolder && "rvt-tree-item-button-folder",
+                            context.isSelected && "rvt-tree-item-button-selected",
+                            context.isExpanded && "rvt-tree-item-button-expanded",
+                            context.isDraggingOver && "rvt-tree-item-button-dragging-over"
                         )}
+                        onClick={() => {
+                            if (renderer.onClick) {
+                                renderer.onClick(item);
+                            }
+                        }}
                     >
                         {renderer.renderItemTitle(item, context)}
                     </button>
                     {children}
                 </li>
-            )
+            );
         },
         renderRenameInput: (item, inputProps, submitButtonProps) => {
             return <div />;
         },
-        renderDraggingItem: items => {
+        renderDraggingItem: (items) => {
             return <div />;
         },
-        renderDraggingItemTitle: items => {
+        renderDraggingItemTitle: (items) => {
             return <div />;
         },
         renderTreeContainer: (ref, children, meta) => {
             return (
                 <div
                     ref={ref}
-                    style={{ position: 'relative' }}
+                    style={{ position: "relative" }}
                     className={classnames(
-                        'rvt-tree-root',
-                        meta.isFocused && 'rvt-tree-root-focus',
-                        meta.isRenaming && 'rvt-tree-root-renaming',
-                        meta.areItemsSelected && 'rvt-tree-root-itemsselected',
+                        "rvt-tree-root",
+                        meta.isFocused && "rvt-tree-root-focus",
+                        meta.isRenaming && "rvt-tree-root-renaming",
+                        meta.areItemsSelected && "rvt-tree-root-itemsselected"
                     )}
                 >
                     {children}
@@ -70,13 +75,17 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     {...lineProps}
                     style={{ left: `${draggingPosition.depth * (renderer.renderDepthOffset ?? 10)}px` }}
                     className={classnames(
-                        'rvt-tree-drag-between-line',
-                        draggingPosition.targetType === 'between-items' && draggingPosition.linePosition === 'top' && 'rvt-tree-drag-between-line-top',
-                        draggingPosition.targetType === 'between-items' && draggingPosition.linePosition === 'bottom' && 'rvt-tree-drag-between-line-bottom',
+                        "rvt-tree-drag-between-line",
+                        draggingPosition.targetType === "between-items" &&
+                            draggingPosition.linePosition === "top" &&
+                            "rvt-tree-drag-between-line-top",
+                        draggingPosition.targetType === "between-items" &&
+                            draggingPosition.linePosition === "bottom" &&
+                            "rvt-tree-drag-between-line-bottom"
                     )}
                 />
             );
         },
         renderDepthOffset: 4,
-    }
-}
+    };
+};

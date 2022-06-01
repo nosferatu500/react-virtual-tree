@@ -1,6 +1,6 @@
-import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { createDefaultRenderer } from './renderers/defaultRender';
-import { VirtualForestProps, Tree, TreeItem, VirtualTreeContextProps, DraggingPosition } from './types';
+import React, { PropsWithChildren, useEffect, useState } from "react";
+import { createDefaultRenderer } from "./renderers/defaultRender";
+import { VirtualForestProps, Tree, TreeItem, VirtualTreeContextProps, DraggingPosition } from "./types";
 
 export const VirtualTreeContext = React.createContext<VirtualTreeContextProps>(null as any);
 
@@ -21,44 +21,46 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
             }
         };
 
-        window.addEventListener('dragend', dragEndEventListener);
+        window.addEventListener("dragend", dragEndEventListener);
 
         return () => {
-            window.removeEventListener('dragend', dragEndEventListener);
-        }
-    }, [draggingPosition, draggingItems, props.onDrop])
+            window.removeEventListener("dragend", dragEndEventListener);
+        };
+    }, [draggingPosition, draggingItems, props.onDrop]);
 
     return (
-        // @ts-ignore
-        <VirtualTreeContext.Provider value={{
-            ...createDefaultRenderer(props),
-            ...props,
-            activeTreeId: activeTree,
-            draggingPosition: draggingPosition,
-            draggingItems: draggingItems,
-            itemHeight: itemHeight,
-            setActiveTree: treeId => {
-                console.log("setActiveTree", treeId)
-                setActiveTree(treeId);
-              },
-            addTree: (tree) => {
-                setTrees({ ...trees, [tree.treeId]: tree });
-                props.onAddTree?.(tree);
-            },
-            removeTree: (treeId) => {
-                props.onRemoveTree?.(trees[treeId]);
-                delete trees[treeId];
-                setTrees(trees);
-            },
-            onStartDragItems: (items, treeId) => {
-                setDraggingItems(items);
-                const height = document.querySelector<HTMLElement>(`[data-rvt-item='${treeId}']`)?.offsetHeight ?? 5;
-                setItemHeight(height);
-            },
-            onDragAtPosition: (position) => {
-                setDraggingPosition(position);
-            },
-        }}>
+        <VirtualTreeContext.Provider
+            // @ts-ignore
+            value={{
+                ...createDefaultRenderer(props),
+                ...props,
+                activeTreeId: activeTree,
+                draggingPosition: draggingPosition,
+                draggingItems: draggingItems,
+                itemHeight: itemHeight,
+                setActiveTree: (treeId) => {
+                    setActiveTree(treeId);
+                },
+                addTree: (tree) => {
+                    setTrees({ ...trees, [tree.treeId]: tree });
+                    props.onAddTree?.(tree);
+                },
+                removeTree: (treeId) => {
+                    props.onRemoveTree?.(trees[treeId]);
+                    delete trees[treeId];
+                    setTrees(trees);
+                },
+                onStartDragItems: (items, treeId) => {
+                    setDraggingItems(items);
+                    const height =
+                        document.querySelector<HTMLElement>(`[data-rvt-item='${treeId}']`)?.offsetHeight ?? 5;
+                    setItemHeight(height);
+                },
+                onDragAtPosition: (position) => {
+                    setDraggingPosition(position);
+                },
+            }}
+        >
             {props.children}
         </VirtualTreeContext.Provider>
     );
