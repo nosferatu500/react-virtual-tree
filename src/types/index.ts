@@ -17,6 +17,7 @@ export type TreeItemActions = {
     selectItem: () => void;
     unselectItem: () => void;
     addToSelectedItems: () => void;
+    focusItem: () => void;
 };
 
 export type TreeItemRenderFlags = {
@@ -61,6 +62,7 @@ export type TreeRenderProps = {
     renderDepthOffset?: number;
     renderTreeContainer?: (
         ref: React.RefObject<HTMLDivElement>,
+        treeId: string,
         children: React.ReactNode,
         meta: TreeMeta
     ) => React.ReactNode;
@@ -102,6 +104,7 @@ type TreeChangeHandlers = {
     onExpandItem?: (item: TreeItem, treeId: string) => void;
     onRenameItem?: (item: TreeItem, name: string, treeId: string) => void;
     onSelectItems?: (items: TreeItemIndex[], treeId: string) => void;
+    onFocusItem?: (item: TreeItem, treeId: string) => void;
     onDrop?: (items: TreeItem[], target: DraggingPosition) => void;
     onPrimaryAction?: (items: TreeItem, treeId: string) => void;
     onAddTree?: (tree: Tree) => void;
@@ -111,6 +114,7 @@ type TreeChangeHandlers = {
 
 export type VirtualForestProps = {
     viewState: TreeViewState;
+    keyboardBindings?: KeyboardBindings;
 } & TreeRenderProps &
     TreeCapabilities &
     TreeChangeHandlers &
@@ -157,6 +161,7 @@ type onReorderParams = {
 export type VirtualForestWrapperProps = PropsWithChildren<
     {
         viewState: TreeViewState;
+        keyboardBindings?: KeyboardBindings;
         containerSize: { width: number; height: number };
         allowCollapse?: boolean;
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
@@ -188,10 +193,6 @@ export type TreeDataProvider = {
 };
 
 export type KeyboardBindings = Partial<{
-    moveFocusUp: string[];
-    moveFocusDown: string[];
-    expandItem: string[];
-    collapseItem: string[];
     primaryAction: string[];
     moveFocusToFirstItem: string[];
     moveFocusToLastItem: string[];

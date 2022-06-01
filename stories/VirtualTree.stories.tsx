@@ -168,9 +168,10 @@ export const SingleTree = () => {
 
     return (
         <VirtualForestWrapper
-            allowDragAndDrop={true}
-            allowDropOnItemWithChildren={true}
-            allowReorderingItems={true}
+            allowDragAndDrop
+            allowDropOnItemWithChildren
+            allowReorderingItems
+            allowCollapse
             containerSize={{ width: 300, height: 300 }}
             dataProvider={new DataProvider(data)}
             onChange={setData}

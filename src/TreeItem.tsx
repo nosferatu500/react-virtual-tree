@@ -3,20 +3,21 @@ import { TreeItemChildren } from "./TreeItemChildren";
 import { TreeItemIndex } from "./types";
 import { useViewState } from "./hooks/useViewState";
 import {
-    createTreeInformation,
-    createTreeInformationDependencies,
+    createTreeMeta,
+    createTreeMetaDeps,
     createTreeItemRenderContext,
     createTreeItemRenderContextDependencies,
 } from "./utils";
-import { TreeIdContext } from "./VirtualTree";
+import { TreeContext, TreeRenderContext } from "./VirtualTree";
 import { VirtualTreeContext } from "./VirtualTreeContext";
 import { useDrag, useDrop } from "react-dnd";
 
 export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
-    const treeId = useContext(TreeIdContext);
+    const { treeId } = useContext(TreeContext);
     const context = useContext(VirtualTreeContext);
     const viewState = useViewState();
+    const renderer = useContext(TreeRenderContext);
     const item = context.items[props.itemIndex];
 
     const ref = useRef<HTMLDivElement>(null);
@@ -94,8 +95,8 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     );
 
     const meta = useMemo(
-        () => createTreeInformation(context, treeId),
-        createTreeInformationDependencies(context, treeId)
+        () => createTreeMeta(context, treeId),
+        createTreeMetaDeps(context, treeId)
     );
 
     if (item === undefined) {
@@ -115,7 +116,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     };
 
     return (
-        context.renderItem(
+        renderer.renderItem(
             ref,
             context.items[props.itemIndex],
             itemStyle,

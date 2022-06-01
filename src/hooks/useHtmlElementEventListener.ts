@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 export const useHtmlElementEventListener = <K extends keyof HTMLElementEventMap>(
-    element: HTMLElement | undefined | null,
+    element: HTMLElement | Document | undefined | null,
     type: K,
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
     deps: any[] = []

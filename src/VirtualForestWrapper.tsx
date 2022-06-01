@@ -7,11 +7,11 @@ import { VirtualForest } from "./VirtualTreeContext";
 
 const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvider> => ({
     ...provider,
-    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => {} })),
+    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => { } })),
     getItems: provider.getItems ?? ((itemIds) => Promise.all(itemIds.map((id) => provider.getItem(id)))),
-    onRenameItem: provider.onRenameItem ?? (async () => {}),
-    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => {}),
-    getData: provider.getData ?? (() => {}),
+    onRenameItem: provider.onRenameItem ?? (async () => { }),
+    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => { }),
+    getData: provider.getData ?? (() => { }),
 });
 
 const ScrollingComponent = withScrolling(
@@ -76,6 +76,9 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
             }}
             onSelectItems={(items, treeId) => {
                 updateState(treeId, (old) => ({ ...old, selectedItems: items }));
+            }}
+            onFocusItem={(item, treeId) => {
+                updateState(treeId, old => ({ ...old, focusedItem: item.index }));
             }}
             onStartRenamingItem={(item, treeId) => {
                 updateState(treeId, (old) => ({ ...old, renamingItem: item.index }));

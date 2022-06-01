@@ -43,11 +43,13 @@
 .rvt-tree-root:not(.rvt-tree-root-focus) .rvt-tree-item-button-selected {
     background-color: rgb(161, 161, 161);
     color: #fff;
-
 }
 .rvt-tree-root.rvt-tree-root-focus .rvt-tree-item-button-selected {
     background-color: rgb(12, 181, 252);
     color: #fff;
+}
+.rvt-tree-root.rvt-tree-root-focus .rvt-tree-item-button-focused {
+    box-shadow: inset 0 0 0 2px rgb(43, 191, 255);
 }
 
 .rvt-tree-item-button-dragging-over {

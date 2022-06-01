@@ -19,17 +19,38 @@ export const getItemsLinearly = (
     items: Record<TreeItemIndex, TreeItem>,
     depth = 0
 ): Array<{ item: TreeItemIndex; depth: number }> => {
-    let itemIds: Array<{ item: TreeItemIndex; depth: number }> = [];
+    const itemIds: Array<{ item: TreeItemIndex; depth: number }> = [];
 
-    for (const itemId of items[rootItem].children ?? []) {
+    for (const itemId of items[rootItem]?.children ?? []) {
         const item = items[itemId];
         itemIds.push({ item: itemId, depth: depth });
-        if (item.isFolder && !!item.children && viewState.expandedItems?.includes(itemId)) {
+        if (item && item.isFolder && !!item.children && viewState.expandedItems?.includes(itemId)) {
             itemIds.push(...getItemsLinearly(itemId, viewState, items, depth + 1));
         }
     }
 
     return itemIds;
+};
+
+export const scrollIntoView = (element: Element | undefined | null) => {
+    if (!element) {
+        return;
+    }
+
+    if ((element as any).scrollIntoViewIfNeeded) {
+        (element as any).scrollIntoViewIfNeeded();
+    } else {
+        const boundingBox = element.getBoundingClientRect();
+        const isElementInViewport = (
+            boundingBox.top >= 0 &&
+            boundingBox.left >= 0 &&
+            boundingBox.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            boundingBox.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+        if (!isElementInViewport) {
+            element.scrollIntoView();
+        }
+    }
 };
 
 export const createTreeItemRenderContext = (
@@ -62,6 +83,9 @@ export const createTreeItemRenderContext = (
         unselectItem: () => {
             context.onSelectItems?.(viewState?.selectedItems?.filter((id) => id !== item.index) ?? [], treeId);
         },
+        focusItem: () => {
+            context.onFocusItem?.(item, treeId);
+        },
     };
 
     const renderContext: TreeItemRenderFlags = {
@@ -79,6 +103,7 @@ export const createTreeItemRenderContext = (
 
     const elementProps: HTMLProps<HTMLElement> = {
         onClick: (e) => {
+            actions.focusItem();
             if (e.ctrlKey || e.metaKey) {
                 if (renderContext.isSelected) {
                     actions.unselectItem();
@@ -104,11 +129,19 @@ export const createTreeItemRenderContext = (
             }
             // actions.selectItem();
         },
+        onFocus: () => {
+            actions.focusItem();
+        },
+        ...({
+            ['data-rvt-item-interactive']: true,
+            ['data-rvt-item-focus']: renderContext.isFocused ? 'true' : 'false',
+            ['data-rvt-item-id']: item.index,
+          } as any)
     };
 
     const containerProps: HTMLProps<HTMLElement> = {
         ...({
-            ["data-rvt-item"]: treeId,
+            ["data-rvt-item-container"]: "true",
         } as any),
     };
 
@@ -125,20 +158,20 @@ export const createTreeItemRenderContextDependencies = (
     context: VirtualForestProps,
     treeId: string
 ) => [
-    context,
-    context.viewState[treeId]?.expandedItems,
-    context.viewState[treeId]?.selectedItems,
-    item?.index ?? "___no_item",
-    treeId,
-];
+        context,
+        context.viewState[treeId]?.expandedItems,
+        context.viewState[treeId]?.selectedItems,
+        item?.index ?? "___no_item",
+        treeId,
+    ];
 
-export const createTreeInformation = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
+export const createTreeMeta = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
     isFocused: context.activeTreeId === treeId,
     isRenaming: context.viewState[treeId]?.renamingItem !== undefined,
     areItemsSelected: (context.viewState[treeId]?.selectedItems?.length ?? 0) > 0,
 });
 
-export const createTreeInformationDependencies = (context: VirtualTreeContextProps, treeId: string) => [
+export const createTreeMetaDeps = (context: VirtualTreeContextProps, treeId: string) => [
     context.activeTreeId,
     context.viewState[treeId]?.renamingItem,
     context.viewState[treeId]?.selectedItems,

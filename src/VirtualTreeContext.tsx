@@ -38,6 +38,11 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
                 draggingPosition: draggingPosition,
                 draggingItems: draggingItems,
                 itemHeight: itemHeight,
+                onFocusItem: (item, treeId) => {
+                    props.onFocusItem?.(item, treeId);
+                    const newItem = document.querySelector(`[data-rvt-tree="${treeId}"] [data-rvt-item-id="${item.index}"]`);
+                    (newItem as HTMLElement)?.focus?.();
+                },
                 setActiveTree: (treeId) => {
                     setActiveTree(treeId);
                 },
@@ -52,8 +57,7 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
                 },
                 onStartDragItems: (items, treeId) => {
                     setDraggingItems(items);
-                    const height =
-                        document.querySelector<HTMLElement>(`[data-rvt-item='${treeId}']`)?.offsetHeight ?? 5;
+                    const height = document.querySelector<HTMLElement>(`[data-rvt-tree="${treeId}"] [data-rvt-item-container="true"]`)?.offsetHeight ?? 5;
                     setItemHeight(height);
                 },
                 onDragAtPosition: (position) => {
