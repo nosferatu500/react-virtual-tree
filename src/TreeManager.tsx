@@ -21,19 +21,21 @@ export const TreeManager = (props: {}): JSX.Element => {
 
     useTreeKeyboardBindings(containerRef.current);
 
-    useFocusWithin(containerRef.current, () => {
-        context.setActiveTree(treeId)
-    }, () => {
-        if (isActiveTree) {
-            // TODO currently looses focus while dropping in the active tree
-            context.setActiveTree(undefined);
-        }
-    }, [context.activeTreeId, treeId]);
+    useFocusWithin(
+        containerRef.current,
+        () => {
+            context.setActiveTree(treeId);
+        },
+        () => {
+            if (isActiveTree) {
+                // TODO currently looses focus while dropping in the active tree
+                context.setActiveTree(undefined);
+            }
+        },
+        [context.activeTreeId, treeId]
+    );
 
-    const meta = useMemo(
-        () => createTreeMeta(context, treeId),
-        createTreeMetaDeps(context, treeId),
-    ); // share with tree children
+    const meta = useMemo(() => createTreeMeta(context, treeId), createTreeMetaDeps(context, treeId)); // share with tree children
 
     const rootChildren = context.items[rootItem].children;
 
@@ -42,10 +44,10 @@ export const TreeManager = (props: {}): JSX.Element => {
     }
 
     const treeChildren = (
-        <React.Fragment>
+        <>
             <TreeItemChildren children={rootChildren} depth={0} parentId={treeId} />
             <DragBetweenLine treeId={treeId} />
-        </React.Fragment>
+        </>
     );
 
     const [, drop] = useDrop({
@@ -203,4 +205,4 @@ export const TreeManager = (props: {}): JSX.Element => {
     drop(containerRef);
 
     return renderers.renderTreeContainer(containerRef, treeId, treeChildren, meta) as JSX.Element;
-} 
+};

@@ -163,6 +163,7 @@ export type VirtualForestWrapperProps = PropsWithChildren<
         viewState: TreeViewState;
         keyboardBindings?: KeyboardBindings;
         containerSize: { width: number; height: number };
+        autoScrollDetectionZone: { vertical: number; horizontal: number };
         allowCollapse?: boolean;
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
         onReorder?: (params: onReorderParams) => void;

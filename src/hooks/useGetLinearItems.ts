@@ -7,4 +7,4 @@ export const useGetLinearItems = (treeId: string, rootItem: string) => {
     const viewState = useViewState();
     const context = useContext(VirtualTreeContext);
     return () => getItemsLinearly(rootItem, viewState, context.items);
-} 
+};

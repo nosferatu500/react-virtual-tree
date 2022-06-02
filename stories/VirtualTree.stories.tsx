@@ -173,6 +173,7 @@ export const SingleTree = () => {
             allowReorderingItems
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
+            autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
             onChange={setData}
             onReorder={(data) => {

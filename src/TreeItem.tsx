@@ -94,10 +94,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
         createTreeItemRenderContextDependencies(item, context, treeId)
     );
 
-    const meta = useMemo(
-        () => createTreeMeta(context, treeId),
-        createTreeMetaDeps(context, treeId)
-    );
+    const meta = useMemo(() => createTreeMeta(context, treeId), createTreeMetaDeps(context, treeId));
 
     if (item === undefined) {
         if (!hasBeenRequested) {

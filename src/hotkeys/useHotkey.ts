@@ -4,7 +4,12 @@ import { KeyboardBindings } from "../types";
 import { VirtualTreeContext } from "../VirtualTreeContext";
 import { defaultKeyboardBindings } from "./defaultKeyboardBindings";
 
-export const useHotkey = (combinationName: keyof KeyboardBindings, onHit: (e: KeyboardEvent) => void, active?: boolean, deps?: any[]) => {
+export const useHotkey = (
+    combinationName: keyof KeyboardBindings,
+    onHit: (e: KeyboardEvent) => void,
+    active?: boolean,
+    deps?: any[]
+) => {
     const context = useContext(VirtualTreeContext);
     const pressedKeys = useRef<string[]>([]);
     const possibleCombinations = useMemo(
@@ -12,30 +17,44 @@ export const useHotkey = (combinationName: keyof KeyboardBindings, onHit: (e: Ke
         [combinationName]
     );
 
-    useHtmlElementEventListener(document, 'keydown', e => {
-        if (!active) {
-            return;
-        }
-        console.log(e.key)
+    useHtmlElementEventListener(
+        document,
+        "keydown",
+        (e) => {
+            if (!active) {
+                return;
+            }
+            console.log(e.key);
 
-        pressedKeys.current.push(e.key);
-    }, [active]);
+            pressedKeys.current.push(e.key);
+        },
+        [active]
+    );
 
-    useHtmlElementEventListener(document, 'keyup', e => {
-        if (!active) {
-            return;
-        }
+    useHtmlElementEventListener(
+        document,
+        "keyup",
+        (e) => {
+            if (!active) {
+                return;
+            }
 
-        const pressedKeysLowercase = pressedKeys.current.map(key => key.toLowerCase());
-        const match = possibleCombinations.map(combination => combination
-            .split('+')
-            .map(key => pressedKeysLowercase.includes(key.toLowerCase()))
-            .reduce((a, b) => a && b, true)).reduce((a, b) => a || b, false);
+            const pressedKeysLowercase = pressedKeys.current.map((key) => key.toLowerCase());
+            const match = possibleCombinations
+                .map((combination) =>
+                    combination
+                        .split("+")
+                        .map((key) => pressedKeysLowercase.includes(key.toLowerCase()))
+                        .reduce((a, b) => a && b, true)
+                )
+                .reduce((a, b) => a || b, false);
 
-        if (match) {
-            onHit(e);
-        }
+            if (match) {
+                onHit(e);
+            }
 
-        pressedKeys.current = pressedKeys.current.filter(key => key !== e.key);
-    }, [possibleCombinations, onHit, active, ...deps ?? []]);
+            pressedKeys.current = pressedKeys.current.filter((key) => key !== e.key);
+        },
+        [possibleCombinations, onHit, active, ...(deps ?? [])]
+    );
 };

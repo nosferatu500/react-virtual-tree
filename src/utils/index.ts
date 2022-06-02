@@ -41,12 +41,11 @@ export const scrollIntoView = (element: Element | undefined | null) => {
         (element as any).scrollIntoViewIfNeeded();
     } else {
         const boundingBox = element.getBoundingClientRect();
-        const isElementInViewport = (
+        const isElementInViewport =
             boundingBox.top >= 0 &&
             boundingBox.left >= 0 &&
             boundingBox.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            boundingBox.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
+            boundingBox.right <= (window.innerWidth || document.documentElement.clientWidth);
         if (!isElementInViewport) {
             element.scrollIntoView();
         }
@@ -133,10 +132,10 @@ export const createTreeItemRenderContext = (
             actions.focusItem();
         },
         ...({
-            ['data-rvt-item-interactive']: true,
-            ['data-rvt-item-focus']: renderContext.isFocused ? 'true' : 'false',
-            ['data-rvt-item-id']: item.index,
-          } as any)
+            ["data-rvt-item-interactive"]: true,
+            ["data-rvt-item-focus"]: renderContext.isFocused ? "true" : "false",
+            ["data-rvt-item-id"]: item.index,
+        } as any),
     };
 
     const containerProps: HTMLProps<HTMLElement> = {
@@ -158,12 +157,12 @@ export const createTreeItemRenderContextDependencies = (
     context: VirtualForestProps,
     treeId: string
 ) => [
-        context,
-        context.viewState[treeId]?.expandedItems,
-        context.viewState[treeId]?.selectedItems,
-        item?.index ?? "___no_item",
-        treeId,
-    ];
+    context,
+    context.viewState[treeId]?.expandedItems,
+    context.viewState[treeId]?.selectedItems,
+    item?.index ?? "___no_item",
+    treeId,
+];
 
 export const createTreeMeta = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
     isFocused: context.activeTreeId === treeId,

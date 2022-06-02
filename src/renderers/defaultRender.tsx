@@ -15,7 +15,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                         item.isFolder && "rvt-tree-item-li-folder",
                         context.isSelected && "rvt-tree-item-li-selected",
                         context.isExpanded && "rvt-tree-item-li-expanded",
-                        context.isFocused && 'rvt-tree-item-li-focused',
+                        context.isFocused && "rvt-tree-item-li-focused",
                         context.isDraggingOver && "rvt-tree-item-li-dragging-over"
                     )}
                 >
@@ -31,7 +31,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                             item.isFolder && "rvt-tree-item-button-folder",
                             context.isSelected && "rvt-tree-item-button-selected",
                             context.isExpanded && "rvt-tree-item-button-expanded",
-                            context.isFocused && 'rvt-tree-item-button-focused',
+                            context.isFocused && "rvt-tree-item-button-focused",
                             context.isDraggingOver && "rvt-tree-item-button-dragging-over"
                         )}
                     >
@@ -56,8 +56,8 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     ref={ref}
                     style={{ position: "relative" }}
                     {...({
-                        ['data-rvt-tree']: treeId,
-                      } as any)}
+                        ["data-rvt-tree"]: treeId,
+                    } as any)}
                     className={classnames(
                         "rvt-tree-root",
                         meta.isFocused && "rvt-tree-root-focus",

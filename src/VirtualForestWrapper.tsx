@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import withScrolling from "@nosferatu500/react-dnd-scrollzone";
+import withScrolling, { createHorizontalStrength, createVerticalStrength } from "@nosferatu500/react-dnd-scrollzone";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from "./types";
@@ -7,11 +7,11 @@ import { VirtualForest } from "./VirtualTreeContext";
 
 const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvider> => ({
     ...provider,
-    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => { } })),
+    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => {} })),
     getItems: provider.getItems ?? ((itemIds) => Promise.all(itemIds.map((id) => provider.getItem(id)))),
-    onRenameItem: provider.onRenameItem ?? (async () => { }),
-    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => { }),
-    getData: provider.getData ?? (() => { }),
+    onRenameItem: provider.onRenameItem ?? (async () => {}),
+    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => {}),
+    getData: provider.getData ?? (() => {}),
 });
 
 const ScrollingComponent = withScrolling(
@@ -22,6 +22,9 @@ const ScrollingComponent = withScrolling(
         return <div ref={ref} {...otherProps} />;
     })
 );
+
+const verticalStrength = (size: number) => createVerticalStrength(size);
+const horizontalStrength = (size: number) => createHorizontalStrength(size);
 
 export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
     const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>({});
@@ -78,7 +81,7 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                 updateState(treeId, (old) => ({ ...old, selectedItems: items }));
             }}
             onFocusItem={(item, treeId) => {
-                updateState(treeId, old => ({ ...old, focusedItem: item.index }));
+                updateState(treeId, (old) => ({ ...old, focusedItem: item.index }));
             }}
             onStartRenamingItem={(item, treeId) => {
                 updateState(treeId, (old) => ({ ...old, renamingItem: item.index }));
@@ -168,10 +171,11 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                         height: props.containerSize.height,
                         overflow: "scroll",
                     }}
+                    verticalStrength={verticalStrength(props.autoScrollDetectionZone.vertical)}
+                    horizontalStrength={horizontalStrength(props.autoScrollDetectionZone.horizontal)}
                 >
                     {props.children}
                 </ScrollingComponent>
-                {/* {props.children} */}
             </DndProvider>
         </VirtualForest>
     );

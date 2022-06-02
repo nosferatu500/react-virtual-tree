@@ -5,8 +5,8 @@ import { VirtualTreeContext } from "./VirtualTreeContext";
 
 export const TreeRenderContext = React.createContext<Required<TreeRenderProps>>(null as any);
 export const TreeContext = React.createContext<Tree>({
-    treeId: '__no_tree',
-    rootItem: '__no_tree',
+    treeId: "__no_tree",
+    rootItem: "__no_tree",
 });
 
 export const VirtualTree = (props: TreeProps) => {
