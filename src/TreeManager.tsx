@@ -4,10 +4,11 @@ import { DragBetweenLine } from "./DragBetweenLine";
 import { useFocusWithin } from "./hooks/useFocusWithin";
 import { useGetLinearItems } from "./hooks/useGetLinearItems";
 import { useTreeKeyboardBindings } from "./hotkeys/useTreeKeyboardBindings";
+import { SearchInput } from "./search/SearchInput";
 import { TreeItemChildren } from "./TreeItemChildren";
 import { DraggingPosition } from "./types";
 import { createTreeMeta, createTreeMetaDeps } from "./utils";
-import { TreeContext, TreeRenderContext } from "./VirtualTree";
+import { TreeContext, TreeRenderContext, TreeSearchContext } from "./VirtualTree";
 import { VirtualTreeContext } from "./VirtualTreeContext";
 
 export const TreeManager = (props: {}): JSX.Element => {
@@ -17,6 +18,8 @@ export const TreeManager = (props: {}): JSX.Element => {
     const lastHoverCode = useRef<string>();
     const getLinearItems = useGetLinearItems(treeId, rootItem);
     const renderers = useContext(TreeRenderContext);
+    const { search } = useContext(TreeSearchContext);
+
     const isActiveTree = context.activeTreeId === treeId;
 
     useTreeKeyboardBindings(containerRef.current);
@@ -28,14 +31,13 @@ export const TreeManager = (props: {}): JSX.Element => {
         },
         () => {
             if (isActiveTree) {
-                // TODO currently looses focus while dropping in the active tree
                 context.setActiveTree(undefined);
             }
         },
         [context.activeTreeId, treeId, isActiveTree]
     );
 
-    const meta = useMemo(() => createTreeMeta(context, treeId), createTreeMetaDeps(context, treeId)); // share with tree children
+    const meta = useMemo(() => createTreeMeta(context, treeId, search), createTreeMetaDeps(context, treeId, search));
 
     const rootChildren = context.items[rootItem].children;
 
@@ -47,6 +49,7 @@ export const TreeManager = (props: {}): JSX.Element => {
         <>
             <TreeItemChildren children={rootChildren} depth={0} parentId={treeId} />
             <DragBetweenLine treeId={treeId} />
+            <SearchInput containerRef={containerRef.current} />
         </>
     );
 

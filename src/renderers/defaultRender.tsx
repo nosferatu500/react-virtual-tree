@@ -5,8 +5,26 @@ import "./style.css";
 
 export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProps => {
     return {
-        renderItemTitle: renderer.renderItemTitle,
-        renderItem: (ref, item, style, depth, children, context, info) => {
+        renderDepthOffset: 4,
+        renderItemTitle: (title, item, context, info) => {
+            if (!info.isSearching || !context.isSearchMatching) {
+                return <>{title}</>;
+            } else {
+                const startIndex = title.toLowerCase().indexOf(info.search!.toLowerCase());
+                return (
+                    <>
+                        {startIndex > 0 && <span>{title.slice(0, startIndex)}</span>}
+                        <span className="rvt-tree-item-search-highlight">
+                            {title.slice(startIndex, startIndex + info.search!.length)}
+                        </span>
+                        {startIndex + info.search!.length < title.length && (
+                            <span>{title.slice(startIndex + info.search!.length, title.length)}</span>
+                        )}
+                    </>
+                );
+            }
+        },
+        renderItem: (ref, item, style, depth, children, title, context, info) => {
             return (
                 <li
                     role="none"
@@ -16,7 +34,8 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                         context.isSelected && "rvt-tree-item-li-selected",
                         context.isExpanded && "rvt-tree-item-li-expanded",
                         context.isFocused && "rvt-tree-item-li-focused",
-                        context.isDraggingOver && "rvt-tree-item-li-dragging-over"
+                        context.isDraggingOver && "rvt-tree-item-li-dragging-over",
+                        context.isSearchMatching && "rvt-tree-item-li-search-match"
                     )}
                 >
                     <button
@@ -32,10 +51,11 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                             context.isSelected && "rvt-tree-item-button-selected",
                             context.isExpanded && "rvt-tree-item-button-expanded",
                             context.isFocused && "rvt-tree-item-button-focused",
-                            context.isDraggingOver && "rvt-tree-item-button-dragging-over"
+                            context.isDraggingOver && "rvt-tree-item-button-dragging-over",
+                            context.isSearchMatching && "rvt-tree-item-button-search-match"
                         )}
                     >
-                        {renderer.renderItemTitle(item, context)}
+                        {title}
                     </button>
                     {children}
                 </li>
@@ -86,6 +106,8 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                 />
             );
         },
-        renderDepthOffset: 4,
+        renderSearchInput: (inputProps) => {
+            return <input {...inputProps} className={classnames("rvt-tree-search-input")} />;
+        },
     };
 };

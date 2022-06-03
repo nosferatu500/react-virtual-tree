@@ -8,7 +8,7 @@ import {
     createTreeItemRenderContext,
     createTreeItemRenderContextDependencies,
 } from "./utils";
-import { TreeContext, TreeRenderContext } from "./VirtualTree";
+import { TreeContext, TreeRenderContext, TreeSearchContext } from "./VirtualTree";
 import { VirtualTreeContext } from "./VirtualTreeContext";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -18,6 +18,8 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     const context = useContext(VirtualTreeContext);
     const viewState = useViewState();
     const renderer = useContext(TreeRenderContext);
+    const { search } = useContext(TreeSearchContext);
+
     const item = context.items[props.itemIndex];
 
     const ref = useRef<HTMLDivElement>(null);
@@ -89,12 +91,20 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
         () => viewState.expandedItems?.includes(props.itemIndex),
         [props.itemIndex, viewState.expandedItems]
     );
+
+    const isSearchMatching = useMemo(() => {
+        return search === null || search.length === 0 || !item
+            ? false
+            : context.doesSearchMatchItem?.(search, item) ??
+                  context.getItemTitle(item).toLowerCase().includes(search.toLowerCase());
+    }, [search]);
+
     const renderContext = useMemo(
-        () => item && createTreeItemRenderContext(item, context, treeId),
-        createTreeItemRenderContextDependencies(item, context, treeId)
+        () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching),
+        createTreeItemRenderContextDependencies(item, context, treeId, isSearchMatching)
     );
 
-    const meta = useMemo(() => createTreeMeta(context, treeId), createTreeMetaDeps(context, treeId));
+    const meta = useMemo(() => createTreeMeta(context, treeId, search), createTreeMetaDeps(context, treeId, search));
 
     if (item === undefined) {
         if (!hasBeenRequested) {
@@ -112,6 +122,9 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
         opacity,
     };
 
+    const title = context.getItemTitle(item);
+    const titleComponent = renderer.renderItemTitle(title, item, renderContext, meta);
+
     return (
         renderer.renderItem(
             ref,
@@ -119,6 +132,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
             itemStyle,
             props.depth,
             children,
+            titleComponent,
             renderContext,
             meta
         ) || (null as any)

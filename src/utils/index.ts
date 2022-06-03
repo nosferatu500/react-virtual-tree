@@ -55,7 +55,8 @@ export const scrollIntoView = (element: Element | undefined | null) => {
 export const createTreeItemRenderContext = (
     item: TreeItem,
     context: VirtualTreeContextProps,
-    treeId: string
+    treeId: string,
+    isSearchMatching: boolean
 ): TreeItemRenderContext => {
     const viewState = context.viewState[treeId];
 
@@ -101,6 +102,7 @@ export const createTreeItemRenderContext = (
             context.draggingPosition.targetItem === item.index &&
             context.draggingPosition.treeId === treeId,
         isDraggingOverParent: false,
+        isSearchMatching: isSearchMatching,
     };
 
     const elementProps: HTMLProps<HTMLElement> = {
@@ -162,24 +164,29 @@ export const createTreeItemRenderContext = (
 export const createTreeItemRenderContextDependencies = (
     item: TreeItem | undefined,
     context: VirtualForestProps,
-    treeId: string
+    treeId: string,
+    isSearchMatching: boolean
 ) => [
     context,
     context.viewState[treeId]?.expandedItems,
     context.viewState[treeId]?.selectedItems,
     item?.index ?? "___no_item",
     treeId,
+    isSearchMatching,
 ];
 
-export const createTreeMeta = (context: VirtualTreeContextProps, treeId: string): TreeMeta => ({
+export const createTreeMeta = (context: VirtualTreeContextProps, treeId: string, search: string | null): TreeMeta => ({
     isFocused: context.activeTreeId === treeId,
     isRenaming: context.viewState[treeId]?.renamingItem !== undefined,
     areItemsSelected: (context.viewState[treeId]?.selectedItems?.length ?? 0) > 0,
+    isSearching: search !== null,
+    search: search,
 });
 
-export const createTreeMetaDeps = (context: VirtualTreeContextProps, treeId: string) => [
+export const createTreeMetaDeps = (context: VirtualTreeContextProps, treeId: string, search: string | null) => [
     context.activeTreeId,
     context.viewState[treeId]?.renamingItem,
     context.viewState[treeId]?.selectedItems,
     treeId,
+    search,
 ];

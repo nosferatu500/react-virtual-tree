@@ -1,21 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Meta } from "@storybook/react";
-import {
-    VirtualForest,
-    VirtualTree,
-    VirtualForestWrapper,
-    DataProvider,
-    DataSource,
-    TreeItem,
-    TreeItemRenderContext,
-    TreeRenderProps,
-} from "../src";
-
-const demoRenderer: TreeRenderProps = {
-    renderItemTitle(item: TreeItem, context: TreeItemRenderContext): string {
-        return item.title;
-    },
-};
+import { VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem } from "../src";
 
 const demoContent: { data: DataSource } = {
     data: {
@@ -174,6 +159,7 @@ export const SingleTree = () => {
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(data) => {
                 console.log({ data });
@@ -184,7 +170,6 @@ export const SingleTree = () => {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
-            {...demoRenderer}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
         </VirtualForestWrapper>
@@ -203,6 +188,7 @@ export const SingleTreeAllCollapsed = () => {
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(data) => {
                 console.log({ data });
@@ -211,7 +197,6 @@ export const SingleTreeAllCollapsed = () => {
             viewState={{
                 ["tree-1"]: {},
             }}
-            {...demoRenderer}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
         </VirtualForestWrapper>
@@ -230,6 +215,7 @@ export const MultipleTrees = () => {
             containerSize={{ width: 500, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(data) => {
                 console.log({ data });
@@ -238,7 +224,6 @@ export const MultipleTrees = () => {
             viewState={{
                 ["tree-1"]: {},
             }}
-            {...demoRenderer}
         >
             <div
                 style={{
@@ -288,6 +273,7 @@ export const NoDragAndDrop = () => {
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(data) => {
                 console.log({ data });
@@ -298,7 +284,6 @@ export const NoDragAndDrop = () => {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
-            {...demoRenderer}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
         </VirtualForestWrapper>
@@ -317,6 +302,7 @@ export const NoReorderingAllowed = () => {
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(data) => {
                 console.log({ data });
@@ -327,7 +313,6 @@ export const NoReorderingAllowed = () => {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
-            {...demoRenderer}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
         </VirtualForestWrapper>
@@ -346,6 +331,7 @@ export const NoCollapseAllowed = () => {
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(data) => {
                 console.log({ data });
@@ -356,7 +342,6 @@ export const NoCollapseAllowed = () => {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
-            {...demoRenderer}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
         </VirtualForestWrapper>

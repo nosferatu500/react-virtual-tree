@@ -28,6 +28,7 @@ export type TreeItemRenderFlags = {
     isRenaming?: boolean;
     isDraggingOver?: boolean;
     isDraggingOverParent?: boolean;
+    isSearchMatching?: boolean;
 };
 
 export type TreeItemRenderContext = {
@@ -40,6 +41,8 @@ export type TreeMeta = {
     areItemsSelected?: boolean;
     isRenaming?: boolean;
     isFocused?: boolean;
+    isSearching?: boolean;
+    search?: string | null;
 };
 
 export type TreeRenderProps = {
@@ -49,10 +52,16 @@ export type TreeRenderProps = {
         style: any,
         depth: number,
         children: React.ReactNode | null,
+        title: React.ReactNode,
         context: TreeItemRenderContext,
         meta: TreeMeta
     ) => React.ReactNode;
-    renderItemTitle: (item: TreeItem, context: TreeItemRenderContext) => string;
+    renderItemTitle?: (
+        title: string,
+        item: TreeItem,
+        context: TreeItemRenderContext,
+        meta: TreeMeta
+    ) => React.ReactNode;
     renderRenameInput?: (
         item: TreeItem,
         inputProps: Partial<InputHTMLAttributes<HTMLInputElement>>,
@@ -68,6 +77,7 @@ export type TreeRenderProps = {
         meta: TreeMeta
     ) => React.ReactNode;
     renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
+    renderSearchInput?: (inputProps: HTMLProps<HTMLInputElement>) => React.ReactNode;
 };
 
 type TreeCapabilities = {
@@ -78,6 +88,8 @@ type TreeCapabilities = {
     canDrag?: (items: TreeItem[]) => boolean;
     canDropAt?: (items: TreeItem[], target: DraggingPosition) => boolean;
     canInvokePrimaryActionOnItemContainer?: boolean;
+    canSearch?: boolean;
+    doesSearchMatchItem?: (search: string, item: TreeItem) => boolean;
 };
 
 export type IndividualTreeViewState = {
@@ -112,11 +124,13 @@ type TreeChangeHandlers = {
     onAddTree?: (tree: Tree) => void;
     onRemoveTree?: (tree: Tree) => void;
     onMissingItems?: (itemIds: TreeItemIndex[]) => void;
+    onMissingChildren?: (itemIds: TreeItemIndex[]) => void;
 };
 
 export type VirtualForestProps = {
     viewState: TreeViewState;
     keyboardBindings?: KeyboardBindings;
+    getItemTitle: (item: TreeItem) => string;
 } & TreeRenderProps &
     TreeCapabilities &
     TreeChangeHandlers &
@@ -170,6 +184,7 @@ export type VirtualForestWrapperProps = PropsWithChildren<
         onChange: (data: Record<TreeItemIndex, TreeItem>) => void;
         onReorder?: (params: onReorderParams) => void;
         onClick?: (item: TreeItem) => void;
+        getItemTitle: (item: TreeItem) => string;
     } & TreeRenderProps &
         TreeCapabilities &
         ImplicitDataSource
@@ -204,4 +219,5 @@ export type KeyboardBindings = Partial<{
     toggleSelectItem: string[];
     moveItems: string[];
     abortMovingItems: string[];
+    abortSearch: string[];
 }>;

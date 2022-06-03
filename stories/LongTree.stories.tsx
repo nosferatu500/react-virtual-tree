@@ -1,20 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Meta } from "@storybook/react";
-import {
-    VirtualTree,
-    VirtualForestWrapper,
-    DataProvider,
-    DataSource,
-    TreeItem,
-    TreeItemRenderContext,
-    TreeRenderProps,
-} from "../src";
-
-const demoRenderer: TreeRenderProps = {
-    renderItemTitle(item: TreeItem, context: TreeItemRenderContext): string {
-        return item.title;
-    },
-};
+import { VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem } from "../src";
 
 const itemsWithManyChildren: DataSource = {
     items: {
@@ -62,6 +48,7 @@ export const LongTree = () => {
             allowReorderingItems
             allowCollapse
             dataProvider={new DataProvider(data)}
+            getItemTitle={(item) => item.title}
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             viewState={{}}
@@ -70,7 +57,6 @@ export const LongTree = () => {
                 console.log({ data });
             }}
             onClick={(item: TreeItem) => console.log(item)}
-            {...demoRenderer}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
         </VirtualForestWrapper>

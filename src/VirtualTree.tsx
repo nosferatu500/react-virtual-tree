@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { TreeManager } from "./TreeManager";
 import { Tree, TreeProps, TreeRenderProps } from "./types";
 import { VirtualTreeContext } from "./VirtualTreeContext";
@@ -9,10 +9,19 @@ export const TreeContext = React.createContext<Tree>({
     rootItem: "__no_tree",
 });
 
+export const TreeSearchContext = React.createContext<{
+    search: string | null;
+    setSearch: (searchValue: string | null) => void;
+}>({
+    search: null,
+    setSearch: () => {},
+});
+
 export const VirtualTree = (props: TreeProps) => {
     const context = useContext(VirtualTreeContext);
     const renderer = useMemo<Required<TreeRenderProps>>(() => ({ ...context, ...props }), [props, context]);
     const rootItem = context.items[props.rootItem];
+    const [search, setSearch] = useState<string | null>(null);
 
     useEffect(() => {
         context.addTree({
@@ -31,7 +40,9 @@ export const VirtualTree = (props: TreeProps) => {
     return (
         <TreeRenderContext.Provider value={renderer}>
             <TreeContext.Provider value={{ treeId: props.treeId, rootItem: props.rootItem }}>
-                <TreeManager />
+                <TreeSearchContext.Provider value={{ search, setSearch }}>
+                    <TreeManager />
+                </TreeSearchContext.Provider>
             </TreeContext.Provider>
         </TreeRenderContext.Provider>
     );
