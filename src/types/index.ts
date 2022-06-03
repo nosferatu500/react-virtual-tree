@@ -89,7 +89,7 @@ type TreeCapabilities = {
     canDropAt?: (items: TreeItem[], target: DraggingPosition) => boolean;
     canInvokePrimaryActionOnItemContainer?: boolean;
     canSearch?: boolean;
-    doesSearchMatchItem?: (search: string, item: TreeItem) => boolean;
+    doesSearchMatchItem?: (search: string, item: TreeItem, itemTitle: string) => boolean;
 };
 
 export type IndividualTreeViewState = {
@@ -156,16 +156,16 @@ export type DraggingPosition = {
     linearIndex?: number;
     depth: number;
 } & (
-    | {
-          targetType: "item";
-          targetItem: TreeItemIndex;
-      }
-    | {
-          targetType: "between-items";
-          childIndex: number;
-          linePosition: "top" | "bottom";
-      }
-);
+        | {
+            targetType: "item";
+            targetItem: TreeItemIndex;
+        }
+        | {
+            targetType: "between-items";
+            childIndex: number;
+            linePosition: "top" | "bottom";
+        }
+    );
 
 type onReorderParams = {
     sourceId: string;
@@ -186,8 +186,8 @@ export type VirtualForestWrapperProps = PropsWithChildren<
         onClick?: (item: TreeItem) => void;
         getItemTitle: (item: TreeItem) => string;
     } & TreeRenderProps &
-        TreeCapabilities &
-        ImplicitDataSource
+    TreeCapabilities &
+    ImplicitDataSource
 >;
 
 export type Tree = {
@@ -200,6 +200,13 @@ export type TreeProps = Tree & Partial<TreeRenderProps>;
 export type Disposable = {
     dispose: () => void;
 };
+
+export type TreeContextProps<T = any> = {
+    search: string | null;
+    setSearch: (searchValue: string | null) => void;
+    renderer: Required<TreeRenderProps>;
+    meta: TreeMeta;
+} & Tree;
 
 export type TreeDataProvider = {
     componentDidUpdate?: (listener: (changedItemIds: TreeItemIndex[]) => void) => Disposable;

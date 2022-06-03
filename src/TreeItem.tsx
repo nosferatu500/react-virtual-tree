@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { TreeItemChildren } from "./TreeItemChildren";
 import { TreeItemIndex } from "./types";
 import { useViewState } from "./hooks/useViewState";
@@ -8,19 +8,19 @@ import {
     createTreeItemRenderContext,
     createTreeItemRenderContextDependencies,
 } from "./utils";
-import { TreeContext, TreeRenderContext, TreeSearchContext } from "./VirtualTree";
-import { VirtualTreeContext } from "./VirtualTreeContext";
+import { useVirtualTreeContext } from "./VirtualTreeContext";
 import { useDrag, useDrop } from "react-dnd";
+import { useTreeContext } from "./VirtualTree";
+import { defaultMatcher } from "./search/defaultMatcher";
 
 export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
-    const { treeId } = useContext(TreeContext);
-    const context = useContext(VirtualTreeContext);
+    const { treeId, search, renderer } = useTreeContext();
+    const context = useVirtualTreeContext();
     const viewState = useViewState();
-    const renderer = useContext(TreeRenderContext);
-    const { search } = useContext(TreeSearchContext);
 
     const item = context.items[props.itemIndex];
+    const itemTitle = item && context.getItemTitle(item);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -94,10 +94,8 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
 
     const isSearchMatching = useMemo(() => {
         return search === null || search.length === 0 || !item
-            ? false
-            : context.doesSearchMatchItem?.(search, item) ??
-                  context.getItemTitle(item).toLowerCase().includes(search.toLowerCase());
-    }, [search]);
+       ? false : (context.doesSearchMatchItem ?? defaultMatcher)(search, item, itemTitle);
+   }, [search, itemTitle]);
 
     const renderContext = useMemo(
         () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching),

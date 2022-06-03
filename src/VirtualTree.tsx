@@ -1,24 +1,15 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { TreeManager } from "./TreeManager";
-import { Tree, TreeProps, TreeRenderProps } from "./types";
-import { VirtualTreeContext } from "./VirtualTreeContext";
+import { TreeContextProps, TreeProps, TreeRenderProps } from "./types";
+import { createTreeMeta, createTreeMetaDeps } from "./utils";
+import { useVirtualTreeContext } from "./VirtualTreeContext";
 
-export const TreeRenderContext = React.createContext<Required<TreeRenderProps>>(null as any);
-export const TreeContext = React.createContext<Tree>({
-    treeId: "__no_tree",
-    rootItem: "__no_tree",
-});
+const TreeContext = React.createContext<TreeContextProps>(null as any);
 
-export const TreeSearchContext = React.createContext<{
-    search: string | null;
-    setSearch: (searchValue: string | null) => void;
-}>({
-    search: null,
-    setSearch: () => {},
-});
+export const useTreeContext = () => useContext(TreeContext);
 
 export const VirtualTree = (props: TreeProps) => {
-    const context = useContext(VirtualTreeContext);
+    const context = useVirtualTreeContext();
     const renderer = useMemo<Required<TreeRenderProps>>(() => ({ ...context, ...props }), [props, context]);
     const rootItem = context.items[props.rootItem];
     const [search, setSearch] = useState<string | null>(null);
@@ -32,18 +23,26 @@ export const VirtualTree = (props: TreeProps) => {
         return () => context.removeTree(props.treeId);
     }, [props.treeId, props.rootItem]);
 
+    const meta = useMemo(
+        () => createTreeMeta(context, props.treeId, search),
+        createTreeMetaDeps(context, props.treeId, search),
+    );
+
     if (rootItem === undefined) {
         context.onMissingItems?.([props.rootItem]);
         return null;
     }
 
     return (
-        <TreeRenderContext.Provider value={renderer}>
-            <TreeContext.Provider value={{ treeId: props.treeId, rootItem: props.rootItem }}>
-                <TreeSearchContext.Provider value={{ search, setSearch }}>
-                    <TreeManager />
-                </TreeSearchContext.Provider>
-            </TreeContext.Provider>
-        </TreeRenderContext.Provider>
+        <TreeContext.Provider value={{
+            treeId: props.treeId,
+            rootItem: props.rootItem,
+            meta,
+            search,
+            setSearch,
+            renderer,
+          }}>
+            <TreeManager />
+          </TreeContext.Provider>
     );
 };

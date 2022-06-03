@@ -1,15 +1,14 @@
-import { useContext } from "react";
 import { useMoveFocusToIndex } from "../hooks/useMoveFocusToIndex";
 import { useViewState } from "../hooks/useViewState";
-import { TreeContext } from "../VirtualTree";
-import { VirtualTreeContext } from "../VirtualTreeContext";
+import { useTreeContext } from "../VirtualTree";
+import { useVirtualTreeContext } from "../VirtualTreeContext";
 import { useHotkey } from "./useHotkey";
 import { useKey } from "./useKey";
 
 export const useTreeKeyboardBindings = (containerRef?: HTMLElement | HTMLDivElement | null) => {
     const viewState = useViewState();
-    const { treeId } = useContext(TreeContext);
-    const context = useContext(VirtualTreeContext);
+    const { treeId } = useTreeContext();
+    const context = useVirtualTreeContext();
     const moveFocusToIndex = useMoveFocusToIndex(containerRef);
 
     const isActiveTree = context.activeTreeId === treeId;

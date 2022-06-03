@@ -14,7 +14,7 @@ export const useHotkey = (
     const pressedKeys = useRef<string[]>([]);
     const possibleCombinations = useMemo(
         () => context.keyboardBindings?.[combinationName] ?? defaultKeyboardBindings[combinationName],
-        [combinationName]
+        [combinationName, context.keyboardBindings]
     );
 
     useHtmlElementEventListener(
@@ -24,7 +24,9 @@ export const useHotkey = (
             if (!active) {
                 return;
             }
-            pressedKeys.current.push(e.key);
+            if (!pressedKeys.current.includes(e.key)) {
+                pressedKeys.current.push(e.key);
+            }
         },
         [active]
     );

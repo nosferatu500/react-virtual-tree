@@ -1,9 +1,8 @@
-import { useContext } from "react";
-import { TreeContext } from "../VirtualTree";
-import { VirtualTreeContext } from "../VirtualTreeContext";
+import { useTreeContext } from "../VirtualTree";
+import { useVirtualTreeContext } from "../VirtualTreeContext";
 
 export const useViewState = () => {
-    const { treeId } = useContext(TreeContext);
-    const context = useContext(VirtualTreeContext);
+    const { treeId } = useTreeContext();
+    const context = useVirtualTreeContext();
     return context.viewState[treeId] ?? {};
 };

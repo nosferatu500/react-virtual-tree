@@ -1,8 +1,11 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { createDefaultRenderer } from "./renderers/defaultRender";
 import { VirtualForestProps, Tree, TreeItem, VirtualTreeContextProps, DraggingPosition } from "./types";
+import { scrollIntoView } from "./utils";
 
 export const VirtualTreeContext = React.createContext<VirtualTreeContextProps>(null as any);
+
+export const useVirtualTreeContext = () => useContext(VirtualTreeContext);
 
 export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
     const [trees, setTrees] = useState<Record<string, Tree>>({});
@@ -23,6 +26,22 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
         }
     }
 
+    const onFocusHandler: typeof props.onFocusItem = (item, treeId) => {
+        console.log("here")
+        props.onFocusItem?.(item, treeId);
+        const newItem = document.querySelector(`[data-rvt-tree="${treeId}"] [data-rvt-item-id="${item.index}"]`);
+
+        console.log(document.activeElement?.attributes.getNamedItem('data-rvt-search-input')?.value)
+
+        if (document.activeElement?.attributes.getNamedItem('data-rvt-search-input')?.value !== 'true') {
+            // Move DOM focus to item if the current focus is not on the search input
+            (newItem as HTMLElement)?.focus?.();
+        } else {
+            // Otherwise just manually scroll into view
+            scrollIntoView(newItem);
+        }
+    };
+
     useEffect(() => {
         const dragEndEventListener = () => {
             setDraggingPosition(undefined);
@@ -30,6 +49,10 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
 
             if (draggingItems && draggingPosition && props.onDrop) {
                 props.onDrop(draggingItems, draggingPosition);
+
+                requestAnimationFrame(() => {
+                    onFocusHandler(draggingItems[0], draggingPosition.treeId);
+                })
             }
         };
 
@@ -50,13 +73,7 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
                 draggingPosition: draggingPosition,
                 draggingItems: draggingItems,
                 itemHeight: itemHeight,
-                onFocusItem: (item, treeId) => {
-                    props.onFocusItem?.(item, treeId);
-                    const newItem = document.querySelector(
-                        `[data-rvt-tree="${treeId}"] [data-rvt-item-id="${item.index}"]`
-                    );
-                    (newItem as HTMLElement)?.focus?.();
-                },
+                onFocusItem: onFocusHandler,
                 setActiveTree: (treeId) => {
                     setActiveTree(treeId);
 

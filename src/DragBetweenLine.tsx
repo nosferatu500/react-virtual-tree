@@ -1,17 +1,17 @@
-import React, { HTMLProps, useContext } from "react";
-import { TreeRenderContext } from "./VirtualTree";
-import { VirtualTreeContext } from "./VirtualTreeContext";
+import React, { HTMLProps } from "react";
+import { useTreeContext } from "./VirtualTree";
+import { useVirtualTreeContext } from "./VirtualTreeContext";
 
 export const DragBetweenLine: React.FC<{
     treeId: string;
 }> = (props) => {
-    const context = useContext(VirtualTreeContext);
-    const renderer = useContext(TreeRenderContext);
+    const { draggingPosition, itemHeight } = useVirtualTreeContext();
+    const { renderer } = useTreeContext();
 
     const shouldDisplay =
-        context.draggingPosition &&
-        context.draggingPosition.treeId === props.treeId &&
-        context.draggingPosition.targetType === "between-items";
+        draggingPosition &&
+        draggingPosition.treeId === props.treeId &&
+        draggingPosition.targetType === "between-items";
 
     if (!shouldDisplay) {
         return null;
@@ -27,10 +27,10 @@ export const DragBetweenLine: React.FC<{
                 position: "absolute",
                 left: "0",
                 right: "0",
-                top: `${(context.draggingPosition?.linearIndex ?? 0) * context.itemHeight}px`,
+                top: `${(draggingPosition?.linearIndex ?? 0) * itemHeight}px`,
             }}
         >
-            {renderer.renderDragBetweenLine(context.draggingPosition!, lineProps)}
+            {renderer.renderDragBetweenLine(draggingPosition!, lineProps)}
         </div>
     );
 };

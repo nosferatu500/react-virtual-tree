@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useMemo } from "react";
+import React, { useRef } from "react";
 import { useDrop } from "react-dnd";
 import { DragBetweenLine } from "./DragBetweenLine";
 import { useFocusWithin } from "./hooks/useFocusWithin";
@@ -7,18 +7,15 @@ import { useTreeKeyboardBindings } from "./hotkeys/useTreeKeyboardBindings";
 import { SearchInput } from "./search/SearchInput";
 import { TreeItemChildren } from "./TreeItemChildren";
 import { DraggingPosition } from "./types";
-import { createTreeMeta, createTreeMetaDeps } from "./utils";
-import { TreeContext, TreeRenderContext, TreeSearchContext } from "./VirtualTree";
-import { VirtualTreeContext } from "./VirtualTreeContext";
+import { useTreeContext } from "./VirtualTree";
+import { useVirtualTreeContext } from "./VirtualTreeContext";
 
 export const TreeManager = (props: {}): JSX.Element => {
-    const { treeId, rootItem } = useContext(TreeContext);
-    const context = useContext(VirtualTreeContext);
+    const { treeId, rootItem, renderer, meta } = useTreeContext();
+    const context = useVirtualTreeContext();
     const containerRef = useRef<HTMLDivElement>(null);
     const lastHoverCode = useRef<string>();
-    const getLinearItems = useGetLinearItems(treeId, rootItem);
-    const renderers = useContext(TreeRenderContext);
-    const { search } = useContext(TreeSearchContext);
+    const getLinearItems = useGetLinearItems();
 
     const isActiveTree = context.activeTreeId === treeId;
 
@@ -36,8 +33,6 @@ export const TreeManager = (props: {}): JSX.Element => {
         },
         [context.activeTreeId, treeId, isActiveTree]
     );
-
-    const meta = useMemo(() => createTreeMeta(context, treeId, search), createTreeMetaDeps(context, treeId, search));
 
     const rootChildren = context.items[rootItem].children;
 
@@ -207,5 +202,5 @@ export const TreeManager = (props: {}): JSX.Element => {
 
     drop(containerRef);
 
-    return renderers.renderTreeContainer(containerRef, treeId, treeChildren, meta) as JSX.Element;
+    return renderer.renderTreeContainer(containerRef, treeId, treeChildren, meta) as JSX.Element;
 };

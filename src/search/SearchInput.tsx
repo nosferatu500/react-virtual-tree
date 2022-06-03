@@ -1,18 +1,18 @@
-import { useContext } from "react";
 import { useHtmlElementEventListener } from "../hooks/useHtmlElementEventListener";
 import { useHotkey } from "../hotkeys/useHotkey";
-import { TreeContext, TreeRenderContext, TreeSearchContext } from "../VirtualTree";
-import { VirtualTreeContext } from "../VirtualTreeContext";
+import { useTreeContext } from "../VirtualTree";
+import { useVirtualTreeContext } from "../VirtualTreeContext";
+import { useSearchMatchFocus } from "./useSearchMatchFocus";
 
 export const SearchInput: React.FC<{
     containerRef?: HTMLElement | HTMLDivElement | null;
 }> = (props) => {
-    const context = useContext(VirtualTreeContext);
-    const renderers = useContext(TreeRenderContext);
-    const { treeId } = useContext(TreeContext);
-    const { search, setSearch } = useContext(TreeSearchContext);
+    const context = useVirtualTreeContext();
+    const { search, setSearch, treeId, renderer } = useTreeContext();
 
     const isActiveTree = context.activeTreeId === treeId;
+
+    useSearchMatchFocus();
 
     const clearSearch = () => {
         setSearch(null);
@@ -24,7 +24,9 @@ export const SearchInput: React.FC<{
     useHotkey(
         "abortSearch",
         (e) => {
-            clearSearch();
+            requestAnimationFrame(() => {
+                clearSearch();
+            })
         },
         isActiveTree && search !== null,
         [search, isActiveTree]
@@ -52,7 +54,7 @@ export const SearchInput: React.FC<{
         return null;
     }
 
-    return renderers.renderSearchInput({
+    return renderer.renderSearchInput({
         value: search,
         onChange: (e: any) => setSearch(e.target.value),
         onBlur: () => {

@@ -1,14 +1,13 @@
-import { useContext } from "react";
 import { getItemsLinearly } from "../utils";
-import { TreeContext } from "../VirtualTree";
-import { VirtualTreeContext } from "../VirtualTreeContext";
+import { useTreeContext } from "../VirtualTree";
+import { useVirtualTreeContext } from "../VirtualTreeContext";
 import { useGetLinearItems } from "./useGetLinearItems";
 import { useViewState } from "./useViewState";
 
 export const useMoveFocusToIndex = (containerRef?: HTMLElement | HTMLDivElement | null) => {
-    const { treeId, rootItem } = useContext(TreeContext);
-    const getLinearItems = useGetLinearItems(treeId, rootItem);
-    const context = useContext(VirtualTreeContext);
+    const { treeId } = useTreeContext();
+    const context = useVirtualTreeContext();
+    const getLinearItems = useGetLinearItems();
     const viewState = useViewState();
 
     return (computeNewIndex: (currentIndex: number, linearItems: ReturnType<typeof getItemsLinearly>) => number) => {
