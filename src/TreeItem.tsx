@@ -1,17 +1,17 @@
 import React, { useMemo, useRef, useState } from "react";
+import { useDrag, useDrop } from "react-dnd";
+import { useViewState } from "./hooks/useViewState";
+import { defaultMatcher } from "./search/defaultMatcher";
 import { TreeItemChildren } from "./TreeItemChildren";
 import { TreeItemIndex } from "./types";
-import { useViewState } from "./hooks/useViewState";
 import {
-    createTreeMeta,
-    createTreeMetaDeps,
     createTreeItemRenderContext,
     createTreeItemRenderContextDependencies,
+    createTreeMeta,
+    createTreeMetaDeps,
 } from "./utils";
-import { useVirtualTreeContext } from "./VirtualTreeContext";
-import { useDrag, useDrop } from "react-dnd";
 import { useTreeContext } from "./VirtualTree";
-import { defaultMatcher } from "./search/defaultMatcher";
+import { useVirtualTreeContext } from "./VirtualTreeContext";
 
 export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
@@ -94,8 +94,9 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
 
     const isSearchMatching = useMemo(() => {
         return search === null || search.length === 0 || !item
-       ? false : (context.doesSearchMatchItem ?? defaultMatcher)(search, item, itemTitle);
-   }, [search, itemTitle]);
+            ? false
+            : (context.doesSearchMatchItem ?? defaultMatcher)(search, item, itemTitle);
+    }, [search, itemTitle]);
 
     const renderContext = useMemo(
         () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching),

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Meta } from "@storybook/react";
-import { VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem } from "../src";
+import { DataProvider, DataSource, TreeItem, VirtualForestWrapper, VirtualTree } from "../src";
 
 const itemsWithManyChildren: DataSource = {
     items: {
@@ -30,7 +30,7 @@ for (let i = 0; i < 1000; i++) {
         canMove: true,
         children: [],
     };
-    itemsWithManyChildren.items["innerRoot"].children!.push(id);
+    itemsWithManyChildren.items.innerRoot.children.push(id);
 }
 
 export default {

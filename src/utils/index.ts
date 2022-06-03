@@ -1,14 +1,14 @@
 import { HTMLProps } from "react";
 import {
     IndividualTreeViewState,
-    VirtualForestProps,
     TreeItem,
     TreeItemActions,
     TreeItemIndex,
     TreeItemRenderContext,
     TreeItemRenderFlags,
-    VirtualTreeContextProps,
     TreeMeta,
+    VirtualForestProps,
+    VirtualTreeContextProps,
 } from "../types";
 
 export const classnames = (...classNames: (string | boolean | undefined)[]) => classNames.filter(Boolean).join(" ");
@@ -23,7 +23,7 @@ export const getItemsLinearly = (
 
     for (const itemId of items[rootItem]?.children ?? []) {
         const item = items[itemId];
-        itemIds.push({ item: itemId, depth: depth });
+        itemIds.push({ item: itemId, depth });
         if (item && item.isFolder && !!item.children && viewState.expandedItems?.includes(itemId)) {
             itemIds.push(...getItemsLinearly(itemId, viewState, items, depth + 1));
         }
@@ -102,7 +102,7 @@ export const createTreeItemRenderContext = (
             context.draggingPosition.targetItem === item.index &&
             context.draggingPosition.treeId === treeId,
         isDraggingOverParent: false,
-        isSearchMatching: isSearchMatching,
+        isSearchMatching,
     };
 
     const elementProps: HTMLProps<HTMLElement> = {
@@ -141,15 +141,15 @@ export const createTreeItemRenderContext = (
             actions.focusItem();
         },
         ...({
-            ["data-rvt-item-interactive"]: true,
-            ["data-rvt-item-focus"]: renderContext.isFocused ? "true" : "false",
-            ["data-rvt-item-id"]: item.index,
+            "data-rvt-item-interactive": true,
+            "data-rvt-item-focus": renderContext.isFocused ? "true" : "false",
+            "data-rvt-item-id": item.index,
         } as any),
     };
 
     const containerProps: HTMLProps<HTMLElement> = {
         ...({
-            ["data-rvt-item-container"]: "true",
+            "data-rvt-item-container": "true",
         } as any),
     };
 
@@ -180,7 +180,7 @@ export const createTreeMeta = (context: VirtualTreeContextProps, treeId: string,
     isRenaming: context.viewState[treeId]?.renamingItem !== undefined,
     areItemsSelected: (context.viewState[treeId]?.selectedItems?.length ?? 0) > 0,
     isSearching: search !== null,
-    search: search,
+    search,
 });
 
 export const createTreeMetaDeps = (context: VirtualTreeContextProps, treeId: string, search: string | null) => [

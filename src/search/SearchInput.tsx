@@ -26,7 +26,7 @@ export const SearchInput: React.FC<{
         (e) => {
             requestAnimationFrame(() => {
                 clearSearch();
-            })
+            });
         },
         isActiveTree && search !== null,
         [search, isActiveTree]
@@ -46,7 +46,7 @@ export const SearchInput: React.FC<{
                 (unicode >= 97 && unicode <= 122)) // lowercase letter
         ) {
             setSearch("");
-            (document.querySelector('[data-rvt-search-input="true"]') as any)?.focus?.();
+            document.querySelector('[data-rvt-search-input="true"]')?.focus?.();
         }
     });
 
@@ -61,7 +61,7 @@ export const SearchInput: React.FC<{
             clearSearch();
         },
         ...({
-            ["data-rvt-search-input"]: "true",
+            "data-rvt-search-input": "true",
         } as any),
     }) as any;
 };

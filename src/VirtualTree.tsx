@@ -25,7 +25,7 @@ export const VirtualTree = (props: TreeProps) => {
 
     const meta = useMemo(
         () => createTreeMeta(context, props.treeId, search),
-        createTreeMetaDeps(context, props.treeId, search),
+        createTreeMetaDeps(context, props.treeId, search)
     );
 
     if (rootItem === undefined) {
@@ -34,15 +34,17 @@ export const VirtualTree = (props: TreeProps) => {
     }
 
     return (
-        <TreeContext.Provider value={{
-            treeId: props.treeId,
-            rootItem: props.rootItem,
-            meta,
-            search,
-            setSearch,
-            renderer,
-          }}>
+        <TreeContext.Provider
+            value={{
+                treeId: props.treeId,
+                rootItem: props.rootItem,
+                meta,
+                search,
+                setSearch,
+                renderer,
+            }}
+        >
             <TreeManager />
-          </TreeContext.Provider>
+        </TreeContext.Provider>
     );
 };

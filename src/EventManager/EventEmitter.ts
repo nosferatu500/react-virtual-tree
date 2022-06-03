@@ -6,6 +6,7 @@ export type EventHandler<EventPayload> = ((payload: EventPayload) => Promise<voi
 
 export class EventEmitter<EventPayload> {
     private handlerCount = 0;
+
     private handlers: Array<EventHandler<EventPayload>> = [];
 
     constructor(private options?: EventEmitterOptions<EventPayload>) {}
@@ -19,8 +20,8 @@ export class EventEmitter<EventPayload> {
 
         this.options?.logger?.("emit", payload);
 
-        for (let handler of this.handlers) {
-            if (!!handler) {
+        for (const handler of this.handlers) {
+            if (handler) {
                 const res = handler(payload) as Promise<void>;
                 if (typeof res?.then === "function") {
                     promises.push(res);

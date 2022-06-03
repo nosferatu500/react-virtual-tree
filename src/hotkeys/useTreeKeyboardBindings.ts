@@ -58,9 +58,8 @@ export const useTreeKeyboardBindings = (containerRef?: HTMLElement | HTMLDivElem
                 if (item.isFolder) {
                     if (viewState.expandedItems?.includes(item.index)) {
                         return currentIndex + 1;
-                    } else {
-                        context.onExpandItem?.(item, treeId);
                     }
+                    context.onExpandItem?.(item, treeId);
                 }
                 return currentIndex;
             });

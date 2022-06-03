@@ -156,16 +156,16 @@ export type DraggingPosition = {
     linearIndex?: number;
     depth: number;
 } & (
-        | {
-            targetType: "item";
-            targetItem: TreeItemIndex;
-        }
-        | {
-            targetType: "between-items";
-            childIndex: number;
-            linePosition: "top" | "bottom";
-        }
-    );
+    | {
+          targetType: "item";
+          targetItem: TreeItemIndex;
+      }
+    | {
+          targetType: "between-items";
+          childIndex: number;
+          linePosition: "top" | "bottom";
+      }
+);
 
 type onReorderParams = {
     sourceId: string;
@@ -186,8 +186,8 @@ export type VirtualForestWrapperProps = PropsWithChildren<
         onClick?: (item: TreeItem) => void;
         getItemTitle: (item: TreeItem) => string;
     } & TreeRenderProps &
-    TreeCapabilities &
-    ImplicitDataSource
+        TreeCapabilities &
+        ImplicitDataSource
 >;
 
 export type Tree = {

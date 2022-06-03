@@ -1,4 +1,4 @@
-import { useContext, useRef, useMemo } from "react";
+import { useContext, useMemo, useRef } from "react";
 import { useHtmlElementEventListener } from "../hooks/useHtmlElementEventListener";
 import { KeyboardBindings } from "../types";
 import { VirtualTreeContext } from "../VirtualTreeContext";
@@ -39,12 +39,12 @@ export const useHotkey = (
                 return;
             }
 
-            const pressedKeysLowercase = pressedKeys.current.map((key) => key.toLowerCase());
+            const pressedKeysLowercase = new Set(pressedKeys.current.map((key) => key.toLowerCase()));
             const match = possibleCombinations
                 .map((combination) =>
                     combination
                         .split("+")
-                        .map((key) => pressedKeysLowercase.includes(key.toLowerCase()))
+                        .map((key) => pressedKeysLowercase.has(key.toLowerCase()))
                         .reduce((a, b) => a && b, true)
                 )
                 .reduce((a, b) => a || b, false);

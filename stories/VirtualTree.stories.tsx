@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Meta } from "@storybook/react";
-import { VirtualTree, VirtualForestWrapper, DataProvider, DataSource, TreeItem } from "../src";
+import { DataProvider, DataSource, TreeItem, VirtualForestWrapper, VirtualTree } from "../src";
 
 const demoContent: { data: DataSource } = {
     data: {
@@ -166,7 +166,7 @@ export const SingleTree = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
-                ["tree-1"]: {
+                "tree-1": {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
@@ -195,7 +195,7 @@ export const SingleTreeAllCollapsed = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
-                ["tree-1"]: {},
+                "tree-1": {},
             }}
         >
             <VirtualTree treeId="tree-1" rootItem="root" />
@@ -222,7 +222,7 @@ export const MultipleTrees = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
-                ["tree-1"]: {},
+                "tree-1": {},
             }}
         >
             <div
@@ -280,7 +280,7 @@ export const NoDragAndDrop = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
-                ["tree-1"]: {
+                "tree-1": {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
@@ -309,7 +309,7 @@ export const NoReorderingAllowed = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
-                ["tree-1"]: {
+                "tree-1": {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}
@@ -338,7 +338,7 @@ export const NoCollapseAllowed = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
-                ["tree-1"]: {
+                "tree-1": {
                     expandedItems: ["child1", "child11", "child2"],
                 },
             }}

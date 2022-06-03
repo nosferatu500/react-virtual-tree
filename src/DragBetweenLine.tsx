@@ -9,9 +9,7 @@ export const DragBetweenLine: React.FC<{
     const { renderer } = useTreeContext();
 
     const shouldDisplay =
-        draggingPosition &&
-        draggingPosition.treeId === props.treeId &&
-        draggingPosition.targetType === "between-items";
+        draggingPosition && draggingPosition.treeId === props.treeId && draggingPosition.targetType === "between-items";
 
     if (!shouldDisplay) {
         return null;
@@ -30,7 +28,7 @@ export const DragBetweenLine: React.FC<{
                 top: `${(draggingPosition?.linearIndex ?? 0) * itemHeight}px`,
             }}
         >
-            {renderer.renderDragBetweenLine(draggingPosition!, lineProps)}
+            {renderer.renderDragBetweenLine(draggingPosition, lineProps)}
         </div>
     );
 };

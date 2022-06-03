@@ -98,11 +98,11 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
                     const newParent = currentItems[target.parentItem];
 
                     if (!parent) {
-                        throw Error(`Could not find parent of item "${item.index}"`);
+                        throw new Error(`Could not find parent of item "${item.index}"`);
                     }
 
                     if (!parent.children) {
-                        throw Error(`Parent "${parent.index}" of item "${item.index}" did not have any children`);
+                        throw new Error(`Parent "${parent.index}" of item "${item.index}" did not have any children`);
                     }
 
                     if (target.targetType === "item") {
@@ -126,7 +126,7 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
 
                         if (target.parentItem === parent.index) {
                             const isOldItemPriorToNewItem =
-                                ((newParent.children ?? []).findIndex((child) => child === item.index) ?? Infinity) <
+                                ((newParent.children ?? []).indexOf(item.index) ?? Number.POSITIVE_INFINITY) <
                                 target.childIndex;
                             newItemIndex = target.childIndex - (isOldItemPriorToNewItem ? 1 : 0);
 

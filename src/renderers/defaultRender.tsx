@@ -9,20 +9,19 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
         renderItemTitle: (title, item, context, info) => {
             if (!info.isSearching || !context.isSearchMatching) {
                 return <>{title}</>;
-            } else {
-                const startIndex = title.toLowerCase().indexOf(info.search!.toLowerCase());
-                return (
-                    <>
-                        {startIndex > 0 && <span>{title.slice(0, startIndex)}</span>}
-                        <span className="rvt-tree-item-search-highlight">
-                            {title.slice(startIndex, startIndex + info.search!.length)}
-                        </span>
-                        {startIndex + info.search!.length < title.length && (
-                            <span>{title.slice(startIndex + info.search!.length, title.length)}</span>
-                        )}
-                    </>
-                );
             }
+            const startIndex = title.toLowerCase().indexOf(info.search!.toLowerCase());
+            return (
+                <>
+                    {startIndex > 0 && <span>{title.slice(0, startIndex)}</span>}
+                    <span className="rvt-tree-item-search-highlight">
+                        {title.slice(startIndex, startIndex + info.search!.length)}
+                    </span>
+                    {startIndex + info.search!.length < title.length && (
+                        <span>{title.slice(startIndex + info.search!.length, title.length)}</span>
+                    )}
+                </>
+            );
         },
         renderItem: (ref, item, style, depth, children, title, context, info) => {
             return (
@@ -76,7 +75,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     ref={ref}
                     style={{ position: "relative" }}
                     {...({
-                        ["data-rvt-tree"]: treeId,
+                        "data-rvt-tree": treeId,
                     } as any)}
                     className={classnames(
                         "rvt-tree-root",

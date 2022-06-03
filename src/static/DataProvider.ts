@@ -3,6 +3,7 @@ import { DataSource, Disposable, TreeDataProvider, TreeItem, TreeItemIndex } fro
 
 export class DataProvider implements TreeDataProvider {
     private data: DataSource;
+
     private componentDidUpdateEmitter = new EventEmitter<TreeItemIndex[]>();
 
     constructor(items: Record<TreeItemIndex, TreeItem>) {

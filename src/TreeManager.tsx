@@ -37,7 +37,7 @@ export const TreeManager = (props: {}): JSX.Element => {
     const rootChildren = context.items[rootItem].children;
 
     if (!rootChildren) {
-        throw Error(`Root ${rootItem} does not contain any children`);
+        throw new Error(`Root ${rootItem} does not contain any children`);
     }
 
     const treeChildren = (
@@ -82,7 +82,7 @@ export const TreeManager = (props: {}): JSX.Element => {
 
             const hoveringPosition = (clientY - hoverBoundingRect.top) / context.itemHeight;
             let linearIndex = Math.floor(hoveringPosition);
-            let offset: "top" | "bottom" | undefined = undefined;
+            let offset: "top" | "bottom" | undefined;
 
             const lineThreshold =
                 context.allowDropOnItemWithChildren || context.allowDropOnItemWithoutChildren ? 0.2 : 0.5;
@@ -111,7 +111,7 @@ export const TreeManager = (props: {}): JSX.Element => {
                 }
 
                 const targetItem = linearItems[linearIndex];
-                const depth = targetItem.depth;
+                const { depth } = targetItem;
                 const targetItemData = context.items[targetItem.item];
 
                 if (!offset && !context.allowDropOnItemWithoutChildren && !targetItemData.isFolder) {
@@ -154,26 +154,24 @@ export const TreeManager = (props: {}): JSX.Element => {
 
                 let draggingPosition: DraggingPosition;
 
-                if (offset) {
-                    draggingPosition = {
-                        targetType: "between-items",
-                        treeId: treeId,
-                        parentItem: parent.item,
-                        depth: targetItem.depth,
-                        linearIndex: linearIndex + (offset === "top" ? 0 : 1),
-                        childIndex: linearIndex - parentLinearIndex - 1 + (offset === "top" ? 0 : 1),
-                        linePosition: offset,
-                    };
-                } else {
-                    draggingPosition = {
-                        targetType: "item",
-                        treeId: treeId,
-                        parentItem: parent.item,
-                        targetItem: targetItem.item,
-                        depth: targetItem.depth,
-                        linearIndex: linearIndex,
-                    };
-                }
+                draggingPosition = offset
+                    ? {
+                          targetType: "between-items",
+                          treeId,
+                          parentItem: parent.item,
+                          depth: targetItem.depth,
+                          linearIndex: linearIndex + (offset === "top" ? 0 : 1),
+                          childIndex: linearIndex - parentLinearIndex - 1 + (offset === "top" ? 0 : 1),
+                          linePosition: offset,
+                      }
+                    : {
+                          targetType: "item",
+                          treeId,
+                          parentItem: parent.item,
+                          targetItem: targetItem.item,
+                          depth: targetItem.depth,
+                          linearIndex,
+                      };
 
                 if (
                     context.canDropAt &&
