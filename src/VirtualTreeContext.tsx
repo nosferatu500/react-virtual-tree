@@ -85,14 +85,30 @@ export const VirtualForest = React.forwardRef<VirtualTreeContextProps, PropsWith
             onDragAtPosition: (position) => {
                 setDraggingPosition(position);
             },
-            setActiveTree: (treeId) => {
-                setActiveTreeId(treeId);
+            setActiveTree: (treeIdOrSetStateFunction) => {
+                const focusTree = (treeId: string | undefined) => {
+                    if (treeId && !document.querySelector(`[data-rvt-tree="${treeId}"]`)?.contains(document.activeElement)) {
+                        const focusItem = document.querySelector(`[data-rvt-tree="${treeId}"] [data-rvt-item-focus="true"]`);
+                        (focusItem as HTMLElement)?.focus?.();
+                    }
+                };
 
-                if (!document.querySelector(`[data-rvt-tree="${treeId}"]`)?.contains(document.activeElement)) {
-                    const focusItem = document.querySelector(
-                        `[data-rvt-tree="${treeId}"] [data-rvt-item-focus="true"]`
-                    );
-                    (focusItem as HTMLElement)?.focus?.();
+                if (typeof treeIdOrSetStateFunction === 'function') {
+                    setActiveTreeId(oldValue => {
+                        const treeId = treeIdOrSetStateFunction(oldValue);
+
+                        if (treeId !== oldValue) {
+                            console.log(`Set active tree to ${treeId}`)
+                            focusTree(treeId);
+                        }
+
+                        return treeId;
+                    });
+                } else {
+                    const treeId = treeIdOrSetStateFunction;
+                    console.log(`Set active tree to ${treeId}`)
+                    setActiveTreeId(treeId);
+                    focusTree(treeId);
                 }
             },
             treeIds: Object.keys(trees),

@@ -7,23 +7,39 @@ export const useFocusWithin = (
     onFocusOut?: () => void,
     deps: any[] = []
 ) => {
+    const [focusWithin, setFocusWithin] = useState(false);
+    const isLoosingFocusFlag = useRef(false);
+
     useHtmlElementEventListener(
         element,
         "focusin",
         () => {
-            onFocusIn?.();
+            if (!focusWithin) {
+                setFocusWithin(true);
+                onFocusIn?.();
+            }
+            if (isLoosingFocusFlag.current) {
+                isLoosingFocusFlag.current = false;
+            }
         },
-        deps
+        [focusWithin, onFocusIn, ...deps]
     );
 
     useHtmlElementEventListener(
         element,
         "focusout",
-        (e: any) => {
-            if (!element?.contains(document.activeElement)) {
-                onFocusOut?.();
-            }
+        (e) => {
+            isLoosingFocusFlag.current = true;
+            requestAnimationFrame(() => {
+                if (isLoosingFocusFlag.current && !element?.contains(document.activeElement)) {
+                    onFocusOut?.();
+                    isLoosingFocusFlag.current = false;
+                    setFocusWithin(false);
+                }
+            });
         },
-        deps
+        [element, onFocusOut, ...deps]
     );
+
+    return focusWithin;
 };

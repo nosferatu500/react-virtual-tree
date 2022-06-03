@@ -28,9 +28,9 @@ export const TreeManager = (props: {}): JSX.Element => {
             context.setActiveTree(treeId);
         },
         () => {
-            if (isActiveTree) {
-                context.setActiveTree(undefined);
-            }
+            context.setActiveTree(oldTreeId => {
+                return oldTreeId === treeId ? undefined : oldTreeId;
+            });
         },
         [context.activeTreeId, treeId, isActiveTree]
     );

@@ -182,7 +182,9 @@ export type VirtualTreeContextProps = {
     onClick?: (item: TreeItem) => void;
     addTree: (tree: Tree) => void;
     removeTree: (treeId: string) => void;
-    setActiveTree: (treeId: string | undefined) => void;
+    setActiveTree: (
+        treeIdOrSetStateFunction: string | undefined | ((prevState: string | undefined) => string | undefined)
+    ) => void;
     onStartDragItems: (items: TreeItem[], treeId: string) => void;
     onDragAtPosition: (position: DraggingPosition | undefined) => void;
 } & VirtualForestProps &
