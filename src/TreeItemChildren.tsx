@@ -2,7 +2,7 @@ import React from "react";
 import { TreeItem } from "./TreeItem";
 import { TreeItemIndex } from "./types";
 
-export const TreeItemChildren = (props: { children: TreeItemIndex[]; depth: number; parentId: TreeItemIndex }) => {
+export const TreeItemChildren = (props: { children: TreeItemIndex[]; depth: number }) => {
     const childElements: JSX.Element[] = [];
 
     for (const child of props.children) {

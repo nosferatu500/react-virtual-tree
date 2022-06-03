@@ -161,8 +161,8 @@ export const SingleTree = () => {
             dataProvider={new DataProvider(data)}
             getItemTitle={(item) => item.title}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
@@ -190,8 +190,8 @@ export const SingleTreeAllCollapsed = () => {
             dataProvider={new DataProvider(data)}
             getItemTitle={(item) => item.title}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
@@ -217,8 +217,8 @@ export const MultipleTrees = () => {
             dataProvider={new DataProvider(data)}
             getItemTitle={(item) => item.title}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
@@ -275,8 +275,8 @@ export const NoDragAndDrop = () => {
             dataProvider={new DataProvider(data)}
             getItemTitle={(item) => item.title}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
@@ -304,8 +304,8 @@ export const NoReorderingAllowed = () => {
             dataProvider={new DataProvider(data)}
             getItemTitle={(item) => item.title}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{
@@ -333,8 +333,8 @@ export const NoCollapseAllowed = () => {
             dataProvider={new DataProvider(data)}
             getItemTitle={(item) => item.title}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
             viewState={{

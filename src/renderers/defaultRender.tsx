@@ -69,7 +69,7 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
         renderDraggingItemTitle: (items) => {
             return <div />;
         },
-        renderTreeContainer: (ref, treeId, children, meta) => {
+        renderTreeContainer: (ref, treeId, children, treeMeta) => {
             return (
                 <div
                     ref={ref}
@@ -79,9 +79,9 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                     } as any)}
                     className={classnames(
                         "rvt-tree-root",
-                        meta.isFocused && "rvt-tree-root-focus",
-                        meta.isRenaming && "rvt-tree-root-renaming",
-                        meta.areItemsSelected && "rvt-tree-root-itemsselected"
+                        treeMeta.isFocused && "rvt-tree-root-focus",
+                        treeMeta.isRenaming && "rvt-tree-root-renaming",
+                        treeMeta.areItemsSelected && "rvt-tree-root-itemsselected"
                     )}
                 >
                     {children}

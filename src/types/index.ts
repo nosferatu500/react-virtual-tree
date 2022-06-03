@@ -54,13 +54,13 @@ export type TreeRenderProps = {
         children: React.ReactNode | null,
         title: React.ReactNode,
         context: TreeItemRenderContext,
-        meta: TreeMeta
+        treeMeta: TreeMeta
     ) => React.ReactNode;
     renderItemTitle?: (
         title: string,
         item: TreeItem,
         context: TreeItemRenderContext,
-        meta: TreeMeta
+        treeMeta: TreeMeta
     ) => React.ReactNode;
     renderRenameInput?: (
         item: TreeItem,
@@ -74,13 +74,13 @@ export type TreeRenderProps = {
         ref: React.RefObject<HTMLDivElement>,
         treeId: string,
         children: React.ReactNode,
-        meta: TreeMeta
+        treeMeta: TreeMeta
     ) => React.ReactNode;
     renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
     renderSearchInput?: (inputProps: HTMLProps<HTMLInputElement>) => React.ReactNode;
 };
 
-type TreeCapabilities = {
+export type TreeCapabilities = {
     allowDragAndDrop?: boolean;
     allowDropOnItemWithChildren?: boolean;
     allowDropOnItemWithoutChildren?: boolean;
@@ -205,7 +205,7 @@ export type TreeContextProps<T = any> = {
     search: string | null;
     setSearch: (searchValue: string | null) => void;
     renderer: Required<TreeRenderProps>;
-    meta: TreeMeta;
+    treeMeta: TreeMeta;
 } & Tree;
 
 export type TreeDataProvider = {

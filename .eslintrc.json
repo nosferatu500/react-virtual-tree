@@ -18,9 +18,9 @@
       "plugin:react-hooks/recommended",
       "plugin:promise/recommended",
       "plugin:unicorn/recommended",
-      "plugin:sonarjs/recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      "plugin:sonarjs/recommended"
+      // "plugin:@typescript-eslint/recommended",
+      // "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     "plugins": [
       "@typescript-eslint",

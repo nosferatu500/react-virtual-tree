@@ -46,6 +46,7 @@ export const SearchInput: React.FC<{
                 (unicode >= 97 && unicode <= 122)) // lowercase letter
         ) {
             setSearch("");
+            // @ts-ignore
             document.querySelector('[data-rvt-search-input="true"]')?.focus?.();
         }
     });

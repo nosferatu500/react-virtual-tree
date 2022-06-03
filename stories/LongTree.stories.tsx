@@ -53,8 +53,8 @@ export const LongTree = () => {
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             viewState={{}}
             onChange={setData}
-            onReorder={(data) => {
-                console.log({ data });
+            onReorder={(outData) => {
+                console.log({ outData });
             }}
             onClick={(item: TreeItem) => console.log(item)}
         >

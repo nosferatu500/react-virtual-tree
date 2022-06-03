@@ -1,26 +1,19 @@
 import React, { useMemo, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
+import { useTreeItemRenderContext } from "./hooks/useTreeItemRenderContext";
 import { useViewState } from "./hooks/useViewState";
-import { defaultMatcher } from "./search/defaultMatcher";
 import { TreeItemChildren } from "./TreeItemChildren";
 import { TreeItemIndex } from "./types";
-import {
-    createTreeItemRenderContext,
-    createTreeItemRenderContextDependencies,
-    createTreeMeta,
-    createTreeMetaDeps,
-} from "./utils";
 import { useTreeContext } from "./VirtualTree";
 import { useVirtualTreeContext } from "./VirtualTreeContext";
 
 export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
-    const { treeId, search, renderer } = useTreeContext();
+    const { treeId, renderer, treeMeta } = useTreeContext();
     const context = useVirtualTreeContext();
     const viewState = useViewState();
 
     const item = context.items[props.itemIndex];
-    const itemTitle = item && context.getItemTitle(item);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -49,15 +42,13 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
         // },
 
         // drop(draggedItem: any, monitor) {
-        //     const dragIndex = draggedItem.index
-        //     const hoverIndex = props.itemIndex
-        // }
+        // },
     });
 
     const [{ isDragging }, drag] = useDrag({
         type: "rvt-item",
         item: () => {
-            return { index: props.itemIndex, canMove: item.canMove };
+            return { index: props.itemIndex, canMove: item.canMove, children: item.children };
         },
         options: {
             dropEffect: "copy",
@@ -67,7 +58,6 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
             isDragging: monitor.isDragging(),
         }),
         end(draggedItem, monitor) {
-            // onDragStart
             let selectedItems = viewState?.selectedItems ?? [];
 
             if (!selectedItems.includes(draggedItem.index)) {
@@ -92,18 +82,9 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
         [props.itemIndex, viewState.expandedItems]
     );
 
-    const isSearchMatching = useMemo(() => {
-        return search === null || search.length === 0 || !item
-            ? false
-            : (context.doesSearchMatchItem ?? defaultMatcher)(search, item, itemTitle);
-    }, [search, itemTitle]);
-
-    const renderContext = useMemo(
-        () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching),
-        createTreeItemRenderContextDependencies(item, context, treeId, isSearchMatching)
-    );
-
-    const meta = useMemo(() => createTreeMeta(context, treeId, search), createTreeMetaDeps(context, treeId, search));
+    // Safely assume that renderContext exists, because if not, item also does not exist and the
+    // component will exit early anyways
+    const renderContext = useTreeItemRenderContext(item)!;
 
     if (item === undefined) {
         if (!hasBeenRequested) {
@@ -122,7 +103,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     };
 
     const title = context.getItemTitle(item);
-    const titleComponent = renderer.renderItemTitle(title, item, renderContext, meta);
+    const titleComponent = renderer.renderItemTitle(title, item, renderContext, treeMeta);
 
     return (
         renderer.renderItem(
@@ -133,7 +114,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
             children,
             titleComponent,
             renderContext,
-            meta
+            treeMeta
         ) || (null as any)
     );
 };
