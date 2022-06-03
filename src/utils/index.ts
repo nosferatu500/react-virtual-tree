@@ -60,6 +60,9 @@ export const createTreeItemRenderContext = (
     const viewState = context.viewState[treeId];
 
     const actions: TreeItemActions = {
+        primaryAction: () => {
+            context.onPrimaryAction?.(context.items[item.index], treeId);
+        },
         collapseItem: () => {
             context.onCollapseItem?.(item, treeId);
         },
@@ -114,6 +117,10 @@ export const createTreeItemRenderContext = (
                     actions.toggleExpandedState();
                 }
                 actions.selectItem();
+
+                if (!item.isFolder || context.canInvokePrimaryActionOnItemContainer) {
+                    actions.primaryAction();
+                }
             }
 
             if (context.onClick) {

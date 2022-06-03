@@ -88,4 +88,51 @@ export const useTreeKeyboardBindings = (containerRef?: HTMLElement | HTMLDivElem
         },
         isActiveTree
     );
+
+    useHotkey(
+        "primaryAction",
+        (e) => {
+            e.preventDefault();
+            if (viewState.focusedItem) {
+                context.onSelectItems?.([viewState.focusedItem], treeId);
+                context.onPrimaryAction?.(context.items[viewState.focusedItem], treeId);
+            }
+        },
+        isActiveTree
+    );
+
+    useHotkey(
+        "toggleSelectItem",
+        (e) => {
+            e.preventDefault();
+            if (viewState.focusedItem) {
+                if (viewState.selectedItems && viewState.selectedItems.includes(viewState.focusedItem)) {
+                    context.onSelectItems?.(
+                        viewState.selectedItems.filter((item) => item !== viewState.focusedItem),
+                        treeId
+                    );
+                } else {
+                    context.onSelectItems?.([...(viewState.selectedItems ?? []), viewState.focusedItem], treeId);
+                }
+            }
+        },
+        isActiveTree
+    );
+
+    useHotkey(
+        "moveItems",
+        (e) => {
+            e.preventDefault();
+            const selectedItems =
+                viewState.selectedItems?.length ?? 0 > 0
+                    ? viewState.selectedItems
+                    : Object.values(context.viewState).find((state) => state?.selectedItems?.length ?? 0 > 0)
+                          ?.selectedItems ?? null;
+
+            if (selectedItems) {
+                // TODO move
+            }
+        },
+        isActiveTree
+    );
 };

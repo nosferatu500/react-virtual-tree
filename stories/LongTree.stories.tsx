@@ -1,0 +1,78 @@
+import React, { useRef, useState } from "react";
+import { Meta } from "@storybook/react";
+import {
+    VirtualTree,
+    VirtualForestWrapper,
+    DataProvider,
+    DataSource,
+    TreeItem,
+    TreeItemRenderContext,
+    TreeRenderProps,
+} from "../src";
+
+const demoRenderer: TreeRenderProps = {
+    renderItemTitle(item: TreeItem, context: TreeItemRenderContext): string {
+        return item.title;
+    },
+};
+
+const itemsWithManyChildren: DataSource = {
+    items: {
+        root: {
+            index: "root",
+            children: ["innerRoot"],
+            title: "root",
+            isFolder: true,
+            canMove: true,
+        },
+        innerRoot: {
+            index: "innerRoot",
+            children: [],
+            title: "innerRoot",
+            isFolder: true,
+            canMove: true,
+        },
+    },
+};
+
+for (let i = 0; i < 1000; i++) {
+    const id = `item${i}`;
+    itemsWithManyChildren.items[id] = {
+        index: id,
+        isFolder: false,
+        title: id,
+        canMove: true,
+        children: [],
+    };
+    itemsWithManyChildren.items["innerRoot"].children!.push(id);
+}
+
+export default {
+    title: "LongTree",
+} as Meta;
+
+export const LongTree = () => {
+    const ref = useRef(itemsWithManyChildren.items);
+    const [data, setData] = useState<any>(ref.current);
+
+    return (
+        <VirtualForestWrapper
+            allowDragAndDrop
+            allowDropOnItemWithChildren
+            allowReorderingItems
+            allowCollapse
+            dataProvider={new DataProvider(data)}
+            containerSize={{ width: 300, height: 300 }}
+            autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
+            viewState={{}}
+            onChange={setData}
+            onReorder={(data) => {
+                console.log({ data });
+            }}
+            onClick={(item: TreeItem) => console.log(item)}
+            {...demoRenderer}
+        >
+            <VirtualTree treeId="tree-1" rootItem="root" />
+        </VirtualForestWrapper>
+    );
+};

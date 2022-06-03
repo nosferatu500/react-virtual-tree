@@ -1460,10 +1460,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nosferatu500/react-dnd-scrollzone@3.0.0-alpha.2":
-  version "3.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@nosferatu500/react-dnd-scrollzone/-/react-dnd-scrollzone-3.0.0-alpha.2.tgz#f6bbf4574f8c54f5cd217bd48f4731af2832d4d1"
-  integrity sha512-BILZTminN5QuVRIoecXQXD3dLdYOJs1OkNJf513pklArsPEKyj46RWBSQUEI7iMjaD0MBAnx8HQs5ieZuX7kCA==
+"@nosferatu500/react-dnd-scrollzone@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@nosferatu500/react-dnd-scrollzone/-/react-dnd-scrollzone-3.0.0.tgz#60034dff6207843c5516d830367ff1e9d0134623"
+  integrity sha512-gcNsBaZFnBPVWxb4fgeW3D9sTRSo+s+0hDfj/CyKBH3AhS5GcvNK6Ddd1r6WJq22J3si5nRQ0VgrzKbfQhincQ==
 
 "@npmcli/fs@^1.0.0":
   version "1.1.1"

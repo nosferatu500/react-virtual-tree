@@ -32,7 +32,7 @@ export const TreeManager = (props: {}): JSX.Element => {
                 context.setActiveTree(undefined);
             }
         },
-        [context.activeTreeId, treeId]
+        [context.activeTreeId, treeId, isActiveTree]
     );
 
     const meta = useMemo(() => createTreeMeta(context, treeId), createTreeMetaDeps(context, treeId)); // share with tree children

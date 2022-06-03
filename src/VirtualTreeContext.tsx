@@ -11,6 +11,18 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
     const [activeTree, setActiveTree] = useState<string>();
     const [itemHeight, setItemHeight] = useState(4);
 
+    const viewState = props.viewState;
+
+    // Make sure that every tree view state has a focused item
+    for (const treeId of Object.keys(trees)) {
+        if (!viewState[treeId]?.focusedItem && trees[treeId]) {
+            viewState[treeId] = {
+                ...viewState[treeId],
+                focusedItem: props.items[trees[treeId].rootItem]?.children?.[0],
+            };
+        }
+    }
+
     useEffect(() => {
         const dragEndEventListener = () => {
             setDraggingPosition(undefined);
@@ -47,9 +59,16 @@ export const VirtualForest = (props: PropsWithChildren<VirtualForestProps>) => {
                 },
                 setActiveTree: (treeId) => {
                     setActiveTree(treeId);
+
+                    if (!document.querySelector(`[data-rvt-tree="${treeId}"]`)?.contains(document.activeElement)) {
+                        const focusItem = document.querySelector(
+                            `[data-rvt-tree="${treeId}"] [data-rvt-item-focus="true"]`
+                        );
+                        (focusItem as HTMLElement)?.focus?.();
+                    }
                 },
                 addTree: (tree) => {
-                    setTrees({ ...trees, [tree.treeId]: tree });
+                    setTrees((trees) => ({ ...trees, [tree.treeId]: tree }));
                     props.onAddTree?.(tree);
                 },
                 removeTree: (treeId) => {

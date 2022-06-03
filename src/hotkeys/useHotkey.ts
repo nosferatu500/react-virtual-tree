@@ -24,8 +24,6 @@ export const useHotkey = (
             if (!active) {
                 return;
             }
-            console.log(e.key);
-
             pressedKeys.current.push(e.key);
         },
         [active]
