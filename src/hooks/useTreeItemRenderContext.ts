@@ -145,12 +145,31 @@ const createTreeItemRenderContext = (
         role: "none",
     };
 
+    const arrowProps: HTMLProps<HTMLElement> = {
+        onClick: (e) => {
+            if (item.isFolder) {
+                actions.toggleExpandedState();
+            }
+            actions.selectItem();
+        },
+        onFocus: () => {
+            actions.focusItem();
+        },
+        onDragOver: (e) => {
+            e.preventDefault(); // Allow drop
+        },
+        "aria-hidden": true,
+        tabIndex: -1,
+        // TODO alternative interaction modes
+    };
+
     return {
         ...actions,
         ...renderContext,
         elementProps,
         itemContainerWithoutChildrenProps,
         itemContainerWithChildrenProps,
+        arrowProps,
     };
 };
 

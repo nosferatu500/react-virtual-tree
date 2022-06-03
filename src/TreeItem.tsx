@@ -118,6 +118,12 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
             })
         );
 
+    const arrowComponent = renderer.renderItemArrow({
+        treeMeta,
+        context: renderContext,
+        item: context.items[props.itemIndex],
+    });
+
     return (
         renderer.renderItem({
             ref,
@@ -126,6 +132,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
             depth: props.depth,
             children,
             title: titleComponent,
+            arrow: arrowComponent,
             context: renderContext,
             treeMeta,
         }) || (null as any)

@@ -14,8 +14,10 @@ export const TreeItemRenamingInput: React.FC<{
     const [title, setTitle] = useState(context.getItemTitle(item));
 
     const abort = () => {
-        // context.onStartRenamingItem()
-        // TODO store renaming details in tree, not externally
+        setRenamingItem(null);
+        requestAnimationFrame(() => {
+            context.setActiveTree(treeId);
+        });
     };
 
     const confirm = () => {

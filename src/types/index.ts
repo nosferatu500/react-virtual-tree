@@ -36,6 +36,7 @@ export type TreeItemRenderContext = {
     elementProps: HTMLProps<any>;
     itemContainerWithoutChildrenProps: HTMLProps<any>;
     itemContainerWithChildrenProps: HTMLProps<any>;
+    arrowProps: HTMLProps<any>;
 } & TreeItemActions &
     TreeItemRenderFlags;
 
@@ -55,11 +56,18 @@ export type TreeRenderProps = {
         depth: number;
         children: React.ReactNode | null;
         title: React.ReactNode;
+        arrow: React.ReactNode;
         context: TreeItemRenderContext;
         treeMeta: TreeMeta;
     }) => React.ReactNode;
     renderItemTitle?: (props: {
         title: string;
+        item: TreeItem;
+        context: TreeItemRenderContext;
+        treeMeta: TreeMeta;
+    }) => React.ReactNode;
+
+    renderItemArrow?: (props: {
         item: TreeItem;
         context: TreeItemRenderContext;
         treeMeta: TreeMeta;
@@ -245,3 +253,17 @@ export type KeyboardBindings = Partial<{
     startSearch?: string[];
     selectAll?: string[];
 }>;
+
+export type TreeRef = {
+    viewState: TreeViewState;
+    getItemsLinearly: () => Array<{ item: TreeItem; depth: number }>;
+    focusItemAt: (index: number) => void;
+    moveFocusRelative: (relativeIndex: number) => void;
+    selectItems: (items: TreeItemIndex[]) => void;
+    // TODO
+};
+
+export type TreeEnvironmentRef = {
+    treeIds: string[];
+    getTree: (treeId: string) => TreeRef;
+};
