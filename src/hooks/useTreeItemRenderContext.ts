@@ -3,11 +3,13 @@ import { defaultMatcher } from "../search/defaultMatcher";
 import {
     TreeItem,
     TreeItemActions,
+    TreeItemIndex,
     TreeItemRenderContext,
     TreeItemRenderFlags,
     VirtualForestProps,
     VirtualTreeContextProps,
 } from "../types";
+import { getItemsLinearly } from "../utils";
 import { useTreeContext } from "../VirtualTree";
 import { useVirtualTreeContext } from "../VirtualTreeContext";
 
@@ -15,7 +17,9 @@ const createTreeItemRenderContext = (
     item: TreeItem,
     context: VirtualTreeContextProps,
     treeId: string,
-    isSearchMatching: boolean
+    isSearchMatching: boolean,
+    renamingItem: TreeItemIndex | null,
+    rootItem: string
 ): TreeItemRenderContext => {
     const viewState = context.viewState[treeId];
 
@@ -48,13 +52,32 @@ const createTreeItemRenderContext = (
         focusItem: () => {
             context.onFocusItem?.(item, treeId);
         },
+        selectUpTo: () => {
+            if (viewState && viewState.selectedItems && viewState.selectedItems.length > 0) {
+                const linearItems = getItemsLinearly(rootItem, viewState, context.items);
+                const selectionStart = linearItems.findIndex((linearItem) =>
+                    viewState.selectedItems?.includes(linearItem.item)
+                );
+                const selectionEnd = linearItems.findIndex((linearItem) => linearItem.item === item.index);
+
+                if (selectionStart < selectionEnd) {
+                    const selection = linearItems.slice(selectionStart, selectionEnd + 1).map(({ item }) => item);
+                    context.onSelectItems?.([...(viewState?.selectedItems ?? []), ...selection], treeId);
+                } else {
+                    const selection = linearItems.slice(selectionEnd, selectionStart).map(({ item }) => item);
+                    context.onSelectItems?.([...(viewState?.selectedItems ?? []), ...selection], treeId);
+                }
+            } else {
+                actions.selectItem();
+            }
+        },
     };
 
     const renderContext: TreeItemRenderFlags = {
         isSelected: viewState?.selectedItems?.includes(item.index),
         isExpanded: viewState?.expandedItems?.includes(item.index),
         isFocused: viewState?.focusedItem === item.index,
-        isRenaming: viewState?.renamingItem === item.index,
+        isRenaming: renamingItem === item.index,
         isDraggingOver:
             context.draggingPosition &&
             context.draggingPosition.targetType === "item" &&
@@ -67,7 +90,10 @@ const createTreeItemRenderContext = (
     const elementProps: HTMLProps<HTMLElement> = {
         onClick: (e) => {
             actions.focusItem();
-            if (e.ctrlKey || e.metaKey) {
+            if (e.shiftKey) {
+                actions.selectUpTo();
+                // TODO: isWindows
+            } else if (e.ctrlKey || e.metaKey) {
                 if (renderContext.isSelected) {
                     actions.unselectItem();
                 } else {
@@ -99,6 +125,9 @@ const createTreeItemRenderContext = (
         onFocus: () => {
             actions.focusItem();
         },
+        role: "treeitem",
+        "aria-expanded": item.isFolder ? (renderContext.isExpanded ? "true" : "false") : undefined,
+        tabIndex: !renderContext.isRenaming ? (renderContext.isFocused ? 0 : -1) : undefined,
         ...({
             "data-rvt-item-interactive": true,
             "data-rvt-item-focus": renderContext.isFocused ? "true" : "false",
@@ -106,17 +135,22 @@ const createTreeItemRenderContext = (
         } as any),
     };
 
-    const containerElementProps: HTMLProps<HTMLElement> = {
+    const itemContainerWithoutChildrenProps: HTMLProps<HTMLElement> = {
         ...({
             "data-rvt-item-container": "true",
         } as any),
+    };
+
+    const itemContainerWithChildrenProps: HTMLProps<HTMLElement> = {
+        role: "none",
     };
 
     return {
         ...actions,
         ...renderContext,
         elementProps,
-        itemContainerProps: containerElementProps,
+        itemContainerWithoutChildrenProps,
+        itemContainerWithChildrenProps,
     };
 };
 
@@ -124,18 +158,20 @@ const createTreeItemRenderContextDependencies = (
     item: TreeItem | undefined,
     context: VirtualForestProps,
     treeId: string,
-    isSearchMatching: boolean
+    isSearchMatching: boolean,
+    renamingItem: TreeItemIndex | null
 ) => [
     context,
     context.viewState[treeId]?.expandedItems,
     context.viewState[treeId]?.selectedItems,
+    renamingItem && renamingItem === item?.index,
     item?.index ?? "___no_item",
     treeId,
     isSearchMatching,
 ];
 
 export const useTreeItemRenderContext = (item?: TreeItem) => {
-    const { treeId, search } = useTreeContext();
+    const { treeId, search, rootItem, renamingItem } = useTreeContext();
     const context = useVirtualTreeContext();
     const itemTitle = item && context.getItemTitle(item);
 
@@ -146,7 +182,7 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
     }, [search, itemTitle]);
 
     return useMemo(
-        () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching),
-        createTreeItemRenderContextDependencies(item, context, treeId, isSearchMatching)
+        () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching, renamingItem, rootItem),
+        createTreeItemRenderContextDependencies(item, context, treeId, isSearchMatching, renamingItem)
     );
 };

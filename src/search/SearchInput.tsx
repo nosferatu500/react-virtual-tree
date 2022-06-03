@@ -1,4 +1,5 @@
 import { useHtmlElementEventListener } from "../hooks/useHtmlElementEventListener";
+import { useViewState } from "../hooks/useViewState";
 import { useHotkey } from "../hotkeys/useHotkey";
 import { useTreeContext } from "../VirtualTree";
 import { useVirtualTreeContext } from "../VirtualTreeContext";
@@ -8,8 +9,8 @@ export const SearchInput: React.FC<{
     containerRef?: HTMLElement | HTMLDivElement | null;
 }> = (props) => {
     const context = useVirtualTreeContext();
-    const { search, setSearch, treeId, renderer } = useTreeContext();
-
+    const { search, setSearch, treeId, renderer, renamingItem } = useTreeContext();
+    const viewState = useViewState();
     const isActiveTree = context.activeTreeId === treeId;
 
     useSearchMatchFocus();
@@ -32,26 +33,34 @@ export const SearchInput: React.FC<{
         [search, isActiveTree]
     );
 
-    useHtmlElementEventListener(props.containerRef, "keydown", (e) => {
-        const unicode = e.key.charCodeAt(0);
-        if (
-            isActiveTree &&
-            search === null &&
-            !e.ctrlKey &&
-            !e.shiftKey &&
-            !e.altKey &&
-            !e.metaKey &&
-            ((unicode >= 48 && unicode <= 57) || // number
-                // (unicode >= 65 && unicode <= 90) || // uppercase letter
-                (unicode >= 97 && unicode <= 122)) // lowercase letter
-        ) {
-            setSearch("");
-            // @ts-ignore
-            document.querySelector('[data-rvt-search-input="true"]')?.focus?.();
-        }
-    });
+    useHtmlElementEventListener(
+        props.containerRef,
+        "keydown",
+        (e) => {
+            const unicode = e.key.charCodeAt(0);
+            if (
+                (context.canSearch ?? true) &&
+                (context.canSearchByStartingTyping ?? true) &&
+                isActiveTree &&
+                search === null &&
+                !renamingItem &&
+                !e.ctrlKey &&
+                !e.shiftKey &&
+                !e.altKey &&
+                !e.metaKey &&
+                ((unicode >= 48 && unicode <= 57) || // number
+                    // (unicode >= 65 && unicode <= 90) || // uppercase letter
+                    (unicode >= 97 && unicode <= 122)) // lowercase letter
+            ) {
+                setSearch("");
+                // @ts-ignore
+                document.querySelector('[data-rvt-search-input="true"]')?.focus?.();
+            }
+        },
+        [isActiveTree, search, renamingItem, context.canSearchByStartingTyping, context.canSearch]
+    );
 
-    if (search === null) {
+    if (!(context.canSearch ?? true) || search === null) {
         return null;
     }
 

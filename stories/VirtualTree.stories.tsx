@@ -158,7 +158,7 @@ export const SingleTree = () => {
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(outData) => {
@@ -187,7 +187,7 @@ export const SingleTreeAllCollapsed = () => {
             allowReorderingItems
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(outData) => {
@@ -214,7 +214,7 @@ export const MultipleTrees = () => {
             allowReorderingItems
             containerSize={{ width: 500, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(outData) => {
@@ -272,7 +272,7 @@ export const NoDragAndDrop = () => {
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(outData) => {
@@ -301,7 +301,7 @@ export const NoReorderingAllowed = () => {
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(outData) => {
@@ -330,7 +330,7 @@ export const NoCollapseAllowed = () => {
             allowReorderingItems
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             onChange={setData}
             onReorder={(outData) => {

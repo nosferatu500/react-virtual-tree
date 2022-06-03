@@ -1,3 +1,4 @@
+import { useGetLinearItems } from "../hooks/useGetLinearItems";
 import { useMoveFocusToIndex } from "../hooks/useMoveFocusToIndex";
 import { useViewState } from "../hooks/useViewState";
 import { useTreeContext } from "../VirtualTree";
@@ -7,9 +8,10 @@ import { useKey } from "./useKey";
 
 export const useTreeKeyboardBindings = (containerRef?: HTMLElement | HTMLDivElement | null) => {
     const viewState = useViewState();
-    const { treeId } = useTreeContext();
+    const { treeId, setRenamingItem, setSearch } = useTreeContext();
     const context = useVirtualTreeContext();
     const moveFocusToIndex = useMoveFocusToIndex(containerRef);
+    const getLinearItems = useGetLinearItems();
 
     const isActiveTree = context.activeTreeId === treeId;
 
@@ -118,6 +120,18 @@ export const useTreeKeyboardBindings = (containerRef?: HTMLElement | HTMLDivElem
     );
 
     useHotkey(
+        "selectAll",
+        (e) => {
+            e.preventDefault();
+            context.onSelectItems?.(
+                getLinearItems().map(({ item }) => item),
+                treeId
+            );
+        },
+        isActiveTree
+    );
+
+    useHotkey(
         "moveItems",
         (e) => {
             e.preventDefault();
@@ -130,6 +144,29 @@ export const useTreeKeyboardBindings = (containerRef?: HTMLElement | HTMLDivElem
             if (selectedItems) {
                 // TODO move
             }
+        },
+        isActiveTree
+    );
+
+    useHotkey(
+        "renameItem",
+        (e) => {
+            if (viewState.focusedItem) {
+                e.preventDefault();
+                const item = context.items[viewState.focusedItem];
+                context.onStartRenamingItem?.(item, treeId);
+                setRenamingItem(item.index);
+            }
+        },
+        isActiveTree
+    );
+
+    useHotkey(
+        "startSearch",
+        (e) => {
+            e.preventDefault();
+            setSearch("");
+            (document.querySelector('[data-rvt-search-input="true"]') as any)?.focus?.();
         },
         isActiveTree
     );

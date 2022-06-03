@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes, HTMLProps, InputHTMLAttributes, PropsWithChildren } from "react";
+import React, { FormHTMLAttributes, HTMLProps, InputHTMLAttributes, PropsWithChildren, Ref } from "react";
 
 export type TreeItemIndex = string | number;
 
@@ -18,6 +18,7 @@ export type TreeItemActions = {
     selectItem: () => void;
     unselectItem: () => void;
     addToSelectedItems: () => void;
+    selectUpTo: () => void;
     focusItem: () => void;
 };
 
@@ -33,7 +34,8 @@ export type TreeItemRenderFlags = {
 
 export type TreeItemRenderContext = {
     elementProps: HTMLProps<any>;
-    itemContainerProps: HTMLProps<any>;
+    itemContainerWithoutChildrenProps: HTMLProps<any>;
+    itemContainerWithChildrenProps: HTMLProps<any>;
 } & TreeItemActions &
     TreeItemRenderFlags;
 
@@ -43,41 +45,51 @@ export type TreeMeta = {
     isFocused?: boolean;
     isSearching?: boolean;
     search?: string | null;
-};
+} & Tree;
 
 export type TreeRenderProps = {
-    renderItem?: (
-        ref: React.RefObject<HTMLDivElement>,
-        item: TreeItem,
-        style: any,
-        depth: number,
-        children: React.ReactNode | null,
-        title: React.ReactNode,
-        context: TreeItemRenderContext,
-        treeMeta: TreeMeta
-    ) => React.ReactNode;
-    renderItemTitle?: (
-        title: string,
-        item: TreeItem,
-        context: TreeItemRenderContext,
-        treeMeta: TreeMeta
-    ) => React.ReactNode;
-    renderRenameInput?: (
-        item: TreeItem,
-        inputProps: Partial<InputHTMLAttributes<HTMLInputElement>>,
-        submitButtonProps: Partial<ButtonHTMLAttributes<HTMLButtonElement>>
-    ) => React.ReactNode;
-    renderDraggingItem?: (items: Array<TreeItem>) => React.ReactNode;
-    renderDraggingItemTitle?: (items: Array<TreeItem>) => React.ReactNode;
+    renderItem?: (props: {
+        ref: React.RefObject<HTMLDivElement>;
+        item: TreeItem;
+        style: any;
+        depth: number;
+        children: React.ReactNode | null;
+        title: React.ReactNode;
+        context: TreeItemRenderContext;
+        treeMeta: TreeMeta;
+    }) => React.ReactNode;
+    renderItemTitle?: (props: {
+        title: string;
+        item: TreeItem;
+        context: TreeItemRenderContext;
+        treeMeta: TreeMeta;
+    }) => React.ReactNode;
+    renderRenameInput?: (props: {
+        item: TreeItem;
+        inputProps: InputHTMLAttributes<HTMLInputElement>;
+        inputRef: Ref<HTMLInputElement>;
+        submitButtonProps: HTMLProps<any>;
+        formProps: FormHTMLAttributes<HTMLFormElement>;
+    }) => React.ReactNode;
+    renderDraggingItem?: (props: { items: Array<TreeItem> }) => React.ReactNode;
+    renderDraggingItemTitle?: (props: { items: Array<TreeItem> }) => React.ReactNode;
+    renderItemsContainer?: (props: {
+        children: React.ReactNode;
+        containerProps: HTMLProps<any>;
+        treeMeta: TreeMeta;
+    }) => React.ReactNode;
+    renderTreeContainer?: (props: {
+        ref: React.RefObject<HTMLDivElement>;
+        treeId: string;
+        children: React.ReactNode;
+        treeMeta: TreeMeta;
+    }) => React.ReactNode;
+    renderDragBetweenLine?: (props: {
+        draggingPosition: DraggingPosition;
+        lineProps: HTMLProps<any>;
+    }) => React.ReactNode;
+    renderSearchInput?: (props: { inputProps: HTMLProps<HTMLInputElement> }) => React.ReactNode;
     renderDepthOffset?: number;
-    renderTreeContainer?: (
-        ref: React.RefObject<HTMLDivElement>,
-        treeId: string,
-        children: React.ReactNode,
-        treeMeta: TreeMeta
-    ) => React.ReactNode;
-    renderDragBetweenLine?: (draggingPosition: DraggingPosition, lineProps: HTMLProps<any>) => React.ReactNode;
-    renderSearchInput?: (inputProps: HTMLProps<HTMLInputElement>) => React.ReactNode;
 };
 
 export type TreeCapabilities = {
@@ -89,11 +101,11 @@ export type TreeCapabilities = {
     canDropAt?: (items: TreeItem[], target: DraggingPosition) => boolean;
     canInvokePrimaryActionOnItemContainer?: boolean;
     canSearch?: boolean;
+    canSearchByStartingTyping?: boolean;
     doesSearchMatchItem?: (search: string, item: TreeItem, itemTitle: string) => boolean;
 };
 
 export type IndividualTreeViewState = {
-    renamingItem?: TreeItemIndex;
     selectedItems?: TreeItemIndex[];
     expandedItems?: TreeItemIndex[];
     untruncatedItems?: TreeItemIndex[];
@@ -204,6 +216,8 @@ export type Disposable = {
 export type TreeContextProps<T = any> = {
     search: string | null;
     setSearch: (searchValue: string | null) => void;
+    renamingItem: TreeItemIndex | null;
+    setRenamingItem: (item: TreeItemIndex | null) => void;
     renderer: Required<TreeRenderProps>;
     treeMeta: TreeMeta;
 } & Tree;
@@ -223,8 +237,11 @@ export type KeyboardBindings = Partial<{
     moveFocusToLastItem: string[];
     expandSiblings: string[];
     renameItem: string[];
+    abortRenameItem?: string[];
     toggleSelectItem: string[];
     moveItems: string[];
     abortMovingItems: string[];
     abortSearch: string[];
+    startSearch?: string[];
+    selectAll?: string[];
 }>;

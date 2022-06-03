@@ -43,7 +43,7 @@ export const TreeManager = (props: {}): JSX.Element => {
 
     const treeChildren = (
         <>
-            <TreeItemChildren children={rootChildren} depth={0} parentId={treeId} />
+            <TreeItemChildren depth={0}>{rootChildren}</TreeItemChildren>
             <DragBetweenLine treeId={treeId} />
             <SearchInput containerRef={containerRef.current} />
         </>
@@ -75,5 +75,10 @@ export const TreeManager = (props: {}): JSX.Element => {
 
     drop(containerRef);
 
-    return renderer.renderTreeContainer(containerRef, treeId, treeChildren, treeMeta) as JSX.Element;
+    return renderer.renderTreeContainer({
+        ref: containerRef,
+        treeId,
+        children: treeChildren,
+        treeMeta,
+    }) as JSX.Element;
 };

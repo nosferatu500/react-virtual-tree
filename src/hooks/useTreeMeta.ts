@@ -1,24 +1,32 @@
 import { useMemo } from "react";
-import { TreeMeta, VirtualTreeContextProps } from "../types";
+import { Tree, TreeItemIndex, TreeMeta, VirtualTreeContextProps } from "../types";
 import { useVirtualTreeContext } from "../VirtualTreeContext";
 
-const createTreeMeta = (context: VirtualTreeContextProps, treeId: string, search: string | null): TreeMeta => ({
-    isFocused: context.activeTreeId === treeId,
-    isRenaming: context.viewState[treeId]?.renamingItem !== undefined,
-    areItemsSelected: (context.viewState[treeId]?.selectedItems?.length ?? 0) > 0,
+const createTreeMeta = (
+    context: VirtualTreeContextProps,
+    treeConf: Tree,
+    search: string | null,
+    renamingItem?: TreeItemIndex | undefined
+): TreeMeta => ({
+    isFocused: context.activeTreeId === treeConf.treeId,
+    isRenaming: !!renamingItem,
+    areItemsSelected: (context.viewState[treeConf.treeId]?.selectedItems?.length ?? 0) > 0,
     isSearching: search !== null,
     search,
+    ...treeConf,
 });
 
-const createTreeMetaDeps = (context: VirtualTreeContextProps, treeId: string, search: string | null) => [
-    context.activeTreeId,
-    context.viewState[treeId]?.renamingItem,
-    context.viewState[treeId]?.selectedItems,
-    treeId,
-    search,
-];
+const createTreeMetaDeps = (
+    context: VirtualTreeContextProps,
+    treeId: string,
+    search: string | null,
+    renamingItem?: TreeItemIndex | undefined
+) => [context.activeTreeId, context.viewState[treeId]?.selectedItems, renamingItem, treeId, search];
 
-export const useTreeMeta = (treeId: string, search: string | null) => {
+export const useTreeMeta = (treeConf: Tree, search: string | null) => {
     const context = useVirtualTreeContext();
-    return useMemo(() => createTreeMeta(context, treeId, search), createTreeMetaDeps(context, treeId, search));
+    return useMemo(
+        () => createTreeMeta(context, treeConf, search),
+        createTreeMetaDeps(context, treeConf.treeId, search)
+    );
 };

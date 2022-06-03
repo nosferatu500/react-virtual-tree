@@ -21,7 +21,7 @@ export const useHotkey = (
         document,
         "keydown",
         (e) => {
-            if (!active) {
+            if (active === false) {
                 return;
             }
             if (!pressedKeys.current.includes(e.key)) {
@@ -35,7 +35,7 @@ export const useHotkey = (
         document,
         "keyup",
         (e) => {
-            if (!active) {
+            if (active === false) {
                 return;
             }
 

@@ -3,13 +3,14 @@ import { useDrag, useDrop } from "react-dnd";
 import { useTreeItemRenderContext } from "./hooks/useTreeItemRenderContext";
 import { useViewState } from "./hooks/useViewState";
 import { TreeItemChildren } from "./TreeItemChildren";
+import { TreeItemRenamingInput } from "./TreeItemRenamingInput";
 import { TreeItemIndex } from "./types";
 import { useTreeContext } from "./VirtualTree";
 import { useVirtualTreeContext } from "./VirtualTreeContext";
 
 export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
-    const { treeId, renderer, treeMeta } = useTreeContext();
+    const { treeId, renderer, treeMeta, renamingItem } = useTreeContext();
     const context = useVirtualTreeContext();
     const viewState = useViewState();
 
@@ -54,6 +55,8 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
             dropEffect: "copy",
         },
         canDrag: () => canDrag,
+        // TODO:
+        // canDrag: () => canDrag && !renderContext.isRenaming,
         collect: (monitor: any) => ({
             isDragging: monitor.isDragging(),
         }),
@@ -95,7 +98,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     }
 
     const children = item.isFolder && isExpanded && item.children && (
-        <TreeItemChildren depth={props.depth + 1} parentId={props.itemIndex} children={item.children} />
+        <TreeItemChildren depth={props.depth + 1}>{item.children}</TreeItemChildren>
     );
 
     const itemStyle = {
@@ -103,18 +106,28 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     };
 
     const title = context.getItemTitle(item);
-    const titleComponent = renderer.renderItemTitle(title, item, renderContext, treeMeta);
+    const titleComponent =
+        renamingItem === props.itemIndex ? (
+            <TreeItemRenamingInput itemIndex={props.itemIndex} />
+        ) : (
+            renderer.renderItemTitle({
+                treeMeta,
+                context: renderContext,
+                title,
+                item,
+            })
+        );
 
     return (
-        renderer.renderItem(
+        renderer.renderItem({
             ref,
-            context.items[props.itemIndex],
-            itemStyle,
-            props.depth,
+            item: context.items[props.itemIndex],
+            style: itemStyle,
+            depth: props.depth,
             children,
-            titleComponent,
-            renderContext,
-            treeMeta
-        ) || (null as any)
+            title: titleComponent,
+            context: renderContext,
+            treeMeta,
+        }) || (null as any)
     );
 };

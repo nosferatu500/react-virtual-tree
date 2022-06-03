@@ -47,7 +47,7 @@ export const LongTree = () => {
             allowDropOnItemWithChildren
             allowReorderingItems
             allowCollapse
-            dataProvider={new DataProvider(data)}
+            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
             getItemTitle={(item) => item.title}
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}

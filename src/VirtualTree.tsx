@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTreeMeta } from "./hooks/useTreeMeta";
 import { TreeManager } from "./TreeManager";
-import { TreeContextProps, TreeProps, TreeRenderProps } from "./types";
+import { TreeContextProps, TreeItemIndex, TreeProps, TreeRenderProps } from "./types";
 import { useVirtualTreeContext } from "./VirtualTreeContext";
 
 const TreeContext = React.createContext<TreeContextProps>(null as any);
@@ -13,6 +13,7 @@ export const VirtualTree = (props: TreeProps) => {
     const renderer = useMemo<Required<TreeRenderProps>>(() => ({ ...context, ...props }), [props, context]);
     const rootItem = context.items[props.rootItem];
     const [search, setSearch] = useState<string | null>(null);
+    const [renamingItem, setRenamingItem] = useState<TreeItemIndex | null>(null);
 
     useEffect(() => {
         context.addTree({
@@ -23,7 +24,13 @@ export const VirtualTree = (props: TreeProps) => {
         return () => context.removeTree(props.treeId);
     }, [props.treeId, props.rootItem]);
 
-    const treeMeta = useTreeMeta(props.treeId, search);
+    const treeMeta = useTreeMeta(
+        {
+            treeId: props.treeId,
+            rootItem: props.rootItem,
+        },
+        search
+    );
 
     if (rootItem === undefined) {
         context.onMissingItems?.([props.rootItem]);
@@ -38,6 +45,8 @@ export const VirtualTree = (props: TreeProps) => {
                 treeMeta,
                 search,
                 setSearch,
+                renamingItem,
+                setRenamingItem,
                 renderer,
             }}
         >

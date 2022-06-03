@@ -2,17 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import withScrolling, { createHorizontalStrength, createVerticalStrength } from "@nosferatu500/react-dnd-scrollzone";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { CompleteDataProvider } from "./static/CompleteDataProvider";
 import { IndividualTreeViewState, TreeDataProvider, TreeItem, TreeItemIndex, VirtualForestWrapperProps } from "./types";
 import { VirtualForest } from "./VirtualTreeContext";
-
-const createDataProvider = (provider: TreeDataProvider): Required<TreeDataProvider> => ({
-    ...provider,
-    componentDidUpdate: provider.componentDidUpdate ?? (() => ({ dispose: () => {} })),
-    getItems: provider.getItems ?? ((itemIds) => Promise.all(itemIds.map((id) => provider.getItem(id)))),
-    onRenameItem: provider.onRenameItem ?? (async () => {}),
-    onChangeItemChildren: provider.onChangeItemChildren ?? (async () => {}),
-    getData: provider.getData ?? (() => {}),
-});
 
 const ScrollingComponent = withScrolling(
     React.forwardRef((props, ref) => {
@@ -29,7 +21,7 @@ const horizontalStrength = (size: number) => createHorizontalStrength(size);
 export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
     const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>({});
     const [viewState, setViewState] = useState(props.viewState);
-    const dataProvider = createDataProvider(props.dataProvider);
+    const dataProvider = useMemo(() => new CompleteDataProvider(props.dataProvider), [props.dataProvider]);
 
     const writeItems = useMemo(
         () => (newItems: Record<TreeItemIndex, TreeItem>) => {
@@ -86,9 +78,11 @@ export const VirtualForestWrapper = (props: VirtualForestWrapperProps) => {
             onStartRenamingItem={(item, treeId) => {
                 updateState(treeId, (old) => ({ ...old, renamingItem: item.index }));
             }}
-            onRenameItem={(item, name, treeId) => {
-                dataProvider.onRenameItem(item, name);
+            onRenameItem={async (item, name, treeId) => {
+                await dataProvider.onRenameItem(item, name);
                 updateState(treeId, (old) => ({ ...old, renamingItem: undefined }));
+                const newItem = await dataProvider.getItem(item.index);
+                writeItems({ [item.index]: newItem });
             }}
             onDrop={async (items, target) => {
                 for (const item of items) {

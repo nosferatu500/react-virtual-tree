@@ -6,26 +6,28 @@ import "./style.css";
 export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProps => {
     return {
         renderDepthOffset: 4,
-        renderItemTitle: (title, item, context, info) => {
-            if (!info.isSearching || !context.isSearchMatching) {
+        renderItemTitle: ({ title, item, context, treeMeta }) => {
+            if (!treeMeta.isSearching || !context.isSearchMatching) {
                 return <>{title}</>;
             }
-            const startIndex = title.toLowerCase().indexOf(info.search!.toLowerCase());
+            const startIndex = title.toLowerCase().indexOf(treeMeta.search!.toLowerCase());
             return (
                 <>
                     {startIndex > 0 && <span>{title.slice(0, startIndex)}</span>}
                     <span className="rvt-tree-item-search-highlight">
-                        {title.slice(startIndex, startIndex + info.search!.length)}
+                        {title.slice(startIndex, startIndex + treeMeta.search!.length)}
                     </span>
-                    {startIndex + info.search!.length < title.length && (
-                        <span>{title.slice(startIndex + info.search!.length, title.length)}</span>
+                    {startIndex + treeMeta.search!.length < title.length && (
+                        <span>{title.slice(startIndex + treeMeta.search!.length, title.length)}</span>
                     )}
                 </>
             );
         },
-        renderItem: (ref, item, style, depth, children, title, context, info) => {
+        renderItem: ({ ref, item, style, depth, children, title, context, treeMeta }) => {
+            const InnerComponent = context.isRenaming ? "div" : "button";
             return (
                 <li
+                    {...(context.itemContainerWithChildrenProps as any)}
                     role="none"
                     className={classnames(
                         "rvt-tree-item-li",
@@ -37,12 +39,10 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                         context.isSearchMatching && "rvt-tree-item-li-search-match"
                     )}
                 >
-                    <button
+                    <InnerComponent
                         ref={ref}
-                        {...(context.itemContainerProps as any)}
+                        {...(context.itemContainerWithoutChildrenProps as any)}
                         {...(context.elementProps as any)}
-                        role="treeitem"
-                        tabIndex={context.isFocused ? 0 : -1}
                         style={{ paddingLeft: `${(depth + 1) * (renderer.renderDepthOffset ?? 10)}px`, ...style }}
                         className={classnames(
                             "rvt-tree-item-button",
@@ -55,13 +55,23 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                         )}
                     >
                         {title}
-                    </button>
+                    </InnerComponent>
                     {children}
                 </li>
             );
         },
-        renderRenameInput: (item, inputProps, submitButtonProps) => {
-            return <div />;
+        renderRenameInput: ({ item, inputProps, inputRef, submitButtonProps, formProps }) => {
+            return (
+                <form {...formProps} className="rvt-tree-item-renaming-form">
+                    <input {...inputProps} ref={inputRef} className="rvt-tree-item-renaming-input" />
+                    <input
+                        {...submitButtonProps}
+                        type="submit"
+                        className="rvt-tree-item-renaming-submit-button"
+                        value="🗸"
+                    />
+                </form>
+            );
         },
         renderDraggingItem: (items) => {
             return <div />;
@@ -69,14 +79,10 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
         renderDraggingItemTitle: (items) => {
             return <div />;
         },
-        renderTreeContainer: (ref, treeId, children, treeMeta) => {
+        renderTreeContainer: ({ ref, treeId, children, treeMeta }) => {
             return (
                 <div
                     ref={ref}
-                    style={{ position: "relative" }}
-                    {...({
-                        "data-rvt-tree": treeId,
-                    } as any)}
                     className={classnames(
                         "rvt-tree-root",
                         treeMeta.isFocused && "rvt-tree-root-focus",
@@ -84,11 +90,26 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
                         treeMeta.areItemsSelected && "rvt-tree-root-itemsselected"
                     )}
                 >
-                    {children}
+                    <div
+                        {...({
+                            role: "tree",
+                            "data-rvt-tree": treeId,
+                        } as any)}
+                        style={{ position: "relative" }}
+                    >
+                        {children}
+                    </div>
                 </div>
             );
         },
-        renderDragBetweenLine: (draggingPosition, lineProps) => {
+        renderItemsContainer: ({ children, containerProps, treeMeta }) => {
+            return (
+                <ul {...containerProps} className="rvt-tree-items-container">
+                    {children}
+                </ul>
+            );
+        },
+        renderDragBetweenLine: ({ draggingPosition, lineProps }) => {
             return (
                 <div
                     {...lineProps}
@@ -106,7 +127,11 @@ export const createDefaultRenderer = (renderer: TreeRenderProps): TreeRenderProp
             );
         },
         renderSearchInput: (inputProps) => {
-            return <input {...inputProps} className={classnames("rvt-tree-search-input")} />;
+            return (
+                <div className={classnames("rvt-tree-search-input-container")}>
+                    <input {...inputProps} className={classnames("rvt-tree-search-input")} />
+                </div>
+            );
         },
     };
 };
