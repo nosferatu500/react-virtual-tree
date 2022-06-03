@@ -1,6 +1,8 @@
 import { HTMLProps, useMemo } from "react";
+import { useInteractionManager } from "../interaction/InteractionManagerProvider";
 import { defaultMatcher } from "../search/defaultMatcher";
 import {
+    InteractionManager,
     TreeItem,
     TreeItemActions,
     TreeItemIndex,
@@ -17,6 +19,7 @@ const createTreeItemRenderContext = (
     item: TreeItem,
     context: VirtualTreeContextProps,
     treeId: string,
+    interactionManager: InteractionManager,
     isSearchMatching: boolean,
     renamingItem: TreeItemIndex | null,
     rootItem: string
@@ -73,7 +76,7 @@ const createTreeItemRenderContext = (
         },
     };
 
-    const renderContext: TreeItemRenderFlags = {
+    const renderFlags: TreeItemRenderFlags = {
         isSelected: viewState?.selectedItems?.includes(item.index),
         isExpanded: viewState?.expandedItems?.includes(item.index),
         isFocused: viewState?.focusedItem === item.index,
@@ -88,49 +91,12 @@ const createTreeItemRenderContext = (
     };
 
     const elementProps: HTMLProps<HTMLElement> = {
-        onClick: (e) => {
-            actions.focusItem();
-            if (e.shiftKey) {
-                actions.selectUpTo();
-                // TODO: isWindows
-            } else if (e.ctrlKey || e.metaKey) {
-                if (renderContext.isSelected) {
-                    actions.unselectItem();
-                } else {
-                    actions.addToSelectedItems();
-                }
-            } else {
-                if (item.isFolder) {
-                    actions.toggleExpandedState();
-                }
-                actions.selectItem();
-
-                if (!item.isFolder || context.canInvokePrimaryActionOnItemContainer) {
-                    actions.primaryAction();
-                }
-            }
-
-            if (context.onClick) {
-                context.onClick(item);
-            }
-        },
-        onDoubleClick: () => {
-            if (item.isFolder) {
-                // actions.toggleExpandedState();
-            } else {
-                context.onPrimaryAction?.(item, treeId);
-            }
-            // actions.selectItem();
-        },
-        onFocus: () => {
-            actions.focusItem();
-        },
+        ...interactionManager.createInteractiveElementProps(item, treeId, actions, renderFlags),
         role: "treeitem",
-        "aria-expanded": item.isFolder ? (renderContext.isExpanded ? "true" : "false") : undefined,
-        tabIndex: !renderContext.isRenaming ? (renderContext.isFocused ? 0 : -1) : undefined,
+        "aria-expanded": item.isFolder ? (renderFlags.isExpanded ? "true" : "false") : undefined,
         ...({
             "data-rvt-item-interactive": true,
-            "data-rvt-item-focus": renderContext.isFocused ? "true" : "false",
+            "data-rvt-item-focus": renderFlags.isFocused ? "true" : "false",
             "data-rvt-item-id": item.index,
         } as any),
     };
@@ -165,7 +131,7 @@ const createTreeItemRenderContext = (
 
     return {
         ...actions,
-        ...renderContext,
+        ...renderFlags,
         elementProps,
         itemContainerWithoutChildrenProps,
         itemContainerWithChildrenProps,
@@ -192,6 +158,7 @@ const createTreeItemRenderContextDependencies = (
 export const useTreeItemRenderContext = (item?: TreeItem) => {
     const { treeId, search, rootItem, renamingItem } = useTreeContext();
     const context = useVirtualTreeContext();
+    const interactionManager = useInteractionManager();
     const itemTitle = item && context.getItemTitle(item);
 
     const isSearchMatching = useMemo(() => {
@@ -201,7 +168,17 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
     }, [search, itemTitle]);
 
     return useMemo(
-        () => item && createTreeItemRenderContext(item, context, treeId, isSearchMatching, renamingItem, rootItem),
+        () =>
+            item &&
+            createTreeItemRenderContext(
+                item,
+                context,
+                treeId,
+                interactionManager,
+                isSearchMatching,
+                renamingItem,
+                rootItem
+            ),
         createTreeItemRenderContextDependencies(item, context, treeId, isSearchMatching, renamingItem)
     );
 };

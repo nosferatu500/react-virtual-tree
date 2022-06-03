@@ -30,6 +30,7 @@ export type TreeItemRenderFlags = {
     isDraggingOver?: boolean;
     isDraggingOverParent?: boolean;
     isSearchMatching?: boolean;
+    canDrag?: boolean;
 };
 
 export type TreeItemRenderContext = {
@@ -100,7 +101,23 @@ export type TreeRenderProps = {
     renderDepthOffset?: number;
 };
 
+export enum InteractionMode {
+    ClickItemToExpand = "click-item-to-expand",
+    ClickArrowToExpand = "click-arrow-to-expand",
+}
+
+export type InteractionManager = {
+    mode: InteractionMode;
+    createInteractiveElementProps: (
+        item: TreeItem,
+        treeId: string,
+        actions: TreeItemActions,
+        renderFlags: TreeItemRenderFlags
+    ) => HTMLProps<HTMLElement>;
+};
+
 export type TreeCapabilities = {
+    defaultInteractionMode?: InteractionMode;
     allowDragAndDrop?: boolean;
     allowDropOnItemWithChildren?: boolean;
     allowDropOnItemWithoutChildren?: boolean;
@@ -161,6 +178,7 @@ export type VirtualTreeContextProps = {
     draggingItems?: TreeItem[];
     draggingPosition?: DraggingPosition;
     itemHeight: number;
+    treeIds: string[];
     onClick?: (item: TreeItem) => void;
     addTree: (tree: Tree) => void;
     removeTree: (treeId: string) => void;
@@ -228,6 +246,7 @@ export type TreeContextProps<T = any> = {
     setRenamingItem: (item: TreeItemIndex | null) => void;
     renderer: Required<TreeRenderProps>;
     treeMeta: TreeMeta;
+    getItemsLinearly: () => Array<{ item: TreeItemIndex; depth: number }>;
 } & Tree;
 
 export type TreeDataProvider = {
@@ -253,17 +272,3 @@ export type KeyboardBindings = Partial<{
     startSearch?: string[];
     selectAll?: string[];
 }>;
-
-export type TreeRef = {
-    viewState: TreeViewState;
-    getItemsLinearly: () => Array<{ item: TreeItem; depth: number }>;
-    focusItemAt: (index: number) => void;
-    moveFocusRelative: (relativeIndex: number) => void;
-    selectItems: (items: TreeItemIndex[]) => void;
-    // TODO
-};
-
-export type TreeEnvironmentRef = {
-    treeIds: string[];
-    getTree: (treeId: string) => TreeRef;
-};
