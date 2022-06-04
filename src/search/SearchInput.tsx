@@ -1,36 +1,47 @@
-import { useHtmlElementEventListener } from "../hooks/useHtmlElementEventListener";
-import { useViewState } from "../hooks/useViewState";
+import * as React from "react";
+import { useTreeEnvironment } from "../controlledEnvironment/ControlledTreeEnvironment";
 import { useHotkey } from "../hotkeys/useHotkey";
-import { useTreeContext } from "../VirtualTree";
-import { useVirtualTreeContext } from "../VirtualTreeContext";
+import { useTree } from "../tree/Tree";
+import { useViewState } from "../tree/useViewState";
+import { useCallSoon } from "../useCallSoon";
+import { useHtmlElementEventListener } from "../useHtmlElementEventListener";
 import { useSearchMatchFocus } from "./useSearchMatchFocus";
 
 export const SearchInput: React.FC<{
-    containerRef?: HTMLElement | HTMLDivElement | null;
+    containerRef?: HTMLElement;
 }> = (props) => {
-    const context = useVirtualTreeContext();
-    const { search, setSearch, treeId, renderer, renamingItem } = useTreeContext();
-    const viewState = useViewState();
-    const isActiveTree = context.activeTreeId === treeId;
+    const { search, setSearch, treeId, renderers, renamingItem } = useTree();
+    const environment = useTreeEnvironment();
+    useViewState();
+    const isActiveTree = environment.activeTreeId === treeId;
+    const callSoon = useCallSoon();
 
     useSearchMatchFocus();
 
     const clearSearch = () => {
         setSearch(null);
 
-        const focusItem = document.querySelector(`[data-rvt-tree="${treeId}"] [data-rvt-item-focus="true"]`);
-        (focusItem as HTMLElement)?.focus?.();
+        if (environment.autoFocus ?? true) {
+            // Refocus item in tree
+            // TODO move logic as reusable method into tree or tree environment
+            const focusItem = document.querySelector(`[data-rct-tree="${treeId}"] [data-rct-item-focus="true"]`);
+            (focusItem as HTMLElement)?.focus?.();
+        }
     };
 
     useHotkey(
         "abortSearch",
-        (e) => {
-            requestAnimationFrame(() => {
+        () => {
+            // Without the callSoon, hitting enter to abort
+            // and then moving focus weirdly moves the selected item along
+            // with the focused item.
+            callSoon(() => {
                 clearSearch();
             });
         },
         isActiveTree && search !== null,
-        [search, isActiveTree]
+        true,
+        [search, isActiveTree, callSoon]
     );
 
     useHtmlElementEventListener(
@@ -39,8 +50,8 @@ export const SearchInput: React.FC<{
         (e) => {
             const unicode = e.key.charCodeAt(0);
             if (
-                (context.canSearch ?? true) &&
-                (context.canSearchByStartingTyping ?? true) &&
+                (environment.canSearch ?? true) &&
+                (environment.canSearchByStartingTyping ?? true) &&
                 isActiveTree &&
                 search === null &&
                 !renamingItem &&
@@ -53,26 +64,27 @@ export const SearchInput: React.FC<{
                     (unicode >= 97 && unicode <= 122)) // lowercase letter
             ) {
                 setSearch("");
-                // @ts-ignore
-                document.querySelector('[data-rvt-search-input="true"]')?.focus?.();
+
+                (document.querySelector('[data-rct-search-input="true"]') as any)?.focus?.();
             }
         },
-        [isActiveTree, search, renamingItem, context.canSearchByStartingTyping, context.canSearch]
+        [isActiveTree, search, renamingItem, environment.canSearchByStartingTyping, environment.canSearch]
     );
 
-    if (!(context.canSearch ?? true) || search === null) {
+    if (!(environment.canSearch ?? true) || search === null) {
         return null;
     }
 
-    return renderer.renderSearchInput({
+    return renderers.renderSearchInput({
         inputProps: {
             value: search,
             onChange: (e: any) => setSearch(e.target.value),
             onBlur: () => {
                 clearSearch();
             },
+            "aria-label": "Search for items", // TODO
             ...({
-                "data-rvt-search-input": "true",
+                "data-rct-search-input": "true",
             } as any),
         },
     }) as any;

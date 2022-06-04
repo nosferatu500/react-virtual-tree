@@ -1,6 +1,6 @@
 import { TreeItem } from "../types";
 
-export const defaultMatcher: <T = any>(search: string, item: TreeItem, itemTitle: string) => boolean = (
+export const defaultMatcher: <T = any>(search: string, item: TreeItem<T>, itemTitle: string) => boolean = (
     search,
     item,
     itemTitle

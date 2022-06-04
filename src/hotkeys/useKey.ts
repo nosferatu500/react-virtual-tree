@@ -1,4 +1,4 @@
-import { useHtmlElementEventListener } from "../hooks/useHtmlElementEventListener";
+import { useHtmlElementEventListener } from "../useHtmlElementEventListener";
 
 export const useKey = (key: string, onHit: (e: KeyboardEvent) => void, active?: boolean, deps?: any[]) => {
     useHtmlElementEventListener(

@@ -1,22 +1,24 @@
 import React, { useRef, useState } from "react";
 import { Meta } from "@storybook/react";
-import { DataProvider, DataSource, TreeItem, VirtualForestWrapper, VirtualTree } from "../src";
+import { ExplicitDataSource, StaticTreeDataProvider, Tree, TreeItem, UncontrolledTreeEnvironment } from "../src";
 
-const itemsWithManyChildren: DataSource = {
+const itemsWithManyChildren: ExplicitDataSource = {
     items: {
         root: {
             index: "root",
             children: ["innerRoot"],
-            title: "root",
-            isFolder: true,
+            data: "root",
+            hasChildren: true,
             canMove: true,
+            canRename: true,
         },
         innerRoot: {
             index: "innerRoot",
             children: [],
-            title: "innerRoot",
-            isFolder: true,
+            data: "innerRoot",
+            hasChildren: true,
             canMove: true,
+            canRename: true,
         },
     },
 };
@@ -25,12 +27,12 @@ for (let i = 0; i < 1000; i++) {
     const id = `item${i}`;
     itemsWithManyChildren.items[id] = {
         index: id,
-        isFolder: false,
-        title: id,
+        hasChildren: false,
+        data: id,
         canMove: true,
-        children: [],
+        canRename: true,
     };
-    itemsWithManyChildren.items.innerRoot.children.push(id);
+    itemsWithManyChildren.items.innerRoot.children!.push(id);
 }
 
 export default {
@@ -42,13 +44,13 @@ export const LongTree = () => {
     const [data, setData] = useState<any>(ref.current);
 
     return (
-        <VirtualForestWrapper
-            allowDragAndDrop
-            allowDropOnItemWithChildren
-            allowReorderingItems
+        <UncontrolledTreeEnvironment
+            canDragAndDrop
+            canDropOnItemWithChildren
+            canReorderItems
             allowCollapse
-            dataProvider={new DataProvider(data, (item, data) => ({ ...item, data }))}
-            getItemTitle={(item) => item.title}
+            dataProvider={new StaticTreeDataProvider(data, (item, itemData) => ({ ...item, itemData }))}
+            getItemTitle={(item) => item.data}
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
             viewState={{}}
@@ -58,7 +60,7 @@ export const LongTree = () => {
             }}
             onClick={(item: TreeItem) => console.log(item)}
         >
-            <VirtualTree treeId="tree-1" rootItem="root" />
-        </VirtualForestWrapper>
+            <Tree treeId="tree-1" rootItem="root" />
+        </UncontrolledTreeEnvironment>
     );
 };
