@@ -1,5 +1,6 @@
 import React from "react";
 import { AllTreeRenderProps } from "../types";
+import "../style.css";
 
 const cx = (...classNames: Array<string | undefined | false>) => classNames.filter((cn) => !!cn).join(" ");
 
