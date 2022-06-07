@@ -156,7 +156,9 @@
         }
       ],
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/exhaustive-deps": ["warn", {
+        "additionalHooks": "(useHtmlElementEventListener)|(useFocusWithin)|(useSideEffect)"
+      }],
       "@typescript-eslint/no-duplicate-imports": [
         "error"
       ],
