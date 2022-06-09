@@ -15,7 +15,11 @@ export function useCallSoon(): (callback: () => void) => void {
         // can't use handleRef.current in the cleanup function, so we have to
         // assign it to a new variable here.
         const handles = handleRef.current;
-        return () => handles.forEach((handle) => cancelAnimationFrame(handle));
+        return () => {
+            for (const handle of handles) {
+                cancelAnimationFrame(handle);
+            }
+        };
     }, [handleRef]);
 
     // schedule callback soon and keep handle for later cancellation

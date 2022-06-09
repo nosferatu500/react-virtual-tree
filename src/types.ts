@@ -24,9 +24,6 @@ export interface TreeItemActions {
     expandItem: () => void;
     collapseItem: () => void;
     toggleExpandedState: () => void;
-    truncateItem: () => void;
-    untruncateItem: () => void;
-    toggleTruncatedState: () => void;
     selectItem: () => void;
     unselectItem: () => void;
     addToSelectedItems: () => void;
@@ -98,10 +95,6 @@ export interface TreeRenderProps<T = any, C extends string = never> {
         submitButtonRef: Ref<any>;
         formProps: FormHTMLAttributes<HTMLFormElement>;
     }) => React.ReactElement | null;
-
-    renderDraggingItem?: (props: { items: Array<TreeItem<T>> }) => React.ReactElement | null;
-
-    renderDraggingItemTitle?: (props: { items: Array<TreeItem<T>> }) => React.ReactElement | null;
 
     renderItemsContainer?: (props: {
         children: React.ReactNode;
@@ -246,7 +239,7 @@ export interface TreeEnvironmentContextProps<T = any, C extends string = never>
 }
 
 export interface DragAndDropContextProps<T = any> {
-    onStartDraggingItems: (items: TreeItem<T>[], treeId: string) => void;
+    onStartDraggingItems: (items: TreeItem<T>[]) => void;
     draggingItems?: TreeItem<T>[];
     itemHeight: number;
     draggingPosition?: DraggingPosition;

@@ -149,12 +149,6 @@ export const createDefaultRenderers = (renderDepthOffset: number): AllTreeRender
                 </form>
             );
         },
-        renderDraggingItem: () => {
-            return <div />;
-        },
-        renderDraggingItemTitle: () => {
-            return <div />;
-        },
         renderTreeContainer: ({ ref, children, containerProps, info }) => {
             return (
                 <div

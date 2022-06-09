@@ -14,7 +14,7 @@ export const useDragAndDrop = () => React.useContext(DragAndDropContext);
 // TODO tidy up
 export const DragAndDropProvider: React.FC = (props) => {
     const environment = useTreeEnvironment();
-    const [itemHeight, setItemHeight] = useState(24);
+    const itemHeight = React.useRef<number>(24);
     const [viableDragPositions, setViableDragPositions] = useState<{ [treeId: string]: DraggingPosition[] }>({});
     const [draggingItems, setDraggingItems] = useState<TreeItem[]>();
     const [draggingPosition, setDraggingPosition] = useState<DraggingPosition>();
@@ -23,7 +23,6 @@ export const DragAndDropProvider: React.FC = (props) => {
     const callSoon = useCallSoon();
 
     const resetState = useCallback(() => {
-        setItemHeight(24);
         setViableDragPositions({});
         setDraggingItems(undefined);
         setDraggingPosition(undefined);
@@ -52,7 +51,7 @@ export const DragAndDropProvider: React.FC = (props) => {
     const onDragOverTreeHandler = useOnDragOverTreeHandler(
         dragCode,
         setDragCode,
-        itemHeight,
+        itemHeight.current,
         setDraggingPosition,
         performDrag
     );
@@ -69,16 +68,11 @@ export const DragAndDropProvider: React.FC = (props) => {
     }, [draggingItems, draggingPosition, environment, resetState, callSoon]);
 
     const onStartDraggingItems = useCallback(
-        (items: TreeItem[], treeId: string) => {
+        (items: TreeItem[]) => {
             const treeViableDragPositions = buildMapForTrees(environment.treeIds, (treeId) =>
                 getViableDragPositions(treeId, items)
             );
 
-            // TODO what if trees have different heights and drag target changes?
-            const height =
-                document.querySelector<HTMLElement>(`[data-rct-tree="${treeId}"] [data-rct-item-container="true"]`)
-                    ?.offsetHeight ?? 5;
-            setItemHeight(height);
             setDraggingItems(items);
             // @ts-ignore
             setViableDragPositions(treeViableDragPositions);
@@ -86,14 +80,16 @@ export const DragAndDropProvider: React.FC = (props) => {
         [environment.treeIds, getViableDragPositions]
     );
 
-    const dnd: DragAndDropContextProps = {
-        onStartDraggingItems,
-        draggingItems,
-        draggingPosition,
-        itemHeight,
-        onDragOverTreeHandler,
-        viableDragPositions,
-    };
+    const dnd: DragAndDropContextProps = React.useMemo(() => {
+        return {
+            onStartDraggingItems,
+            draggingItems,
+            draggingPosition,
+            itemHeight: itemHeight.current,
+            onDragOverTreeHandler,
+            viableDragPositions,
+        };
+    }, [draggingItems, draggingPosition, onDragOverTreeHandler, onStartDraggingItems, viableDragPositions]);
 
     useEffect(() => {
         window.addEventListener("dragend", onDropHandler);

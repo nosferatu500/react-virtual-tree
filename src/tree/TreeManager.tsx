@@ -7,7 +7,6 @@ import { SearchInput } from "../search/SearchInput";
 import { TreeItemChildren } from "../treeItem/TreeItemChildren";
 import { DragBetweenLine } from "./DragBetweenLine";
 import { useTree } from "./Tree";
-import { useFocusWithin } from "./useFocusWithin";
 import { useTreeKeyboardBindings } from "./useTreeKeyboardBindings";
 
 export const TreeManager = (): JSX.Element => {
@@ -15,22 +14,8 @@ export const TreeManager = (): JSX.Element => {
     const environment = useTreeEnvironment();
     const containerRef = useRef<HTMLElement>();
     const dnd = useDragAndDrop();
-    const isActiveTree = environment.activeTreeId === treeId;
 
     useTreeKeyboardBindings();
-
-    useFocusWithin(
-        containerRef.current,
-        () => {
-            environment.setActiveTree(treeId);
-        },
-        () => {
-            environment.setActiveTree((oldTreeId) => {
-                return oldTreeId === treeId ? undefined : oldTreeId;
-            });
-        },
-        [environment.activeTreeId, treeId, isActiveTree]
-    );
 
     const rootChildren = environment.items[rootItem].children;
 
@@ -49,8 +34,6 @@ export const TreeManager = (): JSX.Element => {
     );
 
     const containerProps: HTMLProps<any> = {
-        // onDragOver: e => dnd.onDragOverTreeHandler(e as any, treeId, containerRef),
-        // ref: containerRef,
         style: { position: "relative" },
         role: "tree",
         ...({

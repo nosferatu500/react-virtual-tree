@@ -38,7 +38,7 @@ for (let i = 0; i < 1000; i++) {
 }
 
 function App() {
-    const ref = useRef(itemsWithManyChildren.items);
+    const ref = useRef(demoContent.data.items);
     const [data, setData] = useState<any>(ref.current);
 
     return (

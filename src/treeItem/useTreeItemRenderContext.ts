@@ -7,8 +7,6 @@ import { useTree } from "../tree/Tree";
 import { useSelectUpTo } from "../tree/useSelectUpTo";
 import { TreeItem, TreeItemActions, TreeItemRenderFlags } from "../types";
 
-// TODO restructure file. Everything into one hook file without helper methods, let all props be generated outside (InteractionManager and AccessibilityPropsManager), ...
-
 export const useTreeItemRenderContext = (item?: TreeItem) => {
     const { treeId, search, renamingItem } = useTree();
     const environment = useTreeEnvironment();
@@ -39,7 +37,7 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             (viewState?.focusedItem ? [environment.items[viewState?.focusedItem]] : [])
         ).filter((item) => !!item);
 
-        const isItemPartOfSelectedItems = !!currentlySelectedItems.find(
+        const isItemPartOfSelectedItems = !!currentlySelectedItems.some(
             (selectedItem) => selectedItem.index === item.index
         );
 
@@ -91,9 +89,6 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             selectUpTo: () => {
                 selectUpTo(item);
             },
-            truncateItem: () => {},
-            untruncateItem: () => {},
-            toggleTruncatedState: () => {},
             startRenamingItem: () => {},
             focusItem: () => {
                 environment.onFocusItem?.(item, treeId);
@@ -107,10 +102,7 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
                 }
 
                 if (canDrag) {
-                    dnd.onStartDraggingItems(
-                        selectedItems.map((id) => environment.items[id]),
-                        treeId
-                    );
+                    dnd.onStartDraggingItems(selectedItems.map((id) => environment.items[id]));
                 }
             },
         };

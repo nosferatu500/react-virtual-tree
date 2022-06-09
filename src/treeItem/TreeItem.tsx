@@ -37,9 +37,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
 
     const [{ isDragging }, drag] = useDrag({
         type: "rvt-item",
-        item: () => {
-            return { index: props.itemIndex, canMove: item.canMove, children: item.children };
-        },
+        item: () => ({ index: props.itemIndex }),
         options: {
             dropEffect: "move",
         },
@@ -47,7 +45,7 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
         collect: (monitor: any) => ({
             isDragging: monitor.isDragging(),
         }),
-        end(draggedItem, monitor) {
+        end() {
             renderContext.startDragging();
         },
     });

@@ -9,8 +9,12 @@ export const useHtmlElementEventListener = <K extends keyof HTMLElementEventMap>
     useEffect(() => {
         if (element) {
             element.addEventListener(type, listener as any);
-            return () => element.removeEventListener(type, listener as any);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        return () => {
+            if (element) {
+                element.removeEventListener(type, listener as any);
+            }
+        };
     }, [element, listener, type, ...deps]);
 };
