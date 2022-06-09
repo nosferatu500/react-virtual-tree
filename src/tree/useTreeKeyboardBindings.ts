@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { useTreeEnvironment } from "../controlledEnvironment/ControlledTreeEnvironment";
-import { useLinearItems } from "../controlledEnvironment/useLinearItems";
 import { useHotkey } from "../hotkeys/useHotkey";
 import { useKey } from "../hotkeys/useKey";
 import { useTree } from "./Tree";
@@ -11,7 +10,6 @@ import { useViewState } from "./useViewState";
 export const useTreeKeyboardBindings = () => {
     const environment = useTreeEnvironment();
     const { treeId, setRenamingItem, setSearch, renamingItem } = useTree();
-    const linearItems = useLinearItems(treeId);
     const viewState = useViewState();
     const moveFocusToIndex = useMoveFocusToIndex();
     const selectUpTo = useSelectUpTo();
@@ -48,30 +46,6 @@ export const useTreeKeyboardBindings = () => {
                 }
             },
             [moveFocusToIndex, selectUpTo]
-        ),
-        isActiveTree && !isRenaming
-    );
-
-    useHotkey(
-        "moveFocusToFirstItem",
-        useCallback(
-            (e) => {
-                e.preventDefault();
-                moveFocusToIndex(() => 0);
-            },
-            [moveFocusToIndex]
-        ),
-        isActiveTree && !isRenaming
-    );
-
-    useHotkey(
-        "moveFocusToLastItem",
-        useCallback(
-            (e) => {
-                e.preventDefault();
-                moveFocusToIndex((currentIndex, linearItems) => linearItems.length - 1);
-            },
-            [moveFocusToIndex]
         ),
         isActiveTree && !isRenaming
     );
@@ -155,21 +129,6 @@ export const useTreeKeyboardBindings = () => {
                 }
             },
             [environment, treeId, viewState.focusedItem, viewState.selectedItems]
-        ),
-        isActiveTree && !isRenaming
-    );
-
-    useHotkey(
-        "selectAll",
-        useCallback(
-            (e) => {
-                e.preventDefault();
-                environment.onSelectItems?.(
-                    linearItems.map(({ item }) => item),
-                    treeId
-                );
-            },
-            [environment, linearItems, treeId]
         ),
         isActiveTree && !isRenaming
     );

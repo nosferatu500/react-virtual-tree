@@ -370,13 +370,10 @@ export interface LinearItem {
 
 export interface KeyboardBindings {
     primaryAction?: string[];
-    moveFocusToFirstItem?: string[];
-    moveFocusToLastItem?: string[];
     expandSiblings?: string[];
     renameItem?: string[];
     abortRenameItem?: string[];
     toggleSelectItem?: string[];
     abortSearch?: string[];
     startSearch?: string[];
-    selectAll?: string[];
 }
