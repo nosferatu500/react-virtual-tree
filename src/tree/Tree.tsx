@@ -35,8 +35,6 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
     const treeContextProps: TreeContextProps = {
         treeId: props.treeId,
         rootItem: props.rootItem,
-        treeLabel: props.treeLabel,
-        treeLabelledBy: props.treeLabelledBy,
         getItemsLinearly: () => getItemsLinearly(props.rootItem, viewState, environment.items),
         treeInformation,
         search,

@@ -66,7 +66,6 @@ export const TreeItemRenamingInput: React.FC<{
                 abort();
             }
         },
-        "aria-label": "New item name", // TODO
         tabIndex: 0,
     };
 

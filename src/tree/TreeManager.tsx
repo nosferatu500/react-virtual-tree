@@ -53,8 +53,6 @@ export const TreeManager = (): JSX.Element => {
         // ref: containerRef,
         style: { position: "relative" },
         role: "tree",
-        // 'aria-label': !treeInformation.treeLabelledBy ? treeInformation.treeLabel : undefined,
-        // 'aria-labelledby': treeInformation.treeLabelledBy,
         ...({
             "data-rct-tree": treeId,
         } as any),

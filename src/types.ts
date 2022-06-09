@@ -7,7 +7,6 @@ export interface TreeItem<T = any> {
     index: TreeItemIndex;
     children?: Array<TreeItemIndex>;
     hasChildren?: boolean;
-    // isChildrenLoading?: boolean;
     canMove?: boolean;
     canRename?: boolean;
     data: T;
@@ -313,8 +312,6 @@ export interface UncontrolledTreeEnvironmentProps<T = any, C extends string = ne
 export interface TreeConfiguration {
     treeId: string;
     rootItem: string;
-    treeLabel?: string;
-    treeLabelledBy?: string;
 }
 
 export interface TreeProps<T = any, C extends string = never>
