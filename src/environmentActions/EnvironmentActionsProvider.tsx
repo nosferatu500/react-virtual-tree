@@ -14,7 +14,6 @@ export const EnvironmentActionsProvider = React.forwardRef<
     const {
         onCollapseItem,
         items,
-        trees,
         viewState,
         onExpandItem,
         onFocusItem,
