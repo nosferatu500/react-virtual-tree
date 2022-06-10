@@ -23,7 +23,7 @@ const itemsWithManyChildren: ExplicitDataSource = {
     },
 };
 
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 100; i++) {
     const id = `item${i}`;
     itemsWithManyChildren.items[id] = {
         index: id,
@@ -35,7 +35,7 @@ for (let i = 0; i < 1000; i++) {
 }
 
 function App() {
-    const ref = useRef(demoContent.data.items);
+    const ref = useRef(itemsWithManyChildren.items);
     const [data, setData] = useState<any>(ref.current);
 
     return (

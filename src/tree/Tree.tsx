@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTreeEnvironment } from "../controlledEnvironment/ControlledTreeEnvironment";
-import { AllTreeRenderProps, TreeContextProps, TreeProps, TreeRef } from "../types";
+import { AllTreeRenderProps, TreeContextProps, TreeProps } from "../types";
 import { getItemsLinearly } from "./getItemsLinearly";
 import { TreeManager } from "./TreeManager";
 import { useCreatedTreeInformation } from "./useCreatedTreeInformation";
@@ -10,12 +10,14 @@ const TreeContext = React.createContext<TreeContextProps>(null as any); // TODO 
 
 export const useTree = () => useContext(TreeContext);
 
-export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
+export const Tree = (props: TreeProps) => {
     const environment = useTreeEnvironment();
     const renderers = useMemo<AllTreeRenderProps>(() => ({ ...environment, ...props }), [props, environment]);
     const [search, setSearch] = useState<string | null>(null);
     const rootItem = environment.items[props.rootItem];
-    const viewState = environment.viewState[props.treeId] ?? {};
+    const viewState = React.useMemo(() => {
+        return environment.viewState[props.treeId] ?? {};
+    }, [environment.viewState, props.treeId]);
 
     useEffect(() => {
         environment.registerTree({
@@ -30,15 +32,17 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
 
     const treeInformation = useCreatedTreeInformation(props, search);
 
-    const treeContextProps: TreeContextProps = {
-        treeId: props.treeId,
-        rootItem: props.rootItem,
-        getItemsLinearly: () => getItemsLinearly(props.rootItem, viewState, environment.items),
-        treeInformation,
-        search,
-        setSearch,
-        renderers,
-    };
+    const treeContextProps: TreeContextProps = React.useMemo(() => {
+        return {
+            treeId: props.treeId,
+            rootItem: props.rootItem,
+            getItemsLinearly: () => getItemsLinearly(props.rootItem, viewState, environment.items),
+            treeInformation,
+            search,
+            setSearch,
+            renderers,
+        };
+    }, [environment.items, props.rootItem, props.treeId, renderers, search, treeInformation, viewState]);
 
     if (rootItem === undefined) {
         environment.onMissingItems?.([props.rootItem]);
@@ -50,4 +54,4 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
             <TreeManager />
         </TreeContext.Provider>
     );
-}) as <T = any>(p: TreeProps<T> & { ref?: React.Ref<TreeRef<T>> }) => React.ReactElement;
+};

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
+import { createContainer } from "react-tracked";
 import { DragAndDropContextProps, DraggingPosition, TreeItem } from "../types";
 import { useCallSoon } from "../useCallSoon";
 import { buildMapForTrees } from "../utils";
@@ -8,11 +9,19 @@ import { useCanDropAt } from "./useCanDropAt";
 import { useGetViableDragPositions } from "./useGetViableDragPositions";
 import { useOnDragOverTreeHandler } from "./useOnDragOverTreeHandler";
 
-const DragAndDropContext = React.createContext<DragAndDropContextProps>(null as any);
-export const useDragAndDrop = () => React.useContext(DragAndDropContext);
+const useValue = ({ propState }: { propState: DragAndDropContextProps }) => {
+    const [state, setState] = useState(propState);
+    useEffect(() => {
+        // or useLayoutEffect
+        setState(propState);
+    }, [propState]);
+    return [state, setState] as const;
+};
+
+export const { Provider: DragAndDropContextProvider, useTracked: useDragAndDrop } = createContainer(useValue);
 
 // TODO tidy up
-export const DragAndDropProvider: React.FC = (props) => {
+export const DragAndDropProvider: React.FC = (props: any) => {
     const environment = useTreeEnvironment();
     const itemHeight = React.useRef<number>(24);
     const [viableDragPositions, setViableDragPositions] = useState<{ [treeId: string]: DraggingPosition[] }>({});
@@ -98,6 +107,5 @@ export const DragAndDropProvider: React.FC = (props) => {
         };
     }, [onDropHandler]);
 
-    // @ts-ignore
-    return <DragAndDropContext.Provider value={dnd}>{props.children}</DragAndDropContext.Provider>;
+    return <DragAndDropContextProvider propState={dnd}>{props.children}</DragAndDropContextProvider>;
 };

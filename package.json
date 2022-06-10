@@ -51,8 +51,11 @@
   ],
   "dependencies": {
     "@nosferatu500/react-dnd-scrollzone": "3.0.0",
+    "jotai": "^1.7.1",
     "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1"
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-tracked": "^1.7.9",
+    "react-virtuoso": "^2.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",

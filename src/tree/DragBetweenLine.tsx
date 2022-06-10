@@ -5,7 +5,7 @@ import { useTree } from "./Tree";
 export const DragBetweenLine: React.FC<{
     treeId: string;
 }> = (props) => {
-    const { draggingPosition, itemHeight } = useDragAndDrop();
+    const [{ draggingPosition, itemHeight }] = useDragAndDrop();
     const { renderers } = useTree();
 
     const shouldDisplay =

@@ -11,7 +11,7 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
     const { treeId, search } = useTree();
     const environment = useTreeEnvironment();
     const interactionManager = useInteractionManager();
-    const dnd = useDragAndDrop();
+    const [{ viableDragPositions, onStartDraggingItems, draggingPosition }] = useDragAndDrop();
     const selectUpTo = useSelectUpTo();
     const itemTitle = item && environment.getItemTitle(item);
 
@@ -54,7 +54,7 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
 
         const canDropOn =
             environment.canDragAndDrop &&
-            !!dnd.viableDragPositions?.[treeId]?.find(
+            !!viableDragPositions?.[treeId]?.find(
                 (position) => position.targetType === "item" && position.targetItem === item.index
             );
 
@@ -99,7 +99,7 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
                 }
 
                 if (canDrag) {
-                    dnd.onStartDraggingItems(selectedItems.map((id) => environment.items[id]));
+                    onStartDraggingItems(selectedItems.map((id) => environment.items[id]));
                 }
             },
         };
@@ -109,10 +109,10 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             isExpanded,
             isFocused: viewState?.focusedItem === item.index,
             isDraggingOver:
-                dnd.draggingPosition &&
-                dnd.draggingPosition.targetType === "item" &&
-                dnd.draggingPosition.targetItem === item.index &&
-                dnd.draggingPosition.treeId === treeId,
+                draggingPosition &&
+                draggingPosition.targetType === "item" &&
+                draggingPosition.targetItem === item.index &&
+                draggingPosition.treeId === treeId,
             isDraggingOverParent: false,
             isSearchMatching,
             canDrag,
@@ -170,5 +170,17 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             arrowProps,
             viewStateFlags,
         };
-    }, [item, environment, treeId, dnd, isSelected, isExpanded, isSearchMatching, interactionManager, selectUpTo]);
+    }, [
+        item,
+        environment,
+        treeId,
+        viableDragPositions,
+        isSelected,
+        isExpanded,
+        draggingPosition,
+        isSearchMatching,
+        interactionManager,
+        selectUpTo,
+        onStartDraggingItems,
+    ]);
 };

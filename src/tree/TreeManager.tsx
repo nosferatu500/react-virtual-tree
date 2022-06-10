@@ -13,7 +13,7 @@ export const TreeManager = (): JSX.Element => {
     const { treeId, rootItem, renderers, treeInformation } = useTree();
     const environment = useTreeEnvironment();
     const containerRef = useRef<HTMLElement>();
-    const dnd = useDragAndDrop();
+    const [{ onDragOverTreeHandler }] = useDragAndDrop();
 
     useTreeKeyboardBindings();
 
@@ -49,7 +49,7 @@ export const TreeManager = (): JSX.Element => {
             };
         },
         hover(draggedItem: any, monitor) {
-            dnd.onDragOverTreeHandler(draggedItem, treeId, containerRef, monitor);
+            onDragOverTreeHandler(draggedItem, treeId, containerRef, monitor);
         },
     });
 
