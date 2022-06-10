@@ -19,17 +19,11 @@ export const TreeActionsProvider = React.forwardRef<TreeRef, PropsWithChildren<R
 
         // TODO change tree childs to use actions rather than output events where possible
         const actions: TreeChangeActionsContextProps = {
-            abortRenamingItem(): void {
-                tree.setRenamingItem(null);
-            },
             abortSearch(): void {
                 tree.setSearch(null);
             },
             collapseItem(itemId: TreeItemIndex): void {
                 envActions.collapseItem(itemId, tree.treeId);
-            },
-            completeRenamingItem(): void {
-                // TODO
             },
             expandItem(itemId: TreeItemIndex): void {
                 envActions.expandItem(itemId, tree.treeId);
@@ -49,20 +43,11 @@ export const TreeActionsProvider = React.forwardRef<TreeRef, PropsWithChildren<R
             moveFocusUp(): void {
                 envActions.moveFocusUp(tree.treeId);
             },
-            renameItem(itemId: TreeItemIndex, name: string): void {
-                envActions.renameItem(itemId, name, tree.treeId);
-            },
             selectItems(itemsIds: TreeItemIndex[]): void {
                 envActions.selectItems(itemsIds, tree.treeId);
             },
             setSearch(search: string | null): void {
                 tree.setSearch(search);
-            },
-            startRenamingItem(itemId: TreeItemIndex): void {
-                tree.setRenamingItem(itemId);
-            },
-            stopRenamingItem(): void {
-                tree.setRenamingItem(null);
             },
             toggleItemExpandedState(itemId: TreeItemIndex): void {
                 envActions.toggleItemExpandedState(itemId, tree.treeId);

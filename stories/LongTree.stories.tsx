@@ -10,7 +10,6 @@ const itemsWithManyChildren: ExplicitDataSource = {
             data: "root",
             hasChildren: true,
             canMove: true,
-            canRename: true,
         },
         innerRoot: {
             index: "innerRoot",
@@ -18,7 +17,6 @@ const itemsWithManyChildren: ExplicitDataSource = {
             data: "innerRoot",
             hasChildren: true,
             canMove: true,
-            canRename: true,
         },
     },
 };
@@ -30,7 +28,6 @@ for (let i = 0; i < 1000; i++) {
         hasChildren: false,
         data: id,
         canMove: true,
-        canRename: true,
     };
     itemsWithManyChildren.items.innerRoot.children!.push(id);
 }

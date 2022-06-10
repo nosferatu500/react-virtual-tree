@@ -15,7 +15,6 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
     const environment = useTreeEnvironment();
     const renderers = useMemo<AllTreeRenderProps>(() => ({ ...environment, ...props }), [props, environment]);
     const [search, setSearch] = useState<string | null>(null);
-    const [renamingItem, setRenamingItem] = useState<TreeItemIndex | null>(null);
     const rootItem = environment.items[props.rootItem];
     const viewState = environment.viewState[props.treeId] ?? {};
 
@@ -30,7 +29,7 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.treeId, props.rootItem]);
 
-    const treeInformation = useCreatedTreeInformation(props, renamingItem, search);
+    const treeInformation = useCreatedTreeInformation(props, search);
 
     const treeContextProps: TreeContextProps = {
         treeId: props.treeId,
@@ -39,8 +38,6 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
         treeInformation,
         search,
         setSearch,
-        renamingItem,
-        setRenamingItem,
         renderers,
     };
 

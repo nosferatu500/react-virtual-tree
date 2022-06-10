@@ -17,14 +17,6 @@
   --rct-color-arrow: #9aa5b3;
 
   --rct-item-height: 22px;
-
-  --rct-color-renaming-input-submitbutton-bg: inherit;
-  --rct-color-renaming-input-submitbutton-bg-hover: #0366d6;
-  --rct-color-renaming-input-submitbutton-bg-active: #095fc1;
-
-  --rct-color-renaming-input-submitbutton-text: inherit;
-  --rct-color-renaming-input-submitbutton-text-hover: #ffffff;
-  --rct-color-renaming-input-submitbutton-text-active: #ffffff;
 }
 
 .rct-tree-root {
@@ -142,32 +134,4 @@
 .rct-tree-search-input {
   position: fixed;
   width: 120px;
-}
-
-/* TODO see renaming form in multiple tree example, wraps around */
-.rct-tree-item-renaming-form {
-  flex-grow: 1;
-  display: flex;
-}
-.rct-tree-item-renaming-input {
-  flex-grow: 1;
-  background-color: inherit;
-  border: none;
-  color: inherit;
-  outline: none;
-}
-.rct-tree-item-renaming-submit-button {
-  border: none;
-  background-color: var(--rct-color-renaming-input-submitbutton-bg);
-  border-radius: 999px;
-  color: var(--rct-color-renaming-input-submitbutton-text);
-  cursor: pointer;
-}
-.rct-tree-item-renaming-submit-button:hover {
-  background-color: var(--rct-color-renaming-input-submitbutton-bg-hover);
-  color: var(--rct-color-renaming-input-submitbutton-text-hover);
-}
-.rct-tree-item-renaming-submit-button:active {
-  background-color: var(--rct-color-renaming-input-submitbutton-bg-active);
-  color: var(--rct-color-renaming-input-submitbutton-text-active);
 }

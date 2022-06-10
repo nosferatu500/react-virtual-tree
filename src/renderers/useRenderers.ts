@@ -6,7 +6,6 @@ export const useRenderers = ({
     renderItem,
     renderItemTitle,
     renderItemArrow,
-    renderRenameInput,
     renderItemsContainer,
     renderTreeContainer,
     renderDragBetweenLine,
@@ -19,7 +18,6 @@ export const useRenderers = ({
         renderItem,
         renderItemTitle,
         renderItemArrow,
-        renderRenameInput,
         renderItemsContainer,
         renderTreeContainer,
         renderDragBetweenLine,
@@ -40,7 +38,6 @@ export const useRenderers = ({
     (renderers.renderItem as any).displayName = "RenderItem";
     (renderers.renderItemTitle as any).displayName = "RenderItemTitle";
     (renderers.renderItemArrow as any).displayName = "RenderItemArrow";
-    (renderers.renderRenameInput as any).displayName = "RenderRenameInput";
     (renderers.renderItemsContainer as any).displayName = "RenderItemsContainer";
     (renderers.renderTreeContainer as any).displayName = "RenderTreeContainer";
     (renderers.renderDragBetweenLine as any).displayName = "RenderDragBetweenLine";

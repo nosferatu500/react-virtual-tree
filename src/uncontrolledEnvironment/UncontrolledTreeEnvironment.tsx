@@ -94,21 +94,6 @@ export const UncontrolledTreeEnvironment = React.forwardRef<TreeEnvironmentRef, 
                     amendViewState(treeId, (old) => ({ ...old, focusedItem: item.index }));
                     props.onFocusItem?.(item, treeId);
                 }}
-                onStartRenamingItem={(item, treeId) => {
-                    amendViewState(treeId, (old) => ({ ...old, renamingItem: item.index }));
-                    props.onStartRenamingItem?.(item, treeId);
-                }}
-                onAbortRenamingItem={(item, treeId) => {
-                    amendViewState(treeId, (old) => ({ ...old, renamingItem: undefined }));
-                    props.onAbortRenamingItem?.(item, treeId);
-                }}
-                onRenameItem={async (item, name, treeId) => {
-                    await dataProvider.onRenameItem(item, name);
-                    amendViewState(treeId, (old) => ({ ...old, renamingItem: undefined }));
-                    const newItem = await dataProvider.getTreeItem(item.index);
-                    writeItems({ [item.index]: newItem });
-                    props.onRenameItem?.(item, name, treeId);
-                }}
                 onDrop={async (items, target) => {
                     for (const item of items) {
                         const parent = Object.values(currentItems).find((potentialParent) =>

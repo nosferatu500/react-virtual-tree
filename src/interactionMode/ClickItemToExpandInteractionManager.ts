@@ -51,8 +51,7 @@ export class ClickItemToExpandInteractionManager implements InteractionManager {
             onFocus: () => {
                 actions.focusItem();
             },
-            // draggable: renderFlags.canDrag && !renderFlags.isRenaming,
-            tabIndex: !renderFlags.isRenaming ? (renderFlags.isFocused ? 0 : -1) : undefined,
+            tabIndex: renderFlags.isFocused ? 0 : -1,
         };
     }
 }

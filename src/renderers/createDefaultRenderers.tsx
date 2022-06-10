@@ -84,8 +84,6 @@ export const createDefaultRenderers = (renderDepthOffset: number): AllTreeRender
             );
         },
         renderItem: ({ ref, item, opacity, depth, children, title, context, arrow }) => {
-            const InteractiveComponent = context.isRenaming ? "div" : "button";
-            const type = context.isRenaming ? undefined : "button";
             // TODO have only root li component create all the classes
             return (
                 <li
@@ -115,8 +113,8 @@ export const createDefaultRenderers = (renderDepthOffset: number): AllTreeRender
                         )}
                     >
                         {arrow}
-                        <InteractiveComponent
-                            type={type}
+                        <button
+                            type="button"
                             {...(context.interactiveElementProps as any)}
                             className={cx(
                                 "rct-tree-item-button",
@@ -129,24 +127,10 @@ export const createDefaultRenderers = (renderDepthOffset: number): AllTreeRender
                             )}
                         >
                             {title}
-                        </InteractiveComponent>
+                        </button>
                     </div>
                     {children}
                 </li>
-            );
-        },
-        renderRenameInput: ({ inputProps, inputRef, submitButtonProps, submitButtonRef, formProps }) => {
-            return (
-                <form {...formProps} className="rct-tree-item-renaming-form">
-                    <input {...inputProps} ref={inputRef} className="rct-tree-item-renaming-input" />
-                    <input
-                        {...submitButtonProps}
-                        ref={submitButtonRef}
-                        type="submit"
-                        className="rct-tree-item-renaming-submit-button"
-                        value="🗸"
-                    />
-                </form>
             );
         },
         renderTreeContainer: ({ ref, children, containerProps, info }) => {
@@ -156,7 +140,6 @@ export const createDefaultRenderers = (renderDepthOffset: number): AllTreeRender
                     className={cx(
                         "rct-tree-root",
                         info.isFocused && "rct-tree-root-focus",
-                        info.isRenaming && "rct-tree-root-renaming",
                         info.areItemsSelected && "rct-tree-root-itemsselected"
                     )}
                 >

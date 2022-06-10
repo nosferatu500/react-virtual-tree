@@ -8,7 +8,7 @@ import { useSelectUpTo } from "../tree/useSelectUpTo";
 import { TreeItem, TreeItemActions, TreeItemRenderFlags } from "../types";
 
 export const useTreeItemRenderContext = (item?: TreeItem) => {
-    const { treeId, search, renamingItem } = useTree();
+    const { treeId, search } = useTree();
     const environment = useTreeEnvironment();
     const interactionManager = useInteractionManager();
     const dnd = useDragAndDrop();
@@ -23,7 +23,6 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
 
     const isSelected = item && environment.viewState[treeId]?.selectedItems?.includes(item.index);
     const isExpanded = item && environment.viewState[treeId]?.expandedItems?.includes(item.index);
-    const isRenaming = item && renamingItem === item.index;
 
     return useMemo(() => {
         if (!item) {
@@ -60,7 +59,6 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             );
 
         const actions: TreeItemActions = {
-            // TODO disable most actions during rename
             primaryAction: () => {
                 environment.onPrimaryAction?.(environment.items[item.index], treeId);
             },
@@ -89,7 +87,6 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             selectUpTo: () => {
                 selectUpTo(item);
             },
-            startRenamingItem: () => {},
             focusItem: () => {
                 environment.onFocusItem?.(item, treeId);
             },
@@ -111,7 +108,6 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             isSelected,
             isExpanded,
             isFocused: viewState?.focusedItem === item.index,
-            isRenaming,
             isDraggingOver:
                 dnd.draggingPosition &&
                 dnd.draggingPosition.targetType === "item" &&
@@ -174,16 +170,5 @@ export const useTreeItemRenderContext = (item?: TreeItem) => {
             arrowProps,
             viewStateFlags,
         };
-    }, [
-        item,
-        environment,
-        treeId,
-        dnd,
-        isSelected,
-        isExpanded,
-        isRenaming,
-        isSearchMatching,
-        interactionManager,
-        selectUpTo,
-    ]);
+    }, [item, environment, treeId, dnd, isSelected, isExpanded, isSearchMatching, interactionManager, selectUpTo]);
 };

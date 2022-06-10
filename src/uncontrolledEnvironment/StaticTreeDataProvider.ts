@@ -6,15 +6,8 @@ export class StaticTreeDataProvider<T = any> implements TreeDataProvider {
 
     private onDidChangeTreeDataEmitter = new EventEmitter<TreeItemIndex[]>();
 
-    private setItemName?: (item: TreeItem<T>, newName: string) => TreeItem<T>;
-
-    constructor(
-        items: Record<TreeItemIndex, TreeItem<T>>,
-        setItemName?: (item: TreeItem<T>, newName: string) => TreeItem<T>
-        // private implicitItemOrdering?: (itemA: TreeItem<T>, itemB: TreeItem<T>) => number,
-    ) {
+    constructor(items: Record<TreeItemIndex, TreeItem<T>>) {
         this.data = { items };
-        this.setItemName = setItemName;
     }
 
     public getAllData() {
@@ -33,12 +26,5 @@ export class StaticTreeDataProvider<T = any> implements TreeDataProvider {
     public onDidChangeTreeData(listener: (changedItemIds: TreeItemIndex[]) => void): Disposable {
         const handlerId = this.onDidChangeTreeDataEmitter.on((payload) => listener(payload));
         return { dispose: () => this.onDidChangeTreeDataEmitter.off(handlerId) };
-    }
-
-    public async onRenameItem(item: TreeItem<any>, name: string): Promise<void> {
-        if (this.setItemName) {
-            this.data.items[item.index] = this.setItemName(item, name);
-            // this.onDidChangeTreeDataEmitter.emit(item.index);
-        }
     }
 }

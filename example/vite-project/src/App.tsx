@@ -12,7 +12,6 @@ const itemsWithManyChildren: ExplicitDataSource = {
             data: "root",
             hasChildren: true,
             canMove: true,
-            canRename: true,
         },
         innerRoot: {
             index: "innerRoot",
@@ -20,7 +19,6 @@ const itemsWithManyChildren: ExplicitDataSource = {
             data: "innerRoot",
             hasChildren: true,
             canMove: true,
-            canRename: true,
         },
     },
 };
@@ -32,7 +30,6 @@ for (let i = 0; i < 1000; i++) {
         hasChildren: false,
         data: id,
         canMove: true,
-        canRename: true,
     };
     itemsWithManyChildren.items.innerRoot.children!.push(id);
 }
@@ -50,7 +47,7 @@ function App() {
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new StaticTreeDataProvider(data, (item, itemData) => ({ ...item, itemData }))}
+            dataProvider={new StaticTreeDataProvider(data)}
             getItemTitle={(item) => item.data}
             onChange={setData}
             onReorder={(outData) => {

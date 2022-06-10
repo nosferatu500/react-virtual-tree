@@ -5,12 +5,11 @@ import { useTree } from "../tree/Tree";
 import { useViewState } from "../tree/useViewState";
 import { TreeItemIndex } from "../types";
 import { TreeItemChildren } from "./TreeItemChildren";
-import { TreeItemRenamingInput } from "./TreeItemRenamingInput";
 import { useTreeItemRenderContext } from "./useTreeItemRenderContext";
 
 export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JSX.Element => {
     const [hasBeenRequested, setHasBeenRequested] = useState(false);
-    const { renderers, treeInformation, renamingItem } = useTree();
+    const { renderers, treeInformation } = useTree();
     const environment = useTreeEnvironment();
     const viewState = useViewState();
     const item = environment.items[props.itemIndex];
@@ -65,17 +64,12 @@ export const TreeItem = (props: { itemIndex: TreeItemIndex; depth: number }): JS
     );
 
     const title = environment.getItemTitle(item);
-    const titleComponent =
-        renamingItem === props.itemIndex ? (
-            <TreeItemRenamingInput itemIndex={props.itemIndex} />
-        ) : (
-            renderers.renderItemTitle({
-                info: treeInformation,
-                context: renderContext,
-                title,
-                item,
-            })
-        );
+    const titleComponent = renderers.renderItemTitle({
+        info: treeInformation,
+        context: renderContext,
+        title,
+        item,
+    });
 
     const arrowComponent = renderers.renderItemArrow({
         info: treeInformation,

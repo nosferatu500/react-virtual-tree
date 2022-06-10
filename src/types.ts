@@ -1,4 +1,4 @@
-import React, { FormHTMLAttributes, HTMLProps, InputHTMLAttributes, Ref } from "react";
+import React, { HTMLProps } from "react";
 import { DropTargetMonitor } from "react-dnd";
 
 export type TreeItemIndex = string | number;
@@ -8,7 +8,6 @@ export interface TreeItem<T = any> {
     children?: Array<TreeItemIndex>;
     hasChildren?: boolean;
     canMove?: boolean;
-    canRename?: boolean;
     data: T;
 }
 
@@ -20,7 +19,6 @@ export interface TreePosition {
 
 export interface TreeItemActions {
     primaryAction: () => void;
-    startRenamingItem: () => void;
     expandItem: () => void;
     collapseItem: () => void;
     toggleExpandedState: () => void;
@@ -30,14 +28,12 @@ export interface TreeItemActions {
     selectUpTo: () => void;
     startDragging: () => void;
     focusItem: () => void;
-    // toggleSelectedState: () => void;
 }
 
 export interface TreeItemRenderFlags {
     isSelected?: boolean;
     isExpanded?: boolean;
     isFocused?: boolean;
-    isRenaming?: boolean;
     isDraggingOver?: boolean;
     isDraggingOverParent?: boolean;
     isSearchMatching?: boolean;
@@ -55,7 +51,6 @@ export interface TreeItemRenderContext<C extends string = never> extends TreeIte
 
 export interface TreeInformation extends TreeConfiguration {
     areItemsSelected: boolean;
-    isRenaming: boolean;
     isFocused: boolean;
     isSearching: boolean;
     search: string | null;
@@ -85,15 +80,6 @@ export interface TreeRenderProps<T = any, C extends string = never> {
         item: TreeItem<T>;
         context: TreeItemRenderContext<C>;
         info: TreeInformation;
-    }) => React.ReactElement | null;
-
-    renderRenameInput?: (props: {
-        item: TreeItem<T>;
-        inputProps: InputHTMLAttributes<HTMLInputElement>;
-        inputRef: Ref<HTMLInputElement>;
-        submitButtonProps: HTMLProps<any>;
-        submitButtonRef: Ref<any>;
-        formProps: FormHTMLAttributes<HTMLFormElement>;
     }) => React.ReactElement | null;
 
     renderItemsContainer?: (props: {
@@ -147,7 +133,6 @@ export interface TreeCapabilities<T = any, C extends string = never> {
     canInvokePrimaryActionOnItemContainer?: boolean;
     canSearch?: boolean;
     canSearchByStartingTyping?: boolean;
-    canRename?: boolean;
     autoFocus?: boolean;
     doesSearchMatchItem?: (search: string, item: TreeItem<T>, itemTitle: string) => boolean;
     showLiveDescription?: boolean;
@@ -175,9 +160,6 @@ export interface ImplicitDataSource<T = any> {
 export type DataSource<T = any> = ExplicitDataSource<T> | ImplicitDataSource<T>;
 
 export interface TreeChangeHandlers<T = any> {
-    onStartRenamingItem?: (item: TreeItem<T>, treeId: string) => void;
-    onRenameItem?: (item: TreeItem<T>, name: string, treeId: string) => void;
-    onAbortRenamingItem?: (item: TreeItem<T>, treeId: string) => void;
     onCollapseItem?: (item: TreeItem<T>, treeId: string) => void;
     onExpandItem?: (item: TreeItem<T>, treeId: string) => void;
     onSelectItems?: (items: TreeItemIndex[], treeId: string) => void; // TODO TreeItem instead of just index
@@ -192,7 +174,6 @@ export interface TreeChangeHandlers<T = any> {
 
 export interface TreeEnvironmentChangeActions {
     focusTree: (treeId: string, autoFocus?: boolean) => void;
-    renameItem: (itemId: TreeItemIndex, name: string, treeId: string) => void;
     collapseItem: (itemId: TreeItemIndex, treeId: string) => void;
     expandItem: (itemId: TreeItemIndex, treeId: string) => void;
     toggleItemExpandedState: (itemId: TreeItemIndex, treeId: string) => void;
@@ -315,8 +296,6 @@ export interface TreeProps<T = any, C extends string = never>
 export interface TreeContextProps extends TreeConfiguration {
     search: string | null;
     setSearch: (searchValue: string | null) => void;
-    renamingItem: TreeItemIndex | null;
-    setRenamingItem: (item: TreeItemIndex | null) => void;
     renderers: AllTreeRenderProps;
     treeInformation: TreeInformation;
     getItemsLinearly: () => Array<{ item: TreeItemIndex; depth: number }>;
@@ -324,11 +303,6 @@ export interface TreeContextProps extends TreeConfiguration {
 
 export interface TreeChangeActions {
     focusTree: (autoFocus?: boolean) => void;
-    startRenamingItem: (itemId: TreeItemIndex) => void;
-    stopRenamingItem: () => void;
-    completeRenamingItem: () => void;
-    abortRenamingItem: () => void;
-    renameItem: (itemId: TreeItemIndex, name: string) => void;
     collapseItem: (itemId: TreeItemIndex) => void;
     expandItem: (itemId: TreeItemIndex) => void;
     toggleItemExpandedState: (itemId: TreeItemIndex) => void;
@@ -356,7 +330,6 @@ export interface TreeDataProvider<T = any> {
     getAllData: () => Record<TreeItemIndex, TreeItem>;
     getTreeItem: (itemId: TreeItemIndex) => Promise<TreeItem<T>>;
     getTreeItems?: (itemIds: TreeItemIndex[]) => Promise<TreeItem[]>;
-    onRenameItem?: (item: TreeItem<T>, name: string) => Promise<void>;
     onChangeItemChildren?: (itemId: TreeItemIndex, newChildren: TreeItemIndex[]) => Promise<void>;
 }
 
@@ -372,8 +345,6 @@ export interface LinearItem {
 export interface KeyboardBindings {
     primaryAction?: string[];
     expandSiblings?: string[];
-    renameItem?: string[];
-    abortRenameItem?: string[];
     toggleSelectItem?: string[];
     abortSearch?: string[];
     startSearch?: string[];

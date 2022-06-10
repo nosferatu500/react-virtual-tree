@@ -10,7 +10,7 @@ import { useSearchMatchFocus } from "./useSearchMatchFocus";
 export const SearchInput: React.FC<{
     containerRef?: HTMLElement;
 }> = (props) => {
-    const { search, setSearch, treeId, renderers, renamingItem } = useTree();
+    const { search, setSearch, treeId, renderers } = useTree();
     const environment = useTreeEnvironment();
     useViewState();
     const isActiveTree = environment.activeTreeId === treeId;
@@ -54,7 +54,6 @@ export const SearchInput: React.FC<{
                 (environment.canSearchByStartingTyping ?? true) &&
                 isActiveTree &&
                 search === null &&
-                !renamingItem &&
                 !e.ctrlKey &&
                 !e.shiftKey &&
                 !e.altKey &&
@@ -68,7 +67,7 @@ export const SearchInput: React.FC<{
                 (document.querySelector('[data-rct-search-input="true"]') as any)?.focus?.();
             }
         },
-        [isActiveTree, search, renamingItem, environment.canSearchByStartingTyping, environment.canSearch]
+        [isActiveTree, search, environment.canSearchByStartingTyping, environment.canSearch]
     );
 
     if (!(environment.canSearch ?? true) || search === null) {

@@ -18,7 +18,6 @@ export const EnvironmentActionsProvider = React.forwardRef<
         onExpandItem,
         onFocusItem,
         setActiveTree,
-        onRenameItem,
         onSelectItems,
         onPrimaryAction,
         linearItems,
@@ -74,12 +73,6 @@ export const EnvironmentActionsProvider = React.forwardRef<
                 onFocusItem?.(newItem, treeId);
             },
             [items, linearItems, onFocusItem, viewState]
-        ),
-        renameItem: useCallback(
-            (itemId: TreeItemIndex, name: string, treeId: string) => {
-                onRenameItem?.(items[itemId], name, treeId);
-            },
-            [items, onRenameItem]
         ),
         selectItems: useCallback(
             (itemsIds: TreeItemIndex[], treeId: string) => {
