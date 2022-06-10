@@ -137,6 +137,7 @@ export interface InteractionManager<C extends string = never> {
 export interface TreeCapabilities<T = any, C extends string = never> {
     allowCollapse?: boolean;
     defaultInteractionMode?: InteractionMode | InteractionManager<C>;
+    canDragOnRoot?: boolean;
     canDragAndDrop?: boolean;
     canDropOnItemWithChildren?: boolean;
     canDropOnItemWithoutChildren?: boolean;

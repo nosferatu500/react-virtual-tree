@@ -44,6 +44,7 @@ function App() {
     return (
         <UncontrolledTreeEnvironment
             canDragAndDrop
+            canDragOnRoot
             canDropOnItemWithChildren
             canReorderItems
             allowCollapse

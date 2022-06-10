@@ -47,6 +47,7 @@ export const useOnDragOverTreeHandler = (
         canDropOnItemWithChildren,
         canDropOnItemWithoutChildren,
         canDragAndDrop,
+        canDragOnRoot,
         linearItems,
         items,
         canReorderItems,
@@ -127,6 +128,10 @@ export const useOnDragOverTreeHandler = (
 
             const parent = getParentOfLinearItem(linearIndex, treeId);
 
+            if (parent.item === "root" && !canDragOnRoot) {
+                return;
+            }
+
             if (viewState[treeId]?.selectedItems?.includes(targetItem.item)) {
                 return;
             }
@@ -186,6 +191,7 @@ export const useOnDragOverTreeHandler = (
             onPerformDrag,
             setLastDragCode,
             viewState,
+            canDragOnRoot,
         ]
     );
 };
