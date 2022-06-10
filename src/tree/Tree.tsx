@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTreeEnvironment } from "../controlledEnvironment/ControlledTreeEnvironment";
-import { TreeActionsProvider } from "../treeActions/TreeActionsProvider";
-import { AllTreeRenderProps, TreeContextProps, TreeItemIndex, TreeProps, TreeRef } from "../types";
+import { AllTreeRenderProps, TreeContextProps, TreeProps, TreeRef } from "../types";
 import { getItemsLinearly } from "./getItemsLinearly";
 import { TreeManager } from "./TreeManager";
 import { useCreatedTreeInformation } from "./useCreatedTreeInformation";
@@ -48,9 +47,7 @@ export const Tree = React.forwardRef<TreeRef, TreeProps>((props, ref) => {
 
     return (
         <TreeContext.Provider value={treeContextProps}>
-            <TreeActionsProvider ref={ref}>
-                <TreeManager />
-            </TreeActionsProvider>
+            <TreeManager />
         </TreeContext.Provider>
     );
 }) as <T = any>(p: TreeProps<T> & { ref?: React.Ref<TreeRef<T>> }) => React.ReactElement;
