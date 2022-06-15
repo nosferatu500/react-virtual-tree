@@ -23,7 +23,7 @@ const itemsWithManyChildren: ExplicitDataSource = {
     },
 };
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 10; i++) {
     const id = `item${i}`;
     itemsWithManyChildren.items[id] = {
         index: id,
@@ -35,33 +35,51 @@ for (let i = 0; i < 100; i++) {
 }
 
 function App() {
-    const ref = useRef(itemsWithManyChildren.items);
-    const [data, setData] = useState<any>(ref.current);
+    const [data, setData] = useState<any>(itemsWithManyChildren.items);
+
+    const dataProvider = new StaticTreeDataProvider(data);
 
     return (
-        <UncontrolledTreeEnvironment
-            canDragAndDrop
-            canDragOnRoot
-            canDropOnItemWithChildren
-            canReorderItems
-            allowCollapse
-            containerSize={{ width: 300, height: 300 }}
-            autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new StaticTreeDataProvider(data)}
-            getItemTitle={(item) => item.data}
-            onChange={setData}
-            onReorder={(outData) => {
-                console.log({ outData });
-            }}
-            onClick={(item: TreeItem) => console.log(item)}
-            viewState={{
-                "tree-1": {
-                    expandedItems: ["child1", "child11", "child2"],
-                },
-            }}
-        >
-            <Tree treeId="tree-1" rootItem="root" />
-        </UncontrolledTreeEnvironment>
+        <>
+            <button onClick={() => {
+                const i = Math.random()
+                const id = `item${i}`;
+                itemsWithManyChildren.items[id] = {
+                    index: id,
+                    hasChildren: false,
+                    data: id,
+                    canMove: true,
+                };
+                itemsWithManyChildren.items.innerRoot.children!.push(id);
+                setData(itemsWithManyChildren.items)
+                dataProvider.onChangeItemChildren("root", ["innerRoot"])
+            }}>
+                text
+            </button>
+            <UncontrolledTreeEnvironment
+                canDragAndDrop
+                canDragOnRoot
+                canDropOnItemWithChildren
+                canReorderItems
+                allowCollapse
+                containerSize={{ width: 300, height: 300 }}
+                autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
+                dataProvider={dataProvider}
+                getItemTitle={(item) => item.data}
+                onChange={setData}
+                onReorder={(outData) => {
+                    console.log({ outData });
+                }}
+                onClick={(item: TreeItem) => console.log(item)}
+                viewState={{
+                    "tree-1": {
+                        expandedItems: ["child1", "child11", "child2"],
+                    },
+                }}
+            >
+                <Tree treeId="tree-1" rootItem="root" />
+            </UncontrolledTreeEnvironment>
+        </>
     );
 }
 

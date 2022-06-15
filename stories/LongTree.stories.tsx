@@ -46,7 +46,7 @@ export const LongTree = () => {
             canDropOnItemWithChildren
             canReorderItems
             allowCollapse
-            dataProvider={new StaticTreeDataProvider(data, (item, itemData) => ({ ...item, itemData }))}
+            dataProvider={new StaticTreeDataProvider(data)}
             getItemTitle={(item) => item.data}
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}

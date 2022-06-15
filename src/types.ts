@@ -328,8 +328,6 @@ export interface TreeRef<T = any> extends TreeChangeActions, TreeInformation {
 export interface TreeDataProvider<T = any> {
     onDidChangeTreeData?: (listener: (changedItemIds: TreeItemIndex[]) => void) => Disposable;
     getAllData: () => Record<TreeItemIndex, TreeItem>;
-    getTreeItem: (itemId: TreeItemIndex) => Promise<TreeItem<T>>;
-    getTreeItems?: (itemIds: TreeItemIndex[]) => Promise<TreeItem[]>;
     onChangeItemChildren?: (itemId: TreeItemIndex, newChildren: TreeItemIndex[]) => Promise<void>;
 }
 

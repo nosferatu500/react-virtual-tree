@@ -19,7 +19,7 @@ export const SingleTree = () => {
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new StaticTreeDataProvider(data, (item, itemData) => ({ ...item, itemData }))}
+            dataProvider={new StaticTreeDataProvider(data)}
             getItemTitle={(item) => item.data}
             onChange={setData}
             onReorder={(outData) => {
@@ -49,7 +49,7 @@ export const MultipleTrees = () => {
             allowCollapse
             containerSize={{ width: 300, height: 300 }}
             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            dataProvider={new StaticTreeDataProvider(data, (item, itemData) => ({ ...item, itemData }))}
+            dataProvider={new StaticTreeDataProvider(data)}
             getItemTitle={(item) => item.data}
             onChange={setData}
             onReorder={(outData) => {

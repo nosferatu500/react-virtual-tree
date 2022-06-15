@@ -1,4 +1,4 @@
-import { Disposable, TreeDataProvider, TreeItem, TreeItemIndex } from "../types";
+import { Disposable, ExplicitDataSource, TreeDataProvider, TreeItem, TreeItemIndex } from "../types";
 
 export class CompleteTreeDataProvider<T = any> implements Required<TreeDataProvider<T>> {
     private provider: TreeDataProvider;
@@ -9,16 +9,6 @@ export class CompleteTreeDataProvider<T = any> implements Required<TreeDataProvi
 
     public getAllData() {
         return this.provider.getAllData();
-    }
-
-    public async getTreeItem(itemId: TreeItemIndex): Promise<TreeItem> {
-        return this.provider.getTreeItem(itemId);
-    }
-
-    public async getTreeItems(itemIds: TreeItemIndex[]): Promise<TreeItem[]> {
-        return this.provider.getTreeItems
-            ? this.provider.getTreeItems(itemIds)
-            : Promise.all(itemIds.map((id) => this.provider.getTreeItem(id)));
     }
 
     public async onChangeItemChildren(itemId: TreeItemIndex, newChildren: TreeItemIndex[]): Promise<void> {

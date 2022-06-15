@@ -10,6 +10,7 @@ import { CompleteTreeDataProvider } from "./CompleteTreeDataProvider";
 const ScrollingComponent = withScrolling(
     React.forwardRef((props, ref) => {
         // @ts-ignore
+        // eslint-disable-next-line react/prop-types
         const { dragDropManager, ...otherProps } = props;
         // @ts-ignore
         return <div ref={ref} {...otherProps} />;
@@ -20,17 +21,11 @@ const verticalStrength = (size: number) => createVerticalStrength(size);
 const horizontalStrength = (size: number) => createHorizontalStrength(size);
 
 export const UncontrolledTreeEnvironment = (props: UncontrolledTreeEnvironmentProps) => {
-    const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>({});
     const [viewState, setViewState] = useState(props.viewState);
     const missingItemIds = useRef<TreeItemIndex[]>([]);
+    // const dataProvider = new CompleteTreeDataProvider(props.dataProvider);
     const dataProvider = useMemo(() => new CompleteTreeDataProvider(props.dataProvider), [props.dataProvider]);
-
-    const writeItems = useMemo(
-        () => (newItems: Record<TreeItemIndex, TreeItem>) => {
-            setCurrentItems((oldItems) => ({ ...oldItems, ...newItems }));
-        },
-        []
-    );
+    const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>(dataProvider.getAllData());
 
     const amendViewState = useCallback(
         (
@@ -49,14 +44,12 @@ export const UncontrolledTreeEnvironment = (props: UncontrolledTreeEnvironmentPr
     );
 
     useEffect(() => {
-        const { dispose } = dataProvider.onDidChangeTreeData((changedItemIds) => {
-            dataProvider.getTreeItems(changedItemIds).then((items) => {
-                writeItems(items.map((item) => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {}));
-            });
+        const { dispose } = dataProvider.onDidChangeTreeData(() => {
+            setCurrentItems({ ...dataProvider.getAllData() });
         });
 
         return dispose;
-    }, [dataProvider, writeItems]);
+    }, [dataProvider]);
 
     return (
         <ControlledTreeEnvironment
@@ -159,16 +152,18 @@ export const UncontrolledTreeEnvironment = (props: UncontrolledTreeEnvironmentPr
                 // Batch individual fetch-item-calls together
                 if (missingItemIds.current.length === 0) {
                     setTimeout(() => {
-                        dataProvider.getTreeItems(missingItemIds.current).then((items) => {
-                            writeItems(
-                                items.map((item) => ({ [item.index]: item })).reduce((a, b) => ({ ...a, ...b }), {})
-                            );
-                        });
+                        setCurrentItems({ ...dataProvider.getAllData() });
                         missingItemIds.current = [];
                     });
                 }
 
-                missingItemIds.current.push(...itemIds);
+                for (const itemId of itemIds) {
+                    if (missingItemIds.current.includes(itemId)) {
+                        continue;
+                    }
+                    missingItemIds.current.push(itemId);
+                }
+
                 props.onMissingItems?.(itemIds);
             }}
         >
