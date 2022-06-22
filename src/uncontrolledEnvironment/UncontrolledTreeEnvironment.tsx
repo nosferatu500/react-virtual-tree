@@ -1,10 +1,9 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import withScrolling, { createHorizontalStrength, createVerticalStrength } from "@nosferatu500/react-dnd-scrollzone";
 import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { ControlledTreeEnvironment } from "../controlledEnvironment/ControlledTreeEnvironment";
 import { IndividualTreeViewState, TreeItem, TreeItemIndex, UncontrolledTreeEnvironmentProps } from "../types";
+import withScrolling, { createHorizontalStrength, createVerticalStrength } from "../withScrolling";
 import { CompleteTreeDataProvider } from "./CompleteTreeDataProvider";
 
 const ScrollingComponent = withScrolling(
@@ -23,7 +22,6 @@ const horizontalStrength = (size: number) => createHorizontalStrength(size);
 export const UncontrolledTreeEnvironment = (props: UncontrolledTreeEnvironmentProps) => {
     const [viewState, setViewState] = useState(props.viewState);
     const missingItemIds = useRef<TreeItemIndex[]>([]);
-    // const dataProvider = new CompleteTreeDataProvider(props.dataProvider);
     const dataProvider = useMemo(() => new CompleteTreeDataProvider(props.dataProvider), [props.dataProvider]);
     const [currentItems, setCurrentItems] = useState<Record<TreeItemIndex, TreeItem>>(dataProvider.getAllData());
 
@@ -167,7 +165,7 @@ export const UncontrolledTreeEnvironment = (props: UncontrolledTreeEnvironmentPr
                 props.onMissingItems?.(itemIds);
             }}
         >
-            <DndProvider backend={HTML5Backend}>
+            <DndProvider manager={props.dragDropManager}>
                 <ScrollingComponent
                     style={{
                         width: props.containerSize.width,

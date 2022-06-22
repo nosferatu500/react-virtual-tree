@@ -282,6 +282,7 @@ export interface UncontrolledTreeEnvironmentProps<T = any, C extends string = ne
     children: JSX.Element | JSX.Element[] | null;
     containerSize: { width: number; height: number };
     autoScrollDetectionZone: { vertical: number; horizontal: number };
+    dragDropManager: any;
 }
 
 export interface TreeConfiguration {

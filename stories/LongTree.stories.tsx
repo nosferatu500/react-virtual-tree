@@ -36,28 +36,28 @@ export default {
     title: "LongTree",
 } as Meta;
 
-export const LongTree = () => {
-    const ref = useRef(itemsWithManyChildren.items);
-    const [data, setData] = useState<any>(ref.current);
+// export const LongTree = () => {
+//     const ref = useRef(itemsWithManyChildren.items);
+//     const [data, setData] = useState<any>(ref.current);
 
-    return (
-        <UncontrolledTreeEnvironment
-            canDragAndDrop
-            canDropOnItemWithChildren
-            canReorderItems
-            allowCollapse
-            dataProvider={new StaticTreeDataProvider(data)}
-            getItemTitle={(item) => item.data}
-            containerSize={{ width: 300, height: 300 }}
-            autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
-            viewState={{}}
-            onChange={setData}
-            onReorder={(outData) => {
-                console.log({ outData });
-            }}
-            onClick={(item: TreeItem) => console.log(item)}
-        >
-            <Tree treeId="tree-1" rootItem="root" />
-        </UncontrolledTreeEnvironment>
-    );
-};
+//     return (
+//         <UncontrolledTreeEnvironment
+//             canDragAndDrop
+//             canDropOnItemWithChildren
+//             canReorderItems
+//             allowCollapse
+//             dataProvider={new StaticTreeDataProvider(data)}
+//             getItemTitle={(item) => item.data}
+//             containerSize={{ width: 300, height: 300 }}
+//             autoScrollDetectionZone={{ vertical: 50, horizontal: 50 }}
+//             viewState={{}}
+//             onChange={setData}
+//             onReorder={(outData) => {
+//                 console.log({ outData });
+//             }}
+//             onClick={(item: TreeItem) => console.log(item)}
+//         >
+//             <Tree treeId="tree-1" rootItem="root" />
+//         </UncontrolledTreeEnvironment>
+//     );
+// };
