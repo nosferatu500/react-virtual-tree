@@ -1,4 +1,5 @@
 import { HTMLProps } from "react";
+import { isControlKey } from "../isControlKey";
 import {
     InteractionManager,
     InteractionMode,
@@ -27,7 +28,7 @@ export class ClickItemToExpandInteractionManager implements InteractionManager {
                 actions.focusItem();
                 if (e.shiftKey) {
                     actions.selectUpTo();
-                } else if (e.ctrlKey) {
+                } else if (isControlKey(e)) {
                     if (renderFlags.isSelected) {
                         actions.unselectItem();
                     } else {
