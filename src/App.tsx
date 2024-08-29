@@ -1,25 +1,42 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import './App.css'
+import { TNode } from './TreeNode';
+import VTree from './VTree';
+
+const initialTreeData: TNode[] = [
+  {
+    id: "1",
+    name: 'src',
+    type: 'folder',
+    children: [
+      { id: "1.1", name: 'index.js', type: 'file', children: [] },
+      { id: "1.2", name: 'App.js', type: 'file', children: [] },
+      {
+        id: "1.3",
+        name: 'components',
+        type: 'folder',
+        children: [
+          { id: "1.3.1", name: 'Header.js', type: 'file', children: [] },
+          { id: "1.3.2", name: 'Footer.js', type: 'file', children: [] },
+        ],
+      },
+    ],
+  },
+  { id: "2", name: 'package.json', type: 'file', children: [] },
+];
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [treeData, setTreeData] = useState(initialTreeData);
 
   return (
     <>
       <div>
       </div>
-      <h1>Vite + React</h1>
+      <h1>React Virtual Tree</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <VTree data={treeData} setData={setTreeData} />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
