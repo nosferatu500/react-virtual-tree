@@ -4,38 +4,47 @@ import { TNode, TreeNode } from "./TreeNode";
 type FileTreeProps = {
     data: TNode[]
     setData: (newData: TNode[]) => void
+    selectedNodes: React.Key[]
+    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void
 }
-const FileTree: React.FC<FileTreeProps> = ({ data, setData }) => {
-    const findNodeAndRemove = (node: TNode, targetNodes: TNode[]): TNode | null => {
+const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode }) => {
+    const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
-            if (targetNodes[i].id === node.id) {
+            if (targetNodes[i].id === nodeId) {
                 return targetNodes.splice(i, 1)[0];
             }
-            
+
             if (targetNodes[i].children) {
-                const removedNode = findNodeAndRemove(node, targetNodes[i].children);
+                const removedNode = findNodeAndRemove(nodeId, targetNodes[i].children);
                 if (removedNode) return removedNode;
             }
         }
         return null;
     };
 
-    const moveNode = (draggedNode: TNode, targetNode: TNode, treeData: TNode[]) => {
-        // Удаляем узел из текущего положения
-        const nodeToMove = findNodeAndRemove(draggedNode, treeData);
-        if (!nodeToMove) return;
+    const moveNode = (draggedNodeIds: React.Key[], targetNode: TNode, treeData: TNode[]) => {
+        const nodesToMove: TNode[] = [];
 
-        // Если targetNode - это папка, добавляем внутрь
+        draggedNodeIds.forEach((nodeId) => {
+            const node = findNodeAndRemove(nodeId, treeData);
+            if (node) nodesToMove.push(node);
+        });
+
+        if (!nodesToMove.length) return;
+
+        // Add into folder
         if (targetNode.type === 'folder') {
             targetNode.children = targetNode.children || [];
-            targetNode.children.push(nodeToMove);
+            nodesToMove.forEach((node) => targetNode.children.push(node));
         } else {
-            // Иначе добавляем в одно и то же родительское место
+            // Add on the same level
             const parentNode = findParentNode(targetNode, treeData);
             if (!parentNode) return
 
             const targetIndex = parentNode.children.indexOf(targetNode);
-            parentNode.children.splice(targetIndex + 1, 0, nodeToMove);
+            nodesToMove.forEach((node, i) =>
+                parentNode.children.splice(targetIndex + 1 + i, 0, node)
+            );
         }
     };
 
@@ -54,12 +63,12 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData }) => {
         return null;
     };
 
-    const handleMoveNode = (draggedNode: TNode, targetNode: TNode) => {
-        if (draggedNode.id === targetNode.id) return;
-        
+    const handleMoveNode = (draggedNodeIds: React.Key[], targetNode: TNode) => {
+        if (draggedNodeIds.includes(targetNode.id)) return;
+
         const newTreeData = [...data];
-        moveNode(draggedNode, targetNode, newTreeData);
-        console.log({newTreeData})
+        moveNode(draggedNodeIds, targetNode, newTreeData);
+        console.log({ newTreeData })
         setData(newTreeData);
     };
 
@@ -72,7 +81,13 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData }) => {
             count={data.length}>
             {(index) => {
                 const item = data[index]
-                return <TreeNode key={item.id} node={item} onMove={handleMoveNode} />
+                return <TreeNode
+                    key={item.id}
+                    node={item}
+                    selectedNodes={selectedNodes}
+                    onSelectNode={onSelectNode}
+                    onMove={handleMoveNode}
+                />
             }}
         </VList>
     );

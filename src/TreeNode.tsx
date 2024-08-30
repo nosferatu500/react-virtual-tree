@@ -15,11 +15,15 @@ const ItemTypes = {
 
 type Props = {
     node: TNode
-    onMove: (draggedNode: TNode, targetNode: TNode) => void
+    onMove: (draggedNodeIds: React.Key[], targetNode: TNode) => void
+    selectedNodes: React.Key[]
+    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void
 }
 
-export const TreeNode: React.FC<Props> = ({ node, onMove }) => {
+export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, onMove }) => {
     const [expanded, setExpanded] = useState(false);
+
+    const isSelected = selectedNodes.includes(node.id);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -29,7 +33,7 @@ export const TreeNode: React.FC<Props> = ({ node, onMove }) => {
 
     const [{ isDragging }, drag] = useDrag({
         type: ItemTypes.FILE,
-        item: { node },
+        item: { nodes: isSelected ? selectedNodes : [node.id] },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
@@ -37,10 +41,10 @@ export const TreeNode: React.FC<Props> = ({ node, onMove }) => {
 
     const [{ isOver, handlerId }, drop] = useDrop({
         accept: ItemTypes.FILE,
-        drop: (draggedItem: { node: TNode }, monitor) => {
+        drop: (draggedItem: { nodes: React.Key[] }, monitor) => {
             if (monitor.didDrop()) return;
-            
-            onMove(draggedItem.node, node)
+
+            onMove(draggedItem.nodes, node)
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
@@ -48,17 +52,27 @@ export const TreeNode: React.FC<Props> = ({ node, onMove }) => {
         }),
     });
 
+    const onClickHandler = (event: React.MouseEvent) => {
+        onSelectNode(event, node.id);
+    }
+
     drag(drop(ref))
 
     const style: CSSProperties = {
         marginLeft: 20,
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: isOver ? '#e0e0e0' : 'transparent',
+        backgroundColor: isOver ? '#e0e0e0' : isSelected ? '#d3d3d3' : 'transparent',
         cursor: 'pointer',
     }
 
     return (
-        <div key={node.id} ref={ref} style={style} data-handler-id={handlerId}>
+        <div
+            key={node.id}
+            ref={ref}
+            style={style}
+            data-handler-id={handlerId}
+            onClick={onClickHandler}
+        >
             {node.type === 'folder' ? (
                 <>
                     <span onClick={toggleExpand}>
@@ -66,7 +80,13 @@ export const TreeNode: React.FC<Props> = ({ node, onMove }) => {
                     </span>
                     {expanded &&
                         node.children.map((childNode) => (
-                            <TreeNode key={childNode.id} node={childNode} onMove={onMove}/>
+                            <TreeNode
+                                key={childNode.id}
+                                node={childNode}
+                                selectedNodes={selectedNodes}
+                                onSelectNode={onSelectNode}
+                                onMove={onMove}
+                            />
                         ))}
                 </>
             ) : (
