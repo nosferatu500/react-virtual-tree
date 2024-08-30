@@ -1,23 +1,23 @@
-import React, { CSSProperties, useRef, useState } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import React, { CSSProperties, useRef, useState } from "react";
+import { useDrag, useDrop } from "react-dnd";
 
 export interface TNode {
-    id: React.Key
-    name: string
-    type: "folder" | "file"
-    children: TNode[]
+    id: React.Key;
+    name: string;
+    type: "folder" | "file";
+    children: TNode[];
 }
 
 const ItemTypes = {
-    FILE: 'file',
-    FOLDER: 'folder',
-}
+    FILE: "file",
+    FOLDER: "folder",
+};
 
 interface Props {
-    node: TNode
-    onMove: (draggedNodeIds: React.Key[], targetNode: TNode) => void
-    selectedNodes: React.Key[]
-    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void
+    node: TNode;
+    onMove: (draggedNodeIds: React.Key[], targetNode: TNode) => void;
+    selectedNodes: React.Key[];
+    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
 }
 
 export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, onMove }) => {
@@ -44,7 +44,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
         drop: (draggedItem: { nodes: React.Key[] }, monitor) => {
             if (monitor.didDrop()) return;
 
-            onMove(draggedItem.nodes, node)
+            onMove(draggedItem.nodes, node);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver({ shallow: true }),
@@ -55,36 +55,28 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
 
     const onClickHandler = (event: React.MouseEvent) => {
         onSelectNode(event, node.id);
-    }
+    };
 
-    drag(drop(ref))
+    drag(drop(ref));
 
     const style: CSSProperties = {
-        position: 'relative',
+        position: "relative",
         marginLeft: 20,
-    }
+    };
 
     const nodeStyle: CSSProperties = {
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: isOver && canDrop ? '#e0f7fa' : isSelected ? '#d3d3d3' : 'transparent',
-        cursor: 'pointer',
-    }
+        backgroundColor: isOver && canDrop ? "#e0f7fa" : isSelected ? "#d3d3d3" : "transparent",
+        cursor: "pointer",
+    };
 
     return (
-        <div
-            key={node.id}
-            ref={ref}
-            data-handler-id={handlerId}
-            style={style}
-        >
-            <div
-                style={nodeStyle}
-                onClick={onClickHandler}
-            >
-                {node.type === 'folder' ? (
+        <div key={node.id} ref={ref} data-handler-id={handlerId} style={style}>
+            <div style={nodeStyle} onClick={onClickHandler}>
+                {node.type === "folder" ? (
                     <>
                         <span onClick={toggleExpand}>
-                            {expanded ? '📂' : '📁'} {node.name}
+                            {expanded ? "📂" : "📁"} {node.name}
                         </span>
                         {expanded &&
                             node.children.map((childNode) => (

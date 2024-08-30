@@ -3,10 +3,10 @@ import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
 
 interface FileTreeProps {
-    data: TNode[]
-    setData: (newData: TNode[]) => void
-    selectedNodes: React.Key[]
-    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void
+    data: TNode[];
+    setData: (newData: TNode[]) => void;
+    selectedNodes: React.Key[];
+    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
 }
 const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode }: FileTreeProps) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
@@ -36,18 +36,16 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
         if (!nodesToMove.length) return;
 
         // Add into folder
-        if (targetNode.type === 'folder') {
+        if (targetNode.type === "folder") {
             targetNode.children = targetNode.children || [];
             nodesToMove.forEach((node) => targetNode.children.push(node));
         } else {
             // Add on the same level
             const parentNode = findParentNode(targetNode, treeData);
-            if (!parentNode) return
+            if (!parentNode) return;
 
             const targetIndex = parentNode.children.indexOf(targetNode);
-            nodesToMove.forEach((node, i) =>
-                parentNode.children.splice(targetIndex + 1 + i, 0, node)
-            );
+            nodesToMove.forEach((node, i) => parentNode.children.splice(targetIndex + 1 + i, 0, node));
         }
     };
 
@@ -77,25 +75,26 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
     return (
         <DndContext.Consumer>
             {({ dragDropManager }) =>
-                dragDropManager ?
+                dragDropManager ? (
                     <DndProvider manager={dragDropManager}>
-                        <VList
-                            id="vlist"
-                            style={{ height: 500 }}
-                            count={data.length}>
+                        <VList id="vlist" style={{ height: 500 }} count={data.length}>
                             {(index) => {
-                                const item = data[index]
-                                return <TreeNode
-                                    key={item.id}
-                                    node={item}
-                                    selectedNodes={selectedNodes}
-                                    onSelectNode={onSelectNode}
-                                    onMove={handleMoveNode}
-                                />
+                                const item = data[index];
+                                return (
+                                    <TreeNode
+                                        key={item.id}
+                                        node={item}
+                                        selectedNodes={selectedNodes}
+                                        onSelectNode={onSelectNode}
+                                        onMove={handleMoveNode}
+                                    />
+                                );
                             }}
                         </VList>
                     </DndProvider>
-                    : <div> Unable to find dragDropManager </div>
+                ) : (
+                    <div> Unable to find dragDropManager </div>
+                )
             }
         </DndContext.Consumer>
     );
