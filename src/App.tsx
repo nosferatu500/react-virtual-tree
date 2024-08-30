@@ -55,6 +55,7 @@ function App() {
             <h1>React Virtual Tree</h1>
             <div className="card">
                 <VTree
+                    openAll
                     data={treeData}
                     setData={setTreeData}
                     selectedNodes={selectedNodes}

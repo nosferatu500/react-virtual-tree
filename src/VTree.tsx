@@ -7,8 +7,9 @@ interface FileTreeProps {
     setData: (newData: TNode[]) => void;
     selectedNodes: React.Key[];
     onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
+    openAll: boolean
 }
-const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode }: FileTreeProps) => {
+const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode, openAll }: FileTreeProps) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
@@ -49,7 +50,6 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
         }
     };
 
-    // Рекурсивно ищем родителя узла
     const findParentNode = (node: TNode, treeData: TNode[]): TNode | null => {
         for (const item of treeData) {
             if (item.children.includes(node)) {
@@ -87,6 +87,7 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
                                         selectedNodes={selectedNodes}
                                         onSelectNode={onSelectNode}
                                         onMove={handleMoveNode}
+                                        openAll={openAll}
                                     />
                                 );
                             }}
