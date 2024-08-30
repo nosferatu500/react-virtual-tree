@@ -23,8 +23,6 @@ type Props = {
 export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, onMove }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    const [showPlaceholder, setShowPlaceholder] = useState<boolean>(false);
-
     const isSelected = selectedNodes.includes(node.id);
 
     const ref = useRef<HTMLDivElement>(null);
@@ -48,16 +46,11 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
 
             onMove(draggedItem.nodes, node)
         },
-        hover: () => setShowPlaceholder(true),
         collect: (monitor) => ({
-            isOver: monitor.isOver(),
+            isOver: monitor.isOver({ shallow: true }),
             handlerId: monitor.getHandlerId(),
             canDrop: monitor.canDrop(),
         }),
-        canDrop: () => {
-            setShowPlaceholder(false);
-            return true;
-        }
     });
 
     const onClickHandler = (event: React.MouseEvent) => {
@@ -77,16 +70,6 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
         cursor: 'pointer',
     }
 
-    const placeholderStyle: CSSProperties = {
-        position: 'absolute',
-        top: -4,
-        left: 0,
-        right: 0,
-        height: 2,
-        backgroundColor: 'blue',
-        borderRadius: '1px',
-    }
-
     return (
         <div
             key={node.id}
@@ -94,10 +77,6 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
             data-handler-id={handlerId}
             style={style}
         >
-            {showPlaceholder && (
-                <div style={placeholderStyle} ></div>
-            )}
-
             <div
                 style={nodeStyle}
                 onClick={onClickHandler}
