@@ -1,5 +1,6 @@
 import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
+import { DndContext, DndProvider } from "react-dnd";
 
 type FileTreeProps = {
     data: TNode[]
@@ -73,23 +74,29 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
     };
 
     return (
-        <VList
-            id="vlist"
-            // ref={this.listRef}
-            // dragDropManager={dragDropManager}
-            style={{ height: 500 }}
-            count={data.length}>
-            {(index) => {
-                const item = data[index]
-                return <TreeNode
-                    key={item.id}
-                    node={item}
-                    selectedNodes={selectedNodes}
-                    onSelectNode={onSelectNode}
-                    onMove={handleMoveNode}
-                />
-            }}
-        </VList>
+        <DndContext.Consumer>
+            {({ dragDropManager }) =>
+                dragDropManager ?
+                    <DndProvider manager={dragDropManager}>
+                        <VList
+                            id="vlist"
+                            style={{ height: 500 }}
+                            count={data.length}>
+                            {(index) => {
+                                const item = data[index]
+                                return <TreeNode
+                                    key={item.id}
+                                    node={item}
+                                    selectedNodes={selectedNodes}
+                                    onSelectNode={onSelectNode}
+                                    onMove={handleMoveNode}
+                                />
+                            }}
+                        </VList>
+                    </DndProvider>
+                    : <div> Unable to find dragDropManager </div>
+            }
+        </DndContext.Consumer>
     );
 };
 

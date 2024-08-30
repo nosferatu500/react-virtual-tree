@@ -55,8 +55,6 @@ function App() {
 
     return (
         <>
-            <div>
-            </div>
             <h1>React Virtual Tree</h1>
             <div className="card">
                 <VTree data={treeData} setData={setTreeData} selectedNodes={selectedNodes} onSelectNode={handleSelectNode} />
