@@ -2,21 +2,23 @@ import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
 
-type FileTreeProps = {
+interface FileTreeProps {
     data: TNode[]
     setData: (newData: TNode[]) => void
     selectedNodes: React.Key[]
     onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void
 }
-const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode }) => {
+const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode }: FileTreeProps) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
-            if (targetNodes[i].id === nodeId) {
+            const item = targetNodes[i];
+
+            if (item.id === nodeId) {
                 return targetNodes.splice(i, 1)[0];
             }
 
-            if (targetNodes[i].children) {
-                const removedNode = findNodeAndRemove(nodeId, targetNodes[i].children);
+            if (item.children.length > 0) {
+                const removedNode = findNodeAndRemove(nodeId, item.children);
                 if (removedNode) return removedNode;
             }
         }
@@ -51,13 +53,13 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
 
     // Рекурсивно ищем родителя узла
     const findParentNode = (node: TNode, treeData: TNode[]): TNode | null => {
-        for (let i = 0; i < treeData.length; i++) {
-            if (treeData[i].children && treeData[i].children.includes(node)) {
-                return treeData[i];
+        for (const item of treeData) {
+            if (item.children.includes(node)) {
+                return item;
             }
 
-            if (treeData[i].children) {
-                const parentNode = findParentNode(node, treeData[i].children);
+            if (item.children.length > 0) {
+                const parentNode = findParentNode(node, item.children);
                 if (parentNode) return parentNode;
             }
         }
@@ -69,7 +71,6 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
 
         const newTreeData = [...data];
         moveNode(draggedNodeIds, targetNode, newTreeData);
-        console.log({ newTreeData })
         setData(newTreeData);
     };
 

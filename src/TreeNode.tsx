@@ -13,7 +13,7 @@ const ItemTypes = {
     FOLDER: 'folder',
 }
 
-type Props = {
+interface Props {
     node: TNode
     onMove: (draggedNodeIds: React.Key[], targetNode: TNode) => void
     selectedNodes: React.Key[]
