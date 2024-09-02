@@ -6,7 +6,7 @@ export interface TNode<T = unknown> {
     id: React.Key;
     name: string;
     type: "folder" | "file";
-    children: TNode[];
+    children: TNode<T>[];
     data?: T
 }
 
@@ -15,16 +15,16 @@ const ItemTypes = {
     FOLDER: "folder",
 };
 
-interface Props {
-    node: TNode;
-    onMove: (draggedNodeIds: React.Key[], targetNode: TNode) => void;
+interface Props<T = unknown> {
+    node: TNode<T>;
+    onMove: (draggedNodeIds: React.Key[], targetNode: TNode<T>) => void;
     selectedNodes: React.Key[];
     onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
-    canDrop?: (dragSource: TNode, dropTarget: TNode) => boolean
+    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean
 }
 
-export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, onMove, openAll, canDrop: customCanDrop }) => {
+export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAll, canDrop: customCanDrop }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll);
 
     const isSelected = selectedNodes.includes(node.id);
@@ -59,7 +59,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
             handlerId: monitor.getHandlerId(),
             canDrop: monitor.canDrop(),
         }),
-        canDrop: (item, monitor) => {
+        canDrop: (_item, monitor) => {
             // @ts-expect-error Update types
             const dragSource = monitor.getItem().node
             const dropTarget = node

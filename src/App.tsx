@@ -55,7 +55,7 @@ function App() {
         setSelectedNodes([nodeId]);
     };
 
-    const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
+    const handleCanDrop = (dragSource: TNode, _dropTarget: TNode) => {
         if (dragSource.type === "folder") return false;
 
         return true;
