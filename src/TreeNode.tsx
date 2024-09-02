@@ -18,17 +18,19 @@ const ItemTypes = {
 interface Props<T = unknown> {
     node: TNode<T>;
     onMove: (draggedNodeIds: React.Key[], targetNode: TNode<T>) => void;
-    selectedNodes: React.Key[];
-    onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
+    selectedNodeIds: React.Key[];
+    selectedNodes: TNode<T>[];
+    onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
     openAll: boolean
     canDrag?: (dragSource: TNode<T>) => boolean
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean
+    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void
 }
 
-export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAll, canDrag: customCanDrag, canDrop: customCanDrop }: Props<T>) => {
+export const TreeNode = <T, >({ node, selectedNodeIds, selectedNodes, onClickNode, onMove, openAll, canDrag: customCanDrag, canDrop: customCanDrop, onDrop: onDropCallback }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll);
 
-    const isSelected = selectedNodes.includes(node.id);
+    const isSelected = selectedNodeIds.includes(node.id);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -38,7 +40,7 @@ export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAl
 
     const [{ isDragging }, drag, preview] = useDrag({
         type: ItemTypes.FILE,
-        item: { nodes: isSelected ? selectedNodes : [node.id], node: node, count: selectedNodes.length },
+        item: { nodeIds: isSelected ? selectedNodeIds : [node.id], nodes: isSelected ? selectedNodes : [node], node: node, count: selectedNodeIds.length },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
@@ -57,10 +59,14 @@ export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAl
 
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: ItemTypes.FILE,
-        drop: (draggedItem: { nodes: React.Key[] }, monitor) => {
+        drop: (draggedItem: { nodeIds: React.Key[], nodes: TNode<T>[] }, monitor) => {
             if (monitor.didDrop()) return;
 
-            onMove(draggedItem.nodes, node);
+            onMove(draggedItem.nodeIds, node);
+
+            if (onDropCallback) {
+                onDropCallback(draggedItem.nodes, node)
+            }
         },
         collect: (monitor) => ({
             isOver: monitor.isOver({ shallow: true }),
@@ -81,7 +87,7 @@ export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAl
 
     const onClickHandler = (event: React.MouseEvent) => {
         event.stopPropagation();
-        onClickNode(event, node.id);
+        onClickNode(event, node);
     };
 
     drop(ref);
@@ -114,12 +120,14 @@ export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAl
                                 <TreeNode
                                     key={childNode.id}
                                     node={childNode}
+                                    selectedNodeIds={selectedNodeIds}
                                     selectedNodes={selectedNodes}
                                     onClickNode={onClickNode}
                                     onMove={onMove}
                                     openAll={openAll}
                                     canDrag={customCanDrag}
                                     canDrop={customCanDrop}
+                                    onDrop={onDropCallback}
                                 />
                             ))}
                     </>

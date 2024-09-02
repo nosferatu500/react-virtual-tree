@@ -41,18 +41,24 @@ interface CustomData {
 
 function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
-    const [selectedNodes, setSelectedNodes] = useState<React.Key[]>([]);
+    const [selectedNodeIds, setSelectedNodeIds] = useState<React.Key[]>([]);
+    const [selectedNodes, setSelectedNodes] = useState<TNode<CustomData>[]>([]);
 
-    const onClickNode = (event: React.MouseEvent, nodeId: React.Key) => {
+    const onClickNode = (event: React.MouseEvent, node: TNode<CustomData>) => {
         if (event.metaKey || event.ctrlKey) {
+            setSelectedNodeIds((prevSelected) =>
+                prevSelected.includes(node.id) ? prevSelected.filter((id) => id !== node.id) : [...prevSelected, node.id]
+            );
+
             setSelectedNodes((prevSelected) =>
-                prevSelected.includes(nodeId) ? prevSelected.filter((id) => id !== nodeId) : [...prevSelected, nodeId]
+                prevSelected.find((prevNode) => prevNode.id === node.id) ? prevSelected.filter((prevNode) => prevNode.id !== node.id) : [...prevSelected, node]
             );
 
             return;
         }
 
-        setSelectedNodes([nodeId]);
+        setSelectedNodeIds([node.id]);
+        setSelectedNodes([node]);
     };
 
     const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
@@ -67,6 +73,12 @@ function App() {
         return true;
     }
 
+    const handleOnDrop = (draggedNodes: TNode<CustomData>[], dropTarget: TNode<CustomData>) => {
+        console.warn("DO SOMETHING!!!")
+        console.log(draggedNodes)
+        console.log(dropTarget)
+    }
+
     return (
         <>
             <h1>React Virtual Tree</h1>
@@ -75,10 +87,12 @@ function App() {
                     openAll
                     data={treeData}
                     setData={setTreeData}
+                    selectedNodeIds={selectedNodeIds}
                     selectedNodes={selectedNodes}
                     onClickNode={onClickNode}
                     canDrag={handleCanDrag}
                     canDrop={handleCanDrop}
+                    onDrop={handleOnDrop}
                 />
             </div>
         </>
