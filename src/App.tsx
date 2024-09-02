@@ -55,6 +55,12 @@ function App() {
         setSelectedNodes([nodeId]);
     };
 
+    const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
+        if (dragSource.type === "folder") return false;
+
+        return true;
+    }
+
     return (
         <>
             <h1>React Virtual Tree</h1>
@@ -65,6 +71,7 @@ function App() {
                     setData={setTreeData}
                     selectedNodes={selectedNodes}
                     onClickNode={onClickNode}
+                    canDrop={handleCanDrop}
                 />
             </div>
         </>

@@ -9,8 +9,9 @@ interface VTreeProps<T> {
     selectedNodes: React.Key[];
     onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
+    canDrop?: (dragSource: TNode, dropTarget: TNode) => boolean
 }
-export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }: VTreeProps<T>) => {
+export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll, canDrop }: VTreeProps<T>) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
@@ -73,10 +74,6 @@ export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }
         setData(newTreeData);
     };
 
-    const handleCanDrop = (item: TNode) => {
-        return item.type === "folder";
-    }
-
     return (
         <DndContext.Consumer>
             {({ dragDropManager }) =>
@@ -94,7 +91,7 @@ export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }
                                         onClickNode={onClickNode}
                                         onMove={handleMoveNode}
                                         openAll={openAll}
-                                        canDrop={handleCanDrop}
+                                        canDrop={canDrop}
                                     />
                                 );
                             }}

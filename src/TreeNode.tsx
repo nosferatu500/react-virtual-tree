@@ -21,7 +21,7 @@ interface Props {
     selectedNodes: React.Key[];
     onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
-    canDrop?: (dragSource: TNode) => boolean
+    canDrop?: (dragSource: TNode, dropTarget: TNode) => boolean
 }
 
 export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, onMove, openAll, canDrop: customCanDrop }) => {
@@ -59,9 +59,12 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
             handlerId: monitor.getHandlerId(),
             canDrop: monitor.canDrop(),
         }),
-        canDrop: () => {
+        canDrop: (item, monitor) => {
+            // @ts-expect-error Update types
+            const dragSource = monitor.getItem().node
+            const dropTarget = node
             if (customCanDrop) {
-                return customCanDrop(node)
+                return customCanDrop(dragSource, dropTarget)
             }
             
             return true;
