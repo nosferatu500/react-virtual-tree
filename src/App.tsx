@@ -55,7 +55,13 @@ function App() {
         setSelectedNodes([nodeId]);
     };
 
-    const handleCanDrop = (dragSource: TNode, _dropTarget: TNode) => {
+    const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
+        if (dragSource.id === dropTarget.id) return false;
+
+        return true;
+    }
+
+    const handleCanDrag = (dragSource: TNode) => {
         if (dragSource.type === "folder") return false;
 
         return true;
@@ -71,6 +77,7 @@ function App() {
                     setData={setTreeData}
                     selectedNodes={selectedNodes}
                     onClickNode={onClickNode}
+                    canDrag={handleCanDrag}
                     canDrop={handleCanDrop}
                 />
             </div>

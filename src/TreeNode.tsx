@@ -21,10 +21,11 @@ interface Props<T = unknown> {
     selectedNodes: React.Key[];
     onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
+    canDrag?: (dragSource: TNode<T>) => boolean
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean
 }
 
-export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAll, canDrop: customCanDrop }: Props<T>) => {
+export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAll, canDrag: customCanDrag, canDrop: customCanDrop }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll);
 
     const isSelected = selectedNodes.includes(node.id);
@@ -41,6 +42,13 @@ export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAl
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
+        canDrag: () => {
+            if (customCanDrag) {
+                return customCanDrag(node);
+            }
+
+            return true
+        }
     });
 
     preview(getEmptyImage(), { captureDraggingState: true });
@@ -110,6 +118,7 @@ export const TreeNode = <T, >({ node, selectedNodes, onClickNode, onMove, openAl
                                     onClickNode={onClickNode}
                                     onMove={onMove}
                                     openAll={openAll}
+                                    canDrag={customCanDrag}
                                     canDrop={customCanDrop}
                                 />
                             ))}
