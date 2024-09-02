@@ -2,14 +2,14 @@ import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
 
-interface VTreeProps {
-    data: TNode[];
-    setData: React.Dispatch<React.SetStateAction<TNode<unknown>[]>>
+interface VTreeProps<T> {
+    data: TNode<T>[];
+    setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>
     selectedNodes: React.Key[];
     onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
 }
-export const VTree: React.FC<VTreeProps> = ({ data, setData, selectedNodes, onSelectNode, openAll }: VTreeProps) => {
+export const VTree = <T,>({ data, setData, selectedNodes, onSelectNode, openAll }: VTreeProps<T>) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
