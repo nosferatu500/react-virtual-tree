@@ -2,14 +2,14 @@ import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
 
-interface FileTreeProps {
+interface VTreeProps {
     data: TNode[];
     setData: (newData: TNode[]) => void;
     selectedNodes: React.Key[];
     onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
 }
-const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSelectNode, openAll }: FileTreeProps) => {
+const VTree: React.FC<VTreeProps> = ({ data, setData, selectedNodes, onSelectNode, openAll }: VTreeProps) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
@@ -101,4 +101,4 @@ const FileTree: React.FC<FileTreeProps> = ({ data, setData, selectedNodes, onSel
     );
 };
 
-export default FileTree;
+export default VTree;

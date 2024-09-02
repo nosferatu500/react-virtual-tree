@@ -1,11 +1,12 @@
 import React, { CSSProperties, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-export interface TNode {
+export interface TNode<T = unknown> {
     id: React.Key;
     name: string;
     type: "folder" | "file";
     children: TNode[];
+    data?: T
 }
 
 const ItemTypes = {
