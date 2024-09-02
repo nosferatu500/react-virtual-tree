@@ -73,8 +73,8 @@ export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }
         setData(newTreeData);
     };
 
-    const handleCanDrop = () => {
-        return false;
+    const handleCanDrop = (item: TNode) => {
+        return item.type === "folder";
     }
 
     return (
