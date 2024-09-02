@@ -7,7 +7,7 @@ export interface TNode<T = unknown> {
     name: string;
     type: "folder" | "file";
     children: TNode<T>[];
-    data?: T
+    data?: T;
 }
 
 const ItemTypes = {
@@ -21,13 +21,23 @@ interface Props<T = unknown> {
     selectedNodeIds: React.Key[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
-    openAll: boolean
-    canDrag?: (dragSource: TNode<T>) => boolean
-    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean
-    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void
+    openAll: boolean;
+    canDrag?: (dragSource: TNode<T>) => boolean;
+    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
+    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
 }
 
-export const TreeNode = <T, >({ node, selectedNodeIds, selectedNodes, onClickNode, onMove, openAll, canDrag: customCanDrag, canDrop: customCanDrop, onDrop: onDropCallback }: Props<T>) => {
+export const TreeNode = <T,>({
+    node,
+    selectedNodeIds,
+    selectedNodes,
+    onClickNode,
+    onMove,
+    openAll,
+    canDrag: customCanDrag,
+    canDrop: customCanDrop,
+    onDrop: onDropCallback,
+}: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll);
 
     const isSelected = selectedNodeIds.includes(node.id);
@@ -40,7 +50,12 @@ export const TreeNode = <T, >({ node, selectedNodeIds, selectedNodes, onClickNod
 
     const [{ isDragging }, drag, preview] = useDrag({
         type: ItemTypes.FILE,
-        item: { nodeIds: isSelected ? selectedNodeIds : [node.id], nodes: isSelected ? selectedNodes : [node], node: node, count: selectedNodeIds.length },
+        item: {
+            nodeIds: isSelected ? selectedNodeIds : [node.id],
+            nodes: isSelected ? selectedNodes : [node],
+            node: node,
+            count: selectedNodeIds.length,
+        },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
@@ -49,23 +64,23 @@ export const TreeNode = <T, >({ node, selectedNodeIds, selectedNodes, onClickNod
                 return customCanDrag(node);
             }
 
-            return true
-        }
+            return true;
+        },
     });
 
     preview(getEmptyImage(), { captureDraggingState: true });
 
-    drag(ref)
+    drag(ref);
 
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: ItemTypes.FILE,
-        drop: (draggedItem: { nodeIds: React.Key[], nodes: TNode<T>[] }, monitor) => {
+        drop: (draggedItem: { nodeIds: React.Key[]; nodes: TNode<T>[] }, monitor) => {
             if (monitor.didDrop()) return;
 
             onMove(draggedItem.nodeIds, node);
 
             if (onDropCallback) {
-                onDropCallback(draggedItem.nodes, node)
+                onDropCallback(draggedItem.nodes, node);
             }
         },
         collect: (monitor) => ({
@@ -75,12 +90,12 @@ export const TreeNode = <T, >({ node, selectedNodeIds, selectedNodes, onClickNod
         }),
         canDrop: (_item, monitor) => {
             // @ts-expect-error Update types
-            const dragSource = monitor.getItem().node
-            const dropTarget = node
+            const dragSource = monitor.getItem().node;
+            const dropTarget = node;
             if (customCanDrop) {
-                return customCanDrop(dragSource, dropTarget)
+                return customCanDrop(dragSource, dropTarget);
             }
-            
+
             return true;
         },
     });
@@ -108,13 +123,11 @@ export const TreeNode = <T, >({ node, selectedNodeIds, selectedNodes, onClickNod
             <div style={nodeStyle} onClick={onClickHandler}>
                 {node.type === "folder" ? (
                     <>
-                    <div>
-                        <span onClick={toggleExpand}>
-                            {expanded ? "📂 " : "📁 "}
-                        </span>
-                        {node.name}
-                    </div>
-                        
+                        <div>
+                            <span onClick={toggleExpand}>{expanded ? "📂 " : "📁 "}</span>
+                            {node.name}
+                        </div>
+
                         {expanded &&
                             node.children.map((childNode) => (
                                 <TreeNode

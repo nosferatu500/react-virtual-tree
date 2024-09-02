@@ -24,19 +24,19 @@ const initialTreeData: TNode<CustomData>[] = [
                             { id: "1.3.1", name: "Header.js", type: "file", children: [] },
                             { id: "1.3.2", name: "Footer.js", type: "file", children: [] },
                         ],
-                        data: { owner: "" }
+                        data: { owner: "" },
                     },
                 ],
-                data: { owner: "" }
+                data: { owner: "" },
             },
             { id: "2", name: "package.json", type: "file", children: [], data: { owner: "" } },
         ],
-        data: { owner: "" }
+        data: { owner: "" },
     },
 ];
 
 interface CustomData {
-    owner: string
+    owner: string;
 }
 
 function App() {
@@ -47,11 +47,15 @@ function App() {
     const onClickNode = (event: React.MouseEvent, node: TNode<CustomData>) => {
         if (event.metaKey || event.ctrlKey) {
             setSelectedNodeIds((prevSelected) =>
-                prevSelected.includes(node.id) ? prevSelected.filter((id) => id !== node.id) : [...prevSelected, node.id]
+                prevSelected.includes(node.id)
+                    ? prevSelected.filter((id) => id !== node.id)
+                    : [...prevSelected, node.id]
             );
 
             setSelectedNodes((prevSelected) =>
-                prevSelected.find((prevNode) => prevNode.id === node.id) ? prevSelected.filter((prevNode) => prevNode.id !== node.id) : [...prevSelected, node]
+                prevSelected.find((prevNode) => prevNode.id === node.id)
+                    ? prevSelected.filter((prevNode) => prevNode.id !== node.id)
+                    : [...prevSelected, node]
             );
 
             return;
@@ -65,19 +69,19 @@ function App() {
         if (dragSource.id === dropTarget.id) return false;
 
         return true;
-    }
+    };
 
     const handleCanDrag = (dragSource: TNode) => {
         if (dragSource.type === "folder") return false;
 
         return true;
-    }
+    };
 
     const handleOnDrop = (draggedNodes: TNode<CustomData>[], dropTarget: TNode<CustomData>) => {
-        console.warn("DO SOMETHING!!!")
-        console.log(draggedNodes)
-        console.log(dropTarget)
-    }
+        console.warn("DO SOMETHING!!!");
+        console.log(draggedNodes);
+        console.log(dropTarget);
+    };
 
     return (
         <>

@@ -5,16 +5,26 @@ import CustomDragLayer from "./CustomDragLayer";
 
 interface VTreeProps<T> {
     data: TNode<T>[];
-    setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>
+    setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>;
     selectedNodeIds: React.Key[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
-    openAll: boolean
-    canDrag?: (dragSource: TNode<T>) => boolean
-    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean
-    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void
+    openAll: boolean;
+    canDrag?: (dragSource: TNode<T>) => boolean;
+    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
+    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
 }
-export const VTree = <T,>({ data, setData, selectedNodeIds, selectedNodes, onClickNode, openAll, canDrag, canDrop, onDrop }: VTreeProps<T>) => {
+export const VTree = <T,>({
+    data,
+    setData,
+    selectedNodeIds,
+    selectedNodes,
+    onClickNode,
+    openAll,
+    canDrag,
+    canDrop,
+    onDrop,
+}: VTreeProps<T>) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
@@ -111,4 +121,4 @@ export const VTree = <T,>({ data, setData, selectedNodeIds, selectedNodes, onCli
     );
 };
 
-export type * from "./TreeNode"
+export type * from "./TreeNode";
