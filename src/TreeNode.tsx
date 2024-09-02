@@ -21,9 +21,10 @@ interface Props {
     selectedNodes: React.Key[];
     onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
+    canDrop?: () => boolean
 }
 
-export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, onMove, openAll }) => {
+export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, onMove, openAll, canDrop: customCanDrop }) => {
     const [expanded, setExpanded] = useState<boolean>(openAll);
 
     const isSelected = selectedNodes.includes(node.id);
@@ -58,6 +59,13 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
             handlerId: monitor.getHandlerId(),
             canDrop: monitor.canDrop(),
         }),
+        canDrop: () => {
+            if (customCanDrop) {
+                return customCanDrop()
+            }
+            
+            return true;
+        },
     });
 
     const onClickHandler = (event: React.MouseEvent) => {
@@ -99,6 +107,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
                                     onClickNode={onClickNode}
                                     onMove={onMove}
                                     openAll={openAll}
+                                    canDrop={customCanDrop}
                                 />
                             ))}
                     </>

@@ -23,6 +23,7 @@ const CustomDragLayer = () => {
     top: clientOffset?.y,
     left: clientOffset?.x,
     transform: 'translate(-50%, -50%)',
+    zIndex: 1000,
   };
 
   return (

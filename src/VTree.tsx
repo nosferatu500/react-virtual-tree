@@ -73,6 +73,10 @@ export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }
         setData(newTreeData);
     };
 
+    const handleCanDrop = () => {
+        return false;
+    }
+
     return (
         <DndContext.Consumer>
             {({ dragDropManager }) =>
@@ -90,6 +94,7 @@ export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }
                                         onClickNode={onClickNode}
                                         onMove={handleMoveNode}
                                         openAll={openAll}
+                                        canDrop={handleCanDrop}
                                     />
                                 );
                             }}
