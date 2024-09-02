@@ -6,10 +6,10 @@ interface VTreeProps<T> {
     data: TNode<T>[];
     setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>
     selectedNodes: React.Key[];
-    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
+    onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
 }
-export const VTree = <T,>({ data, setData, selectedNodes, onSelectNode, openAll }: VTreeProps<T>) => {
+export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }: VTreeProps<T>) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
@@ -85,7 +85,7 @@ export const VTree = <T,>({ data, setData, selectedNodes, onSelectNode, openAll 
                                         key={item.id}
                                         node={item}
                                         selectedNodes={selectedNodes}
-                                        onSelectNode={onSelectNode}
+                                        onClickNode={onClickNode}
                                         onMove={handleMoveNode}
                                         openAll={openAll}
                                     />

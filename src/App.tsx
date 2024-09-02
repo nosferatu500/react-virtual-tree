@@ -43,7 +43,7 @@ function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
     const [selectedNodes, setSelectedNodes] = useState<React.Key[]>([]);
 
-    const handleSelectNode = (event: React.MouseEvent, nodeId: React.Key) => {
+    const onClickNode = (event: React.MouseEvent, nodeId: React.Key) => {
         if (event.metaKey || event.ctrlKey) {
             setSelectedNodes((prevSelected) =>
                 prevSelected.includes(nodeId) ? prevSelected.filter((id) => id !== nodeId) : [...prevSelected, nodeId]
@@ -64,7 +64,7 @@ function App() {
                     data={treeData}
                     setData={setTreeData}
                     selectedNodes={selectedNodes}
-                    onSelectNode={handleSelectNode}
+                    onClickNode={onClickNode}
                 />
             </div>
         </>

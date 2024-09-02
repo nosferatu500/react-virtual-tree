@@ -18,11 +18,11 @@ interface Props {
     node: TNode;
     onMove: (draggedNodeIds: React.Key[], targetNode: TNode) => void;
     selectedNodes: React.Key[];
-    onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
+    onClickNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
 }
 
-export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, onMove, openAll }) => {
+export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, onMove, openAll }) => {
     const [expanded, setExpanded] = useState<boolean>(openAll);
 
     const isSelected = selectedNodes.includes(node.id);
@@ -57,7 +57,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
 
     const onClickHandler = (event: React.MouseEvent) => {
         event.stopPropagation();
-        onSelectNode(event, node.id);
+        onClickNode(event, node.id);
     };
 
     drag(drop(ref));
@@ -87,7 +87,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
                                     key={childNode.id}
                                     node={childNode}
                                     selectedNodes={selectedNodes}
-                                    onSelectNode={onSelectNode}
+                                    onClickNode={onClickNode}
                                     onMove={onMove}
                                     openAll={openAll}
                                 />
