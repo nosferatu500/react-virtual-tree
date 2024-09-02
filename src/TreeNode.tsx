@@ -56,6 +56,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onSelectNode, o
     });
 
     const onClickHandler = (event: React.MouseEvent) => {
+        event.stopPropagation();
         onSelectNode(event, node.id);
     };
 

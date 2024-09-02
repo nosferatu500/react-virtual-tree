@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { TNode } from "./TreeNode";
-import VTree from "./VTree";
+import { VTree } from "./VTree";
 
 const initialTreeData: TNode[] = [
     {
@@ -37,8 +37,6 @@ function App() {
     const [selectedNodes, setSelectedNodes] = useState<React.Key[]>([]);
 
     const handleSelectNode = (event: React.MouseEvent, nodeId: React.Key) => {
-        event.stopPropagation();
-
         if (event.metaKey || event.ctrlKey) {
             setSelectedNodes((prevSelected) =>
                 prevSelected.includes(nodeId) ? prevSelected.filter((id) => id !== nodeId) : [...prevSelected, nodeId]

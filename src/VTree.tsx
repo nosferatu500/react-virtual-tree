@@ -4,12 +4,12 @@ import { DndContext, DndProvider } from "react-dnd";
 
 interface VTreeProps {
     data: TNode[];
-    setData: (newData: TNode[]) => void;
+    setData: React.Dispatch<React.SetStateAction<TNode<unknown>[]>>
     selectedNodes: React.Key[];
     onSelectNode: (event: React.MouseEvent, nodeId: React.Key) => void;
     openAll: boolean
 }
-const VTree: React.FC<VTreeProps> = ({ data, setData, selectedNodes, onSelectNode, openAll }: VTreeProps) => {
+export const VTree: React.FC<VTreeProps> = ({ data, setData, selectedNodes, onSelectNode, openAll }: VTreeProps) => {
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
             const item = targetNodes[i];
@@ -101,4 +101,4 @@ const VTree: React.FC<VTreeProps> = ({ data, setData, selectedNodes, onSelectNod
     );
 };
 
-export default VTree;
+export type * from "./TreeNode"
