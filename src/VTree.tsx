@@ -1,6 +1,7 @@
 import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
+import CustomDragLayer from "./CustomDragLayer";
 
 interface VTreeProps<T> {
     data: TNode<T>[];
@@ -77,6 +78,7 @@ export const VTree = <T,>({ data, setData, selectedNodes, onClickNode, openAll }
             {({ dragDropManager }) =>
                 dragDropManager ? (
                     <DndProvider manager={dragDropManager}>
+                        <CustomDragLayer />
                         <VList id="vlist" style={{ height: 500 }} count={data.length}>
                             {(index) => {
                                 const item = data[index];

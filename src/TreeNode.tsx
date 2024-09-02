@@ -1,5 +1,6 @@
 import React, { CSSProperties, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
 
 export interface TNode<T = unknown> {
     id: React.Key;
@@ -33,13 +34,17 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
         setExpanded(!expanded);
     };
 
-    const [{ isDragging }, drag] = useDrag({
+    const [{ isDragging }, drag, preview] = useDrag({
         type: ItemTypes.FILE,
-        item: { nodes: isSelected ? selectedNodes : [node.id] },
+        item: { nodes: isSelected ? selectedNodes : [node.id], node: node, count: selectedNodes.length },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
     });
+
+    preview(getEmptyImage(), { captureDraggingState: true });
+
+    drag(ref)
 
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: ItemTypes.FILE,
@@ -60,7 +65,7 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
         onClickNode(event, node.id);
     };
 
-    drag(drop(ref));
+    drop(ref);
 
     const style: CSSProperties = {
         position: "relative",
@@ -78,9 +83,13 @@ export const TreeNode: React.FC<Props> = ({ node, selectedNodes, onClickNode, on
             <div style={nodeStyle} onClick={onClickHandler}>
                 {node.type === "folder" ? (
                     <>
+                    <div>
                         <span onClick={toggleExpand}>
-                            {expanded ? "📂" : "📁"} {node.name}
+                            {expanded ? "📂 " : "📁 "}
                         </span>
+                        {node.name}
+                    </div>
+                        
                         {expanded &&
                             node.children.map((childNode) => (
                                 <TreeNode
