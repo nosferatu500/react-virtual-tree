@@ -22,7 +22,7 @@ interface Props<T = unknown> {
     selectedNodeIds: React.Key[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
-    openAll: boolean;
+    openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
@@ -39,7 +39,7 @@ export const TreeNode = <T,>({
     canDrop: customCanDrop,
     onDrop: onDropCallback,
 }: Props<T>) => {
-    const [expanded, setExpanded] = useState<boolean>(openAll);
+    const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
 
     const isSelected = selectedNodeIds.includes(node.id);
 
