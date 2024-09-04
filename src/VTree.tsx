@@ -63,6 +63,7 @@ export const VTree = <T,>({
 
         for (const draggedNode of nodesToMove) {
             if (draggedNode.parent !== targetNode.parent) {
+                draggedNode.prevParent = draggedNode.parent
                 draggedNode.parent = targetNode.parent
             }
         }

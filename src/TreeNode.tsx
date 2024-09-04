@@ -7,6 +7,7 @@ export interface TNode<T = unknown> {
     name: string;
     type: "folder" | "file";
     parent: React.Key | null;
+    prevParent?: React.Key | null;
     children: TNode<T>[];
     data?: T;
 }
