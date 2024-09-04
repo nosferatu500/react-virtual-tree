@@ -1,4 +1,4 @@
-import React, { CSSProperties, useRef, useState } from "react";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 
@@ -23,6 +23,7 @@ interface Props<T = unknown> {
     selectedNodeIds: React.Key[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
+    allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
@@ -35,12 +36,21 @@ export const TreeNode = <T,>({
     selectedNodes,
     onClickNode,
     onMove,
+    allwaysOpenRoot,
     openAll,
     canDrag: customCanDrag,
     canDrop: customCanDrop,
     onDrop: onDropCallback,
 }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
+
+    useEffect(() => {
+        if (node.id === "root" && allwaysOpenRoot) {
+            setExpanded(true);
+        } else {
+            setExpanded(openAll ?? false)
+        }
+    }, [openAll, allwaysOpenRoot, node.id])
 
     const isSelected = selectedNodeIds.includes(node.id);
 

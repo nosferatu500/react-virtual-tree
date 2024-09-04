@@ -8,6 +8,7 @@ interface VTreeProps<T> {
     data: TNode<T>[];
     setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>;
     onClick?: (event: React.MouseEvent, node: TNode<T>) => void;
+    allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
@@ -18,6 +19,7 @@ export const VTree = <T,>({
     data,
     setData,
     onClick: onClickCallback,
+    allwaysOpenRoot = true,
     openAll,
     canDrag,
     canDrop,
@@ -217,6 +219,7 @@ export const VTree = <T,>({
                                         selectedNodes={selectedNodes}
                                         onClickNode={onClickNode}
                                         onMove={handleMoveNode}
+                                        allwaysOpenRoot={allwaysOpenRoot}
                                         openAll={openAll}
                                         canDrag={canDrag}
                                         canDrop={canDrop}

@@ -114,7 +114,7 @@ function App() {
             />
             <div className="card">
                 <VTree
-                    openAll
+                    openAll={searchTerm !== ""}
                     data={filterTree(treeData, searchTerm)}
                     setData={setTreeData}
                     onClick={handleOnClick}
