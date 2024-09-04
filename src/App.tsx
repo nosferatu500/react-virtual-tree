@@ -57,12 +57,14 @@ interface CustomData {
 
 function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
-    const [selectedNodes, setSelectedNodes] = useState<TNode<CustomData>[]>([]); // State in parent to keep selected nodes
+    const [selectedNodes, setSelectedNodes] = useState<TNode<CustomData>[]>([]);
 
-  // Callback to handle selection change from VTree
-  const handleSelectionChange = (nodes: TNode<CustomData>[]) => {
-    setSelectedNodes(nodes);
-  };
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Callback to handle selection change from VTree
+    const handleSelectionChange = (nodes: TNode<CustomData>[]) => {
+        setSelectedNodes(nodes);
+    };
 
     const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
         if (dragSource.parent === dropTarget.parent) return false;
@@ -86,15 +88,34 @@ function App() {
         console.log("Click!")
     }
 
-    console.log({selectedNodes})
+    const filterTree = (nodes: TNode<CustomData>[], term: string): TNode<CustomData>[] => {
+        if (!term) return nodes;
+
+        // Filter nodes that match the search term or have children that match
+        return nodes
+            .map((node) => {
+                const children = filterTree(node.children, term); // Recursively filter children
+                if (node.name.toLowerCase().includes(term.toLowerCase()) || children.length > 0) {
+                    return { ...node, children }; // Include matching nodes or parents of matches
+                }
+                return null;
+            })
+            .filter(Boolean) as TNode<CustomData>[]; // Remove null values
+    };
 
     return (
         <>
             <h1>React Virtual Tree</h1>
+            <input
+                type="text"
+                placeholder="Search nodes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
             <div className="card">
                 <VTree
                     openAll
-                    data={treeData}
+                    data={filterTree(treeData, searchTerm)}
                     setData={setTreeData}
                     onClick={handleOnClick}
                     canDrag={handleCanDrag}
