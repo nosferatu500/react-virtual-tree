@@ -124,7 +124,7 @@ export const TreeNode = <T,>({
                 {node.type === "folder" ? (
                     <>
                         <div>
-                            <span onClick={toggleExpand}>{expanded ? "📂 " : "📁 "}</span>
+                            <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
                             {node.name}
                         </div>
 
