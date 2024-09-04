@@ -1,34 +1,52 @@
-import { CSSProperties } from "react";
-import { DragLayerMonitor, useDragLayer } from "react-dnd";
+import { useMemo } from "react";
+import { useDragLayer, XYCoord } from "react-dnd";
+import { TNode } from "./TreeNode";
 import CustomDragPreview from "./CustomDragPreview";
 
-const collect = (monitor: DragLayerMonitor) => {
+interface DragLayerProps {
+    item: {
+        node: TNode;
+        count: number
+    },
+    isDragging: boolean;
+    initialOffset: XYCoord | null;
+    currentOffset: XYCoord | null;
+}
+
+const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | null): React.CSSProperties => {
+    if (!initialOffset || !currentOffset) {
+        return { display: "none" };
+    }
+
+    const { x, y } = currentOffset;
+
     return {
-        item: monitor.getItem(),
-        clientOffset: monitor.getClientOffset(),
-        isDragging: monitor.isDragging(),
+        position: "fixed",
+        pointerEvents: "none",
+        top: y,
+        left: x,
+        transform: "translate(-50%, -50%)",
+        zIndex: 1000,
     };
 };
 
 const CustomDragLayer = () => {
-    const { item, clientOffset, isDragging } = useDragLayer(collect);
+    const { item, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps>(
+        (monitor) => ({
+            item: monitor.getItem(),
+            isDragging: monitor.isDragging(),
+            initialOffset: monitor.getInitialSourceClientOffset(),
+            currentOffset: monitor.getClientOffset(),
+        })
+    );
 
-    if (!isDragging || !item) {
-        return null; // Do not render if not dragging
-    }
+    const itemStyles = useMemo(() => getItemStyles(initialOffset, currentOffset), [initialOffset, currentOffset]);
 
-    const layerStyle: CSSProperties = {
-        position: "fixed",
-        pointerEvents: "none",
-        top: clientOffset?.y,
-        left: clientOffset?.x,
-        transform: "translate(-50%, -50%)",
-        zIndex: 1000,
-    };
+    // Do not render if not dragging
+    if (!isDragging || !item) return null;
 
     return (
-        <div style={layerStyle}>
-            {/* @ts-expect-error Update types */}
+        <div style={itemStyles}>
             <CustomDragPreview node={item.node} count={item.count} />
         </div>
     );
