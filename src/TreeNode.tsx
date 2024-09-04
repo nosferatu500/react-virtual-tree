@@ -103,11 +103,10 @@ export const TreeNode = <T,>({
         }),
         canDrop: (_item, monitor) => {
             if (monitor.isOver({ shallow: true })) {
-                // @ts-expect-error Update types
-                const dragSource = monitor.getItem().node;
+                const dragSource: { node: TNode<T> } = monitor.getItem();
                 const dropTarget = node;
                 if (customCanDrop) {
-                    return customCanDrop(dragSource, dropTarget);
+                    return customCanDrop(dragSource.node, dropTarget);
                 }
 
                 return true;
