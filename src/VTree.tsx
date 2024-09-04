@@ -61,6 +61,12 @@ export const VTree = <T,>({
 
         if (!nodesToMove.length) return;
 
+        for (const draggedNode of nodesToMove) {
+            if (draggedNode.parent !== targetNode.parent) {
+                draggedNode.parent = targetNode.parent
+            }
+        }
+
         // Add into folder
         if (targetNode.type === "folder") {
             targetNode.children = targetNode.children || [];

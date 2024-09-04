@@ -90,14 +90,19 @@ export const TreeNode = <T,>({
             canDrop: monitor.canDrop(),
         }),
         canDrop: (_item, monitor) => {
-            // @ts-expect-error Update types
-            const dragSource = monitor.getItem().node;
-            const dropTarget = node;
-            if (customCanDrop) {
-                return customCanDrop(dragSource, dropTarget);
-            }
+            if (monitor.isOver({ shallow: true })) {
+                // @ts-expect-error Update types
+                const dragSource = monitor.getItem().node;
+                const dropTarget = node;
+                if (customCanDrop) {
+                    return customCanDrop(dragSource, dropTarget);
+                }
 
-            return true;
+                return true;
+            }
+            
+
+            return false;
         },
     });
 

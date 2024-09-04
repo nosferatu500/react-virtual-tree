@@ -65,7 +65,7 @@ function App() {
   };
 
     const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
-        if (dragSource.id === dropTarget.id) return false;
+        if (dragSource.parent === dropTarget.parent) return false;
 
         return true;
     };
