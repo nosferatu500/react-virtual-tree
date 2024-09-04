@@ -57,6 +57,12 @@ interface CustomData {
 
 function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
+    const [selectedNodes, setSelectedNodes] = useState<TNode<CustomData>[]>([]); // State in parent to keep selected nodes
+
+  // Callback to handle selection change from VTree
+  const handleSelectionChange = (nodes: TNode<CustomData>[]) => {
+    setSelectedNodes(nodes);
+  };
 
     const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
         if (dragSource.id === dropTarget.id) return false;
@@ -80,6 +86,8 @@ function App() {
         console.log("Click!")
     }
 
+    console.log({selectedNodes})
+
     return (
         <>
             <h1>React Virtual Tree</h1>
@@ -92,6 +100,7 @@ function App() {
                     canDrag={handleCanDrag}
                     canDrop={handleCanDrop}
                     onDrop={handleOnDrop}
+                    onSelectionChange={handleSelectionChange}
                 />
             </div>
         </>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
@@ -12,6 +12,7 @@ interface VTreeProps<T> {
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
+    onSelectionChange?: (selectedNodes: TNode<T>[]) => void
 }
 export const VTree = <T,>({
     data,
@@ -21,11 +22,18 @@ export const VTree = <T,>({
     canDrag,
     canDrop,
     onDrop,
+    onSelectionChange,
 }: VTreeProps<T>) => {
     const [selectedNodeIds, setSelectedNodeIds] = useState<React.Key[]>([]);
     const [selectedNodes, setSelectedNodes] = useState<TNode<T>[]>([]);
 
     const [lastSelectedNode, setLastSelectedNode] = useState<TNode<T> | null>(null);
+
+    useEffect(() => {
+        if (onSelectionChange) {
+          onSelectionChange(selectedNodes);
+        }
+      }, [selectedNodes, onSelectionChange]);
 
     const findNodeAndRemove = (nodeId: React.Key, targetNodes: TNode[]): TNode | null => {
         for (let i = 0; i < targetNodes.length; i++) {
