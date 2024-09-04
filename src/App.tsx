@@ -85,7 +85,7 @@ function App() {
     };
 
     const handleOnClick = () => {
-        console.log("Click!")
+        console.log({selectedNodes})
     }
 
     const filterTree = (nodes: TNode<CustomData>[], term: string): TNode<CustomData>[] => {

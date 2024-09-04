@@ -1,45 +1,17 @@
-import { CSSProperties } from "react";
+import React from "react";
 import { TNode } from "./TreeNode";
+import styles from './CustomDragPreview.module.css';
 
 interface CustomDragProps {
     node: TNode;
     count: number;
 }
 
-const CustomDragPreview = ({ node, count }: CustomDragProps) => {
-    const previewStyle: CSSProperties = {
-        padding: "8px 16px",
-        borderRadius: "4px",
-        backgroundColor: "rgba(0, 123, 255, 0.8)",
-        color: "white",
-        pointerEvents: "none", // Prevents interfering with drop targets
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        zIndex: 1000,
-        display: "flex",
-        alignItems: "center",
-        position: "relative", // For positioning the count badge
-    };
-
-    const countBadgeStyle: CSSProperties = {
-        position: "absolute",
-        top: "-10px",
-        right: "-10px",
-        backgroundColor: "red",
-        color: "white",
-        borderRadius: "50%",
-        width: "20px",
-        height: "20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
-        fontWeight: "bold",
-    };
-
+const CustomDragPreview: React.FC<CustomDragProps> = ({ node, count }: CustomDragProps) => {
     return (
-        <div style={previewStyle}>
+        <div className={styles.previewBox}>
             {node.type === "folder" ? "📁" : "📄"} {node.name}
-            {count > 1 && <div style={countBadgeStyle}>{count}</div>}
+            {count > 1 && <div className={styles.countBadge}>{count}</div>}
         </div>
     );
 };
