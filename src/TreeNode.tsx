@@ -1,13 +1,14 @@
 import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import styles from './TreeNode.module.css';
 
 export interface TNode<T = unknown> {
-    id: React.Key;
+    id: string;
     name: string;
     type: "folder" | "file";
-    parent: React.Key | null;
-    prevParent?: React.Key | null;
+    parent: string | null;
+    prevParent?: string | null;
     children: TNode<T>[];
     data?: T;
 }
@@ -19,8 +20,8 @@ const ItemTypes = {
 
 interface Props<T = unknown> {
     node: TNode<T>;
-    onMove: (draggedNodeIds: React.Key[], targetNode: TNode<T>) => void;
-    selectedNodeIds: React.Key[];
+    onMove: (draggedNodeIds: string[], targetNode: TNode<T>) => void;
+    selectedNodeIds: string[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
     allwaysOpenRoot?: boolean;
@@ -86,7 +87,7 @@ export const TreeNode = <T,>({
 
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: ItemTypes.FILE,
-        drop: (draggedItem: { nodeIds: React.Key[]; nodes: TNode<T>[] }, monitor) => {
+        drop: (draggedItem: { nodeIds: string[]; nodes: TNode<T>[] }, monitor) => {
             if (monitor.didDrop()) return;
 
             onMove(draggedItem.nodeIds, node);
@@ -111,7 +112,7 @@ export const TreeNode = <T,>({
 
                 return true;
             }
-            
+
 
             return false;
         },
@@ -124,11 +125,6 @@ export const TreeNode = <T,>({
 
     drop(ref);
 
-    const style: CSSProperties = {
-        position: "relative",
-        marginLeft: 20,
-    };
-
     const nodeStyle: CSSProperties = {
         opacity: isDragging ? 0.5 : 1,
         backgroundColor: isOver && canDrop ? "#e0f7fa" : isSelected ? "#d3d3d3" : "transparent",
@@ -136,7 +132,7 @@ export const TreeNode = <T,>({
     };
 
     return (
-        <div key={node.id} ref={ref} data-handler-id={handlerId} style={style}>
+        <div key={node.id} ref={ref} data-handler-id={handlerId} className={styles.container}>
             <div style={nodeStyle} onClick={onClickHandler}>
                 {node.type === "folder" ? (
                     <>
