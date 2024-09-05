@@ -2,9 +2,9 @@ import { useDragLayer, XYCoord } from "react-dnd";
 import { TNode } from "./TreeNode";
 import CustomDragPreview from "./CustomDragPreview";
 
-interface DragLayerProps {
+interface DragLayerProps<T> {
     item: {
-        node: TNode;
+        node: TNode<T>;
         count: number
     },
     isDragging: boolean;
@@ -29,8 +29,8 @@ const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | n
     };
 };
 
-const CustomDragLayer = () => {
-    const { item, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps>(
+const CustomDragLayer = <T,>() => {
+    const { item, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps<T>>(
         (monitor) => ({
             item: monitor.getItem(),
             isDragging: monitor.isDragging(),

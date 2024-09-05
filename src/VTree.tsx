@@ -122,7 +122,7 @@ export const VTree = <T,>({
         }
     }, [selectedNodes, lastSelectedNode, flattenedData, handleNodeSelection, onClickCallback]);
 
-    const handleMoveNode = useCallback((draggedNodeIds: string[], targetNode: TNode) => {
+    const handleMoveNode = useCallback((draggedNodeIds: string[], targetNode: TNode<T>) => {
         if (draggedNodeIds.includes(targetNode.id)) return;
 
         const newTreeData = [...data];

@@ -13,6 +13,9 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'virtua'],
+      output: {
+        intro: 'import "./style.css";',
+      }
     },
   },
 })

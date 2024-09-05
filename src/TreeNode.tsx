@@ -3,7 +3,7 @@ import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import './TreeNode.css';
 
-export interface TNode<T = unknown> {
+export interface TNode<T> {
     id: string;
     name: string;
     type: "folder" | "file";
@@ -18,7 +18,7 @@ const ItemTypes = {
     FOLDER: "folder",
 };
 
-interface Props<T = unknown> {
+interface Props<T> {
     node: TNode<T>;
     onMove: (draggedNodeIds: string[], targetNode: TNode<T>) => void;
     selectedNodeIds: string[];
@@ -32,7 +32,7 @@ interface Props<T = unknown> {
     renderNode?: (text: string) => React.ReactNode;
 }
 
-export const TreeNode = <T,>({
+const TreeNodeComponent = <T,>({
     node,
     selectedNodeIds,
     selectedNodes,
@@ -160,9 +160,11 @@ export const TreeNode = <T,>({
                             ))}
                     </>
                 ) : (
-                    <span>📄 {renderNode ? renderNode(node.name) : node.name}</span>
+                    <span className="clipped">📄 {renderNode ? renderNode(node.name) : node.name}</span>
                 )}
             </div>
         </div>
     );
 };
+
+export const TreeNode: React.FC<any> = React.memo(TreeNodeComponent);

@@ -19,7 +19,7 @@ export function getAllDescendantIds<T>(node: TNode<T>): string[] {
     return ids;
 }
 
-function findParentNode(targetNode: TNode, nodes: TNode[]): TNode | null {
+function findParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]): TNode<T> | null {
     for (const item of nodes) {
         if (item.children.includes(targetNode)) {
             return item;
@@ -33,7 +33,7 @@ function findParentNode(targetNode: TNode, nodes: TNode[]): TNode | null {
     return null;
 };
 
-function findNodeAndRemove(nodeId: string, targetNodes: TNode[]): TNode | null {
+function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> | null {
     for (let i = 0; i < targetNodes.length; i++) {
         const item = targetNodes[i];
 
@@ -49,10 +49,10 @@ function findNodeAndRemove(nodeId: string, targetNodes: TNode[]): TNode | null {
     return null;
 };
 
-export const moveNode = (draggedNodeIds: string[], targetNode: TNode, treeData: TNode[]) => {
-    const nodesToMove: TNode[] = draggedNodeIds
+export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, treeData: TNode<T>[]) => {
+    const nodesToMove: TNode<T>[] = draggedNodeIds
         .map((id) => findNodeAndRemove(id, treeData))
-        .filter((node): node is TNode => node !== null);
+        .filter((node): node is TNode<T> => node !== null);
 
     if (!nodesToMove.length) return;
 

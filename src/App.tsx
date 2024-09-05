@@ -71,13 +71,13 @@ function App() {
         setSelectedNodes(nodes);
     };
 
-    const handleCanDrop = (dragSource: TNode, dropTarget: TNode) => {
+    const handleCanDrop = (dragSource: TNode<CustomData>, dropTarget: TNode<CustomData>) => {
         if (dragSource.parent === dropTarget.parent) return false;
 
         return true;
     };
 
-    const handleCanDrag = (dragSource: TNode) => {
+    const handleCanDrag = (dragSource: TNode<CustomData>) => {
         if (dragSource.type === "folder") return false;
 
         return true;

@@ -1,13 +1,12 @@
-import React from "react";
 import { TNode } from "./TreeNode";
 import './CustomDragPreview.css';
 
-interface CustomDragProps {
-    node: TNode;
+interface CustomDragProps<T> {
+    node: TNode<T>;
     count: number;
 }
 
-const CustomDragPreview: React.FC<CustomDragProps> = ({ node, count }: CustomDragProps) => {
+const CustomDragPreview = <T,>({ node, count }: CustomDragProps<T>) => {
     return (
         <div className="previewBox">
             {node.type === "folder" ? "📁" : "📄"} {node.name}
