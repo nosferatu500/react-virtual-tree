@@ -1,6 +1,6 @@
 import React from "react";
 import { TNode } from "./TreeNode";
-import styles from './CustomDragPreview.module.css';
+import './CustomDragPreview.css';
 
 interface CustomDragProps {
     node: TNode;
@@ -9,9 +9,9 @@ interface CustomDragProps {
 
 const CustomDragPreview: React.FC<CustomDragProps> = ({ node, count }: CustomDragProps) => {
     return (
-        <div className={styles.previewBox}>
+        <div className="previewBox">
             {node.type === "folder" ? "📁" : "📄"} {node.name}
-            {count > 1 && <div className={styles.countBadge}>{count}</div>}
+            {count > 1 && <div className="countBadge">{count}</div>}
         </div>
     );
 };

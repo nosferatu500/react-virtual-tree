@@ -1,7 +1,7 @@
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
-import styles from './TreeNode.module.css';
+import './TreeNode.css';
 
 export interface TNode<T = unknown> {
     id: string;
@@ -55,13 +55,13 @@ export const TreeNode = <T,>({
         }
     }, [openAll, allwaysOpenRoot, node.id])
 
-    const isSelected = selectedNodeIds.includes(node.id);
+    const isSelected = useMemo(() => selectedNodeIds.includes(node.id), [selectedNodeIds, node.id]);
 
     const ref = useRef<HTMLDivElement>(null);
 
-    const toggleExpand = () => {
-        setExpanded(!expanded);
-    };
+    const toggleExpand = useCallback(() => {
+        setExpanded((prev) => !prev);
+    }, []);
 
     const [{ isDragging }, drag, preview] = useDrag({
         type: ItemTypes.FILE,
@@ -119,10 +119,10 @@ export const TreeNode = <T,>({
         },
     });
 
-    const onClickHandler = (event: React.MouseEvent) => {
+    const onClickHandler = useCallback((event: React.MouseEvent) => {
         event.stopPropagation();
         onClickNode(event, node);
-    };
+    }, [onClickNode, node]);
 
     drop(ref);
 
@@ -133,7 +133,7 @@ export const TreeNode = <T,>({
     };
 
     return (
-        <div key={node.id} ref={ref} data-handler-id={handlerId} className={styles.container}>
+        <div key={node.id} ref={ref} data-handler-id={handlerId} className="container">
             <div style={nodeStyle} onClick={onClickHandler}>
                 {node.type === "folder" ? (
                     <>

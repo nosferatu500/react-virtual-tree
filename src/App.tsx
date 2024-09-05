@@ -55,8 +55,8 @@ interface CustomData {
     ownData: string | null;
 }
 
-const RenderNode = (text: string): React.ReactNode => {
-    return <span style={{ color: "red"}}>{text}</span>
+const renderNode = (text: string): React.ReactNode => {
+    return <span style={{ color: "red" }}>{text}</span>
 }
 
 function App() {
@@ -67,7 +67,7 @@ function App() {
 
     // Callback to handle selection change from VTree
     const handleSelectionChange = (nodes: TNode<CustomData>[]) => {
-        console.log({nodes})
+        console.log({ nodes })
         setSelectedNodes(nodes);
     };
 
@@ -90,7 +90,7 @@ function App() {
     };
 
     const handleOnClick = () => {
-        console.log({selectedNodes})
+        console.log({ selectedNodes })
     }
 
     const filterTree = (nodes: TNode<CustomData>[], term: string): TNode<CustomData>[] => {
@@ -128,7 +128,7 @@ function App() {
                     canDrop={handleCanDrop}
                     onDrop={handleOnDrop}
                     onSelectionChange={handleSelectionChange}
-                    renderNode={RenderNode}
+                    renderNode={renderNode}
                 />
             </div>
             <div>Selected: {selectedNodes[0]?.name}</div>

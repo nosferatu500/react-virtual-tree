@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
@@ -37,18 +37,18 @@ export const VTree = <T,>({
 
     const [lastSelectedNode, setLastSelectedNode] = useState<TNode<T> | null>(null);
 
-    const flattenedData = flattenTree(data);
+    const flattenedData = useMemo(() => flattenTree(data), [data]);
 
-    const handleNodeSelection = (nodes: TNode<T>[]) => {
+    const handleNodeSelection = useCallback((nodes: TNode<T>[]) => {
         if (onSelectionChange) {
             onSelectionChange(nodes);
         }
 
         setSelectedNodes(nodes);
-        setSelectedNodeIds(nodes.map((item) => item.id))
-    }
+        setSelectedNodeIds(nodes.map((item) => item.id));
+    }, [onSelectionChange]);
 
-    const onClickNode = (event: React.MouseEvent, node: TNode<T>) => {
+    const onClickNode = useCallback((event: React.MouseEvent, node: TNode<T>) => {
         if (event.metaKey || event.ctrlKey) {
 
             let result: TNode<T>[]
@@ -120,15 +120,36 @@ export const VTree = <T,>({
         if (onClickCallback) {
             onClickCallback(event, node);
         }
-    };
+    }, [selectedNodes, lastSelectedNode, flattenedData, handleNodeSelection, onClickCallback]);
 
-    const handleMoveNode = (draggedNodeIds: string[], targetNode: TNode) => {
+    const handleMoveNode = useCallback((draggedNodeIds: string[], targetNode: TNode) => {
         if (draggedNodeIds.includes(targetNode.id)) return;
 
         const newTreeData = [...data];
         moveNode(draggedNodeIds, targetNode, newTreeData);
         setData(newTreeData);
-    };
+    }, [data, setData]);
+
+    const renderTreeNode = useCallback((index: number) => {
+        const item = data[index];
+        return (
+            <TreeNode
+                key={item.id}
+                node={item}
+                selectedNodeIds={selectedNodeIds}
+                selectedNodes={selectedNodes}
+                onClickNode={onClickNode}
+                onMove={handleMoveNode}
+                allwaysOpenRoot={allwaysOpenRoot}
+                openAll={openAll}
+                canDrag={canDrag}
+                canDrop={canDrop}
+                onDrop={onDrop}
+                renderNode={renderNode}
+            />
+        );
+    }, [data, selectedNodeIds, selectedNodes, onClickNode, handleMoveNode, allwaysOpenRoot, openAll, canDrag, canDrop, onDrop, renderNode]);
+
 
     return (
         <DndContext.Consumer>
@@ -137,25 +158,7 @@ export const VTree = <T,>({
                     <DndProvider manager={dragDropManager}>
                         <CustomDragLayer />
                         <VList id="vlist" style={{ height: containerHeight }} count={data.length}>
-                            {(index) => {
-                                const item = data[index];
-                                return (
-                                    <TreeNode
-                                        key={item.id}
-                                        node={item}
-                                        selectedNodeIds={selectedNodeIds}
-                                        selectedNodes={selectedNodes}
-                                        onClickNode={onClickNode}
-                                        onMove={handleMoveNode}
-                                        allwaysOpenRoot={allwaysOpenRoot}
-                                        openAll={openAll}
-                                        canDrag={canDrag}
-                                        canDrop={canDrop}
-                                        onDrop={onDrop}
-                                        renderNode={renderNode}
-                                    />
-                                );
-                            }}
+                            {renderTreeNode}
                         </VList>
                     </DndProvider>
                 ) : (
