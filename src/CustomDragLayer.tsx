@@ -5,8 +5,8 @@ import CustomDragPreview from "./CustomDragPreview";
 interface DragLayerProps<T> {
     item: {
         node: TNode<T>;
-        count: number
-    },
+        count: number;
+    };
     isDragging: boolean;
     initialOffset: XYCoord | null;
     currentOffset: XYCoord | null;
@@ -31,15 +31,13 @@ const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | n
 };
 
 const CustomDragLayer = <T,>({ dataSet }: { dataSet: string }) => {
-    const { item, itemType, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps<T>>(
-        (monitor) => ({
-            item: monitor.getItem(),
-            itemType: monitor.getItemType(),
-            isDragging: monitor.isDragging(),
-            initialOffset: monitor.getInitialSourceClientOffset(),
-            currentOffset: monitor.getClientOffset(),
-        })
-    );
+    const { item, itemType, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps<T>>((monitor) => ({
+        item: monitor.getItem(),
+        itemType: monitor.getItemType(),
+        isDragging: monitor.isDragging(),
+        initialOffset: monitor.getInitialSourceClientOffset(),
+        currentOffset: monitor.getClientOffset(),
+    }));
 
     const itemStyles = getItemStyles(initialOffset, currentOffset);
 

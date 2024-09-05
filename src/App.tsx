@@ -56,8 +56,8 @@ interface CustomData {
 }
 
 const renderNode = (text: string): React.ReactNode => {
-    return <span style={{ color: "red" }}>{text}</span>
-}
+    return <span style={{ color: "red" }}>{text}</span>;
+};
 
 function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
@@ -67,13 +67,17 @@ function App() {
 
     // Callback to handle selection change from VTree
     const handleSelectionChange = (nodes: TNode<CustomData>[]) => {
-        console.log({ nodes })
+        console.log({ nodes });
         setSelectedNodes(nodes);
     };
 
     const handleCanDrop = (draggedNodes: TNode<CustomData>[], dropTarget: TNode<CustomData>) => {
         // Prevent re-order
-        if (draggedNodes.some((dragSource) => (dragSource.parent === dropTarget.parent) || (dragSource.parent === dropTarget.id))) {
+        if (
+            draggedNodes.some(
+                (dragSource) => dragSource.parent === dropTarget.parent || dragSource.parent === dropTarget.id
+            )
+        ) {
             return false;
         }
 
@@ -93,8 +97,8 @@ function App() {
     };
 
     const handleOnClick = () => {
-        console.log({ selectedNodes })
-    }
+        console.log({ selectedNodes });
+    };
 
     const filterTree = (nodes: TNode<CustomData>[], term: string): TNode<CustomData>[] => {
         if (!term) return nodes;

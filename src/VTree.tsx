@@ -15,7 +15,7 @@ interface VTreeProps<T> {
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
-    onSelectionChange?: (selectedNodes: TNode<T>[]) => void
+    onSelectionChange?: (selectedNodes: TNode<T>[]) => void;
     renderNode?: (text: string) => React.ReactNode;
     fileExplorerMode?: boolean;
     dataSetName: string;
@@ -43,104 +43,114 @@ export const VTree = <T,>({
 
     const flattenedData = useMemo(() => flattenTree(data), [data]);
 
-    const handleNodeSelection = useCallback((nodes: TNode<T>[]) => {
-        if (onSelectionChange) {
-            onSelectionChange(nodes);
-        }
-
-        setSelectedNodes(nodes);
-        setSelectedNodeIds(nodes.map((item) => item.id));
-    }, [onSelectionChange]);
-
-    const handleOnDrop = useCallback((draggedNodes: TNode<T>[], dropTarget: TNode<T>) => {
-        if (onDrop) {
-            onDrop(draggedNodes, dropTarget);
-        }
-
-        handleNodeSelection([])
-    }, [onDrop, handleNodeSelection])
-
-    const onClickNode = useCallback((event: React.MouseEvent, node: TNode<T>) => {
-        if (event.metaKey || event.ctrlKey) {
-
-            let result: TNode<T>[]
-
-            // Check if the node is already selected
-            const isSelected = selectedNodes.some((selectedNode) => selectedNode.id === node.id);
-
-            if (isSelected) {
-                // Deselect the node if it was already selected
-                result = selectedNodes.filter((selectedNode) => selectedNode.id !== node.id);
-            } else {
-                // Add the clicked node to the selection
-                const updatedSelected = [...selectedNodes, node];
-
-                // Get all descendant IDs of the clicked node
-                const descendants = getAllDescendantIds(node);
-
-                // Filter out the descendants from the updated selection
-                result = updatedSelected.filter((selectedNode) => !descendants.includes(selectedNode.id));
+    const handleNodeSelection = useCallback(
+        (nodes: TNode<T>[]) => {
+            if (onSelectionChange) {
+                onSelectionChange(nodes);
             }
 
-            handleNodeSelection(result);
+            setSelectedNodes(nodes);
+            setSelectedNodeIds(nodes.map((item) => item.id));
+        },
+        [onSelectionChange]
+    );
 
-            if (onClickCallback) {
-                onClickCallback(event, node);
+    const handleOnDrop = useCallback(
+        (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => {
+            if (onDrop) {
+                onDrop(draggedNodes, dropTarget);
             }
 
-            return;
-        }
+            handleNodeSelection([]);
+        },
+        [onDrop, handleNodeSelection]
+    );
 
-        if (event.shiftKey && lastSelectedNode) {
-            if (lastSelectedNode.parent !== node.parent) {
+    const onClickNode = useCallback(
+        (event: React.MouseEvent, node: TNode<T>) => {
+            if (event.metaKey || event.ctrlKey) {
+                let result: TNode<T>[];
+
+                // Check if the node is already selected
+                const isSelected = selectedNodes.some((selectedNode) => selectedNode.id === node.id);
+
+                if (isSelected) {
+                    // Deselect the node if it was already selected
+                    result = selectedNodes.filter((selectedNode) => selectedNode.id !== node.id);
+                } else {
+                    // Add the clicked node to the selection
+                    const updatedSelected = [...selectedNodes, node];
+
+                    // Get all descendant IDs of the clicked node
+                    const descendants = getAllDescendantIds(node);
+
+                    // Filter out the descendants from the updated selection
+                    result = updatedSelected.filter((selectedNode) => !descendants.includes(selectedNode.id));
+                }
+
+                handleNodeSelection(result);
+
+                if (onClickCallback) {
+                    onClickCallback(event, node);
+                }
+
                 return;
             }
 
-            // If Shift is pressed, select a range of nodes
-            const startIndex = flattenedData.findIndex((n) => n.id === lastSelectedNode.id);
-            const endIndex = flattenedData.findIndex((n) => n.id === node.id);
+            if (event.shiftKey && lastSelectedNode) {
+                if (lastSelectedNode.parent !== node.parent) {
+                    return;
+                }
 
-            // Determine the range direction
-            const [start, end] = startIndex < endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
+                // If Shift is pressed, select a range of nodes
+                const startIndex = flattenedData.findIndex((n) => n.id === lastSelectedNode.id);
+                const endIndex = flattenedData.findIndex((n) => n.id === node.id);
 
-            // Get nodes within the range
-            const rangeNodes = flattenedData.slice(start, end + 1);
+                // Determine the range direction
+                const [start, end] = startIndex < endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
 
-            // Add range nodes and remove any descendant nodes if their parent is included
-            const updatedSelected = [...selectedNodes, ...rangeNodes].filter(
-                (node, index, self) =>
-                    self.findIndex((n) => n.id === node.id) === index // Remove duplicates
-            );
+                // Get nodes within the range
+                const rangeNodes = flattenedData.slice(start, end + 1);
 
-            // Remove descendant nodes if their parent is selected
-            const descendantIds = updatedSelected.flatMap((n) => getAllDescendantIds(n));
-            const result: TNode<T>[] = updatedSelected.filter((n) => !descendantIds.includes(n.id));
+                // Add range nodes and remove any descendant nodes if their parent is included
+                const updatedSelected = [...selectedNodes, ...rangeNodes].filter(
+                    (node, index, self) => self.findIndex((n) => n.id === node.id) === index // Remove duplicates
+                );
 
-            handleNodeSelection(result);
+                // Remove descendant nodes if their parent is selected
+                const descendantIds = updatedSelected.flatMap((n) => getAllDescendantIds(n));
+                const result: TNode<T>[] = updatedSelected.filter((n) => !descendantIds.includes(n.id));
+
+                handleNodeSelection(result);
+
+                if (onClickCallback) {
+                    onClickCallback(event, node);
+                }
+
+                return;
+            }
+
+            handleNodeSelection([node]);
+
+            setLastSelectedNode(node);
 
             if (onClickCallback) {
                 onClickCallback(event, node);
             }
+        },
+        [selectedNodes, lastSelectedNode, flattenedData, handleNodeSelection, onClickCallback]
+    );
 
-            return;
-        }
+    const handleMoveNode = useCallback(
+        (draggedNodeIds: string[], targetNode: TNode<T>) => {
+            if (draggedNodeIds.includes(targetNode.id)) return;
 
-        handleNodeSelection([node]);
-
-        setLastSelectedNode(node);
-
-        if (onClickCallback) {
-            onClickCallback(event, node);
-        }
-    }, [selectedNodes, lastSelectedNode, flattenedData, handleNodeSelection, onClickCallback]);
-
-    const handleMoveNode = useCallback((draggedNodeIds: string[], targetNode: TNode<T>) => {
-        if (draggedNodeIds.includes(targetNode.id)) return;
-
-        const newTreeData = [...data];
-        moveNode(draggedNodeIds, targetNode, newTreeData, fileExplorerMode);
-        setData(newTreeData);
-    }, [data, setData, fileExplorerMode]);
+            const newTreeData = [...data];
+            moveNode(draggedNodeIds, targetNode, newTreeData, fileExplorerMode);
+            setData(newTreeData);
+        },
+        [data, setData, fileExplorerMode]
+    );
 
     return (
         <DndContext.Consumer>

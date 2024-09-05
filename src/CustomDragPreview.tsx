@@ -1,5 +1,5 @@
 import { TNode } from "./TreeNode";
-import './CustomDragPreview.css';
+import "./CustomDragPreview.css";
 
 interface CustomDragProps<T> {
     node: TNode<T>;

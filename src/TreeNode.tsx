@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
-import './TreeNode.css';
+import "./TreeNode.css";
 
 export interface TNode<T> {
     id: string;
@@ -48,9 +48,9 @@ const TreeNodeComponent = <T,>({
         if (node.id === "root" && allwaysOpenRoot) {
             setExpanded(true);
         } else {
-            setExpanded(openAll ?? false)
+            setExpanded(openAll ?? false);
         }
-    }, [openAll, allwaysOpenRoot, node.id])
+    }, [openAll, allwaysOpenRoot, node.id]);
 
     const isSelected = useMemo(() => selectedNodeIds.includes(node.id), [selectedNodeIds, node.id]);
 
@@ -84,7 +84,8 @@ const TreeNodeComponent = <T,>({
 
     drag(ref);
 
-    const [{ isOver, handlerId, canDrop, dropClassName }, drop] = useDrop({
+    // const [{ isOver, handlerId, canDrop, dropClassName }, drop] = useDrop({
+    const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: dataSet,
         drop: (draggedItem: { nodeIds: string[]; nodes: TNode<T>[] }, monitor) => {
             if (monitor.didDrop()) return;
@@ -129,15 +130,17 @@ const TreeNodeComponent = <T,>({
                 return true;
             }
 
-
             return false;
         },
     });
 
-    const onClickHandler = useCallback((event: React.MouseEvent) => {
-        event.stopPropagation();
-        onClickNode(event, node);
-    }, [onClickNode, node]);
+    const onClickHandler = useCallback(
+        (event: React.MouseEvent) => {
+            event.stopPropagation();
+            onClickNode(event, node);
+        },
+        [onClickNode, node]
+    );
 
     drop(ref);
 
@@ -149,7 +152,8 @@ const TreeNodeComponent = <T,>({
 
     return (
         <div key={node.id} ref={ref} data-handler-id={handlerId} className="container">
-            <div className={isOver ? dropClassName : ""} style={nodeStyle}>
+            {/* <div className={isOver ? dropClassName : ""} style={nodeStyle}> */}
+            <div style={nodeStyle}>
                 {node.children.length > 0 ? (
                     <>
                         <div className="clippedFolder">
@@ -177,7 +181,9 @@ const TreeNodeComponent = <T,>({
                             ))}
                     </>
                 ) : (
-                    <span className="clippedFile" onClick={onClickHandler}>📄 {renderNode ? renderNode(node.name) : node.name}</span>
+                    <span className="clippedFile" onClick={onClickHandler}>
+                        📄 {renderNode ? renderNode(node.name) : node.name}
+                    </span>
                 )}
             </div>
         </div>
