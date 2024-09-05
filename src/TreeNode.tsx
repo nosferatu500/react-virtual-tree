@@ -137,7 +137,7 @@ const TreeNodeComponent = <T,>({
             <div style={nodeStyle} onClick={onClickHandler}>
                 {node.type === "folder" ? (
                     <>
-                        <div>
+                        <div className="clipped">
                             <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
                             {renderNode ? renderNode(node.name) : node.name}
                         </div>

@@ -130,27 +130,6 @@ export const VTree = <T,>({
         setData(newTreeData);
     }, [data, setData]);
 
-    const renderTreeNode = useCallback((index: number) => {
-        const item = data[index];
-        return (
-            <TreeNode
-                key={item.id}
-                node={item}
-                selectedNodeIds={selectedNodeIds}
-                selectedNodes={selectedNodes}
-                onClickNode={onClickNode}
-                onMove={handleMoveNode}
-                allwaysOpenRoot={allwaysOpenRoot}
-                openAll={openAll}
-                canDrag={canDrag}
-                canDrop={canDrop}
-                onDrop={onDrop}
-                renderNode={renderNode}
-            />
-        );
-    }, [data, selectedNodeIds, selectedNodes, onClickNode, handleMoveNode, allwaysOpenRoot, openAll, canDrag, canDrop, onDrop, renderNode]);
-
-
     return (
         <DndContext.Consumer>
             {({ dragDropManager }) =>
@@ -158,7 +137,25 @@ export const VTree = <T,>({
                     <DndProvider manager={dragDropManager}>
                         <CustomDragLayer />
                         <VList id="vlist" style={{ height: containerHeight }} count={data.length}>
-                            {renderTreeNode}
+                            {(index) => {
+                                const item = data[index];
+                                return (
+                                    <TreeNode
+                                        key={item.id}
+                                        node={item}
+                                        selectedNodeIds={selectedNodeIds}
+                                        selectedNodes={selectedNodes}
+                                        onClickNode={onClickNode}
+                                        onMove={handleMoveNode}
+                                        allwaysOpenRoot={allwaysOpenRoot}
+                                        openAll={openAll}
+                                        canDrag={canDrag}
+                                        canDrop={canDrop}
+                                        onDrop={onDrop}
+                                        renderNode={renderNode}
+                                    />
+                                );
+                            }}
                         </VList>
                     </DndProvider>
                 ) : (
