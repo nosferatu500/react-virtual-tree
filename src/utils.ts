@@ -53,7 +53,8 @@ export const moveNode = <T>(
     draggedNodeIds: string[],
     targetNode: TNode<T>,
     treeData: TNode<T>[],
-    fileExplorerMode = true
+    fileExplorerMode = true,
+    drop: string
 ) => {
     const nodesToMove: TNode<T>[] = draggedNodeIds
         .map((id) => findNodeAndRemove(id, treeData))
@@ -100,7 +101,17 @@ export const moveNode = <T>(
             nodesToMove.forEach((node, i) => parentNode.children.splice(targetIndex + 1 + i, 0, node));
         }
     } else {
-        // Add into
-        nodesToMove.forEach((node) => targetNode.children.push(node));
+        if (drop === "child") {
+            // Add into folder/node
+            nodesToMove.forEach((node) => targetNode.children.push(node));
+        } else {
+            // Add on the same level (below)
+            const parentNode = findParentNode(targetNode, treeData);
+            if (!parentNode) return;
+
+            const targetIndex = parentNode.children.indexOf(targetNode);
+            const offset = drop === "below" ? 1 : 0;
+            nodesToMove.forEach((node, i) => parentNode.children.splice(targetIndex + offset + i, 0, node));
+        }
     }
 };

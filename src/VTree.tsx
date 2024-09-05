@@ -142,11 +142,11 @@ export const VTree = <T,>({
     );
 
     const handleMoveNode = useCallback(
-        (draggedNodeIds: string[], targetNode: TNode<T>) => {
+        (draggedNodeIds: string[], targetNode: TNode<T>, drop: string) => {
             if (draggedNodeIds.includes(targetNode.id)) return;
 
             const newTreeData = [...data];
-            moveNode(draggedNodeIds, targetNode, newTreeData, fileExplorerMode);
+            moveNode(draggedNodeIds, targetNode, newTreeData, fileExplorerMode, drop);
             setData(newTreeData);
         },
         [data, setData, fileExplorerMode]

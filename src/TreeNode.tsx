@@ -15,7 +15,7 @@ export interface TNode<T> {
 
 interface Props<T> {
     node: TNode<T>;
-    onMove: (draggedNodeIds: string[], targetNode: TNode<T>) => void;
+    onMove: (draggedNodeIds: string[], targetNode: TNode<T>, drop: "above" | "below" | "child") => void;
     selectedNodeIds: string[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
@@ -43,6 +43,8 @@ const TreeNodeComponent = <T,>({
     dataSet,
 }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
+
+    const [dropPosition, setDropPosition] = useState<string | null>(null);
 
     useEffect(() => {
         if (node.id === "root" && allwaysOpenRoot) {
@@ -84,43 +86,47 @@ const TreeNodeComponent = <T,>({
 
     drag(ref);
 
-    // const [{ isOver, handlerId, canDrop, dropClassName }, drop] = useDrop({
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: dataSet,
-        drop: (draggedItem: { nodeIds: string[]; nodes: TNode<T>[] }, monitor) => {
+        drop: (
+            draggedItem: { nodeIds: string[]; nodes: TNode<T>[]; dropPosition: "above" | "below" | "child" },
+            monitor
+        ) => {
             if (monitor.didDrop()) return;
 
-            onMove(draggedItem.nodeIds, node);
+            onMove(draggedItem.nodeIds, node, draggedItem.dropPosition);
 
             onDropCallback(draggedItem.nodes, node);
+
+            setDropPosition(null);
         },
-        collect: (monitor) => ({
-            isOver: monitor.isOver({ shallow: true }),
-            handlerId: monitor.getHandlerId(),
-            canDrop: monitor.canDrop(),
-        }),
-        // collect: (monitor) => {
-        //     if (!ref.current || !monitor.isOver()) return { isOver: false, handlerId: null, canDrop: false, position: null };
+        hover(item, monitor) {
+            if (!ref.current) return;
 
-        //     const hoverBoundingRect = ref.current.getBoundingClientRect();
-        //     const clientOffset = monitor.getClientOffset();
-        //     const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-        //     const hoverClientY = clientOffset!.y - hoverBoundingRect.top;
+            const boundingRect = ref.current.getBoundingClientRect();
+            const hoverMiddleY = (boundingRect.bottom - boundingRect.top) / 2;
+            const clientOffset = monitor.getClientOffset();
+            const hoverClientY = clientOffset!.y - boundingRect.top;
 
-        //     let position = null;
-        //     if (hoverClientY < hoverMiddleY) {
-        //         position = 'above';
-        //     } else {
-        //         position = 'below';
-        //     }
-
-        //     return {
-        //         isOver: monitor.isOver({ shallow: true }),
-        //         handlerId: monitor.getHandlerId(),
-        //         canDrop: monitor.canDrop(),
-        //         dropClassName: position === "above" ? "placeholder-top" : "placeholder-bottom",
-        //     }
-        // },
+            // Determine if hover is in the upper or lower half
+            if (hoverClientY < hoverMiddleY - 6) {
+                item.dropPosition = "above";
+                setDropPosition("above");
+            } else if (hoverClientY > hoverMiddleY + 6) {
+                item.dropPosition = "below";
+                setDropPosition("below");
+            } else {
+                item.dropPosition = "child";
+                setDropPosition(null);
+            }
+        },
+        collect: (monitor) => {
+            return {
+                isOver: monitor.isOver({ shallow: true }),
+                handlerId: monitor.getHandlerId(),
+                canDrop: monitor.canDrop(),
+            };
+        },
         canDrop: (item, monitor) => {
             if (monitor.isOver({ shallow: true })) {
                 if (customCanDrop) {
@@ -150,10 +156,16 @@ const TreeNodeComponent = <T,>({
         cursor: "pointer",
     };
 
+    let placeholderStyle = "";
+    if (dropPosition === "above") {
+        placeholderStyle = "placeholder-top";
+    } else if (dropPosition === "below") {
+        placeholderStyle = "placeholder-bottom";
+    }
+
     return (
         <div key={node.id} ref={ref} data-handler-id={handlerId} className="container">
-            {/* <div className={isOver ? dropClassName : ""} style={nodeStyle}> */}
-            <div style={nodeStyle}>
+            <div className={isOver ? placeholderStyle : ""} style={nodeStyle}>
                 {node.children.length > 0 ? (
                     <>
                         <div className="clippedFolder">
