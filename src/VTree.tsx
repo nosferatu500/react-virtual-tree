@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
@@ -37,13 +37,16 @@ export const VTree = <T,>({
 
     const [lastSelectedNode, setLastSelectedNode] = useState<TNode<T> | null>(null);
 
-    useEffect(() => {
-        if (onSelectionChange) {
-            onSelectionChange(selectedNodes);
-        }
-    }, [selectedNodes, onSelectionChange]);
-
     const flattenedData = flattenTree(data);
+
+    const handleNodeSelection = (nodes: TNode<T>[]) => {
+        if (onSelectionChange) {
+            onSelectionChange(nodes);
+        }
+
+        setSelectedNodes(nodes);
+        setSelectedNodeIds(nodes.map((item) => item.id))
+    }
 
     const onClickNode = (event: React.MouseEvent, node: TNode<T>) => {
         if (event.metaKey || event.ctrlKey) {
@@ -67,8 +70,7 @@ export const VTree = <T,>({
                 result = updatedSelected.filter((selectedNode) => !descendants.includes(selectedNode.id));
             }
 
-            setSelectedNodeIds(result.map((item) => item.id));
-            setSelectedNodes(result);
+            handleNodeSelection(result);
 
             if (onClickCallback) {
                 onClickCallback(event, node);
@@ -102,8 +104,7 @@ export const VTree = <T,>({
             const descendantIds = updatedSelected.flatMap((n) => getAllDescendantIds(n));
             const result: TNode<T>[] = updatedSelected.filter((n) => !descendantIds.includes(n.id));
 
-            setSelectedNodeIds(result.map((item) => item.id));
-            setSelectedNodes(result);
+            handleNodeSelection(result);
 
             if (onClickCallback) {
                 onClickCallback(event, node);
@@ -112,8 +113,7 @@ export const VTree = <T,>({
             return;
         }
 
-        setSelectedNodeIds([node.id]);
-        setSelectedNodes([node]);
+        handleNodeSelection([node]);
 
         setLastSelectedNode(node);
 

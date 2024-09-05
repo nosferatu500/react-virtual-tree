@@ -67,6 +67,7 @@ function App() {
 
     // Callback to handle selection change from VTree
     const handleSelectionChange = (nodes: TNode<CustomData>[]) => {
+        console.log({nodes})
         setSelectedNodes(nodes);
     };
 
@@ -119,6 +120,7 @@ function App() {
             <div className="card">
                 <VTree
                     openAll={searchTerm !== ""}
+                    containerHeight={200}
                     data={filterTree(treeData, searchTerm)}
                     setData={setTreeData}
                     onClick={handleOnClick}
@@ -129,6 +131,7 @@ function App() {
                     renderNode={RenderNode}
                 />
             </div>
+            <div>Selected: {selectedNodes[0]?.name}</div>
         </>
     );
 }
