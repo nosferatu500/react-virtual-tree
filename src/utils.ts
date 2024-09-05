@@ -49,26 +49,29 @@ function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T>
     return null;
 };
 
-export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, treeData: TNode<T>[]) => {
+export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, treeData: TNode<T>[], fileExplorerMode = true) => {
     const nodesToMove: TNode<T>[] = draggedNodeIds
         .map((id) => findNodeAndRemove(id, treeData))
         .filter((node): node is TNode<T> => node !== null);
 
     if (!nodesToMove.length) return;
 
-    // FileExplorer rules
-    for (const draggedNode of nodesToMove) {
-        if (draggedNode.type === "file" && targetNode.type === "file") {
-            if (draggedNode.parent !== targetNode.parent) {
-                draggedNode.prevParent = draggedNode.parent
-                draggedNode.parent = targetNode.parent
+    if (fileExplorerMode) {
+        for (const draggedNode of nodesToMove) {
+            if (draggedNode.type === "file" && targetNode.type === "file") {
+                if (draggedNode.parent !== targetNode.parent) {
+                    draggedNode.prevParent = draggedNode.parent
+                    draggedNode.parent = targetNode.parent
+                }
+            } else if ((draggedNode.type === "file" && targetNode.type === "folder") || (draggedNode.type === "folder" && targetNode.type === "folder")) {
+                if (draggedNode.parent !== targetNode.id) {
+                    draggedNode.prevParent = draggedNode.parent
+                    draggedNode.parent = targetNode.id
+                }
             }
-        } else if (draggedNode.type === "file" && targetNode.type === "folder") {
-            if (draggedNode.parent !== targetNode.id) {
-                draggedNode.prevParent = draggedNode.parent
-                draggedNode.parent = targetNode.id
-            }
-        } else if (draggedNode.type === "folder" && targetNode.type === "folder") {
+        }
+    } else {
+        for (const draggedNode of nodesToMove) {
             if (draggedNode.parent !== targetNode.id) {
                 draggedNode.prevParent = draggedNode.parent
                 draggedNode.parent = targetNode.id
@@ -76,17 +79,21 @@ export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, tre
         }
     }
 
-    // FileExplorer rules
-    // Add into folder
-    if (targetNode.type === "folder") {
-        targetNode.children = targetNode.children || [];
-        nodesToMove.forEach((node) => targetNode.children.push(node));
-    } else {
-        // Add on the same level
-        const parentNode = findParentNode(targetNode, treeData);
-        if (!parentNode) return;
 
-        const targetIndex = parentNode.children.indexOf(targetNode);
-        nodesToMove.forEach((node, i) => parentNode.children.splice(targetIndex + 1 + i, 0, node));
+    if (fileExplorerMode) {
+        // Add into folder
+        if (targetNode.type === "folder") {
+            nodesToMove.forEach((node) => targetNode.children.push(node));
+        } else {
+            // Add on the same level
+            const parentNode = findParentNode(targetNode, treeData);
+            if (!parentNode) return;
+
+            const targetIndex = parentNode.children.indexOf(targetNode);
+            nodesToMove.forEach((node, i) => parentNode.children.splice(targetIndex + 1 + i, 0, node));
+        }
+    } else {
+        // Add into
+        nodesToMove.forEach((node) => targetNode.children.push(node));
     }
 };

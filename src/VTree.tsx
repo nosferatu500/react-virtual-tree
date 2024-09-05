@@ -17,6 +17,7 @@ interface VTreeProps<T> {
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void
     renderNode?: (text: string) => React.ReactNode;
+    fileExplorerMode?: boolean;
 }
 
 export const VTree = <T,>({
@@ -31,6 +32,7 @@ export const VTree = <T,>({
     onSelectionChange,
     containerHeight = 500,
     renderNode,
+    fileExplorerMode = true,
 }: VTreeProps<T>) => {
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [selectedNodes, setSelectedNodes] = useState<TNode<T>[]>([]);
@@ -134,9 +136,9 @@ export const VTree = <T,>({
         if (draggedNodeIds.includes(targetNode.id)) return;
 
         const newTreeData = [...data];
-        moveNode(draggedNodeIds, targetNode, newTreeData);
+        moveNode(draggedNodeIds, targetNode, newTreeData, fileExplorerMode);
         setData(newTreeData);
-    }, [data, setData]);
+    }, [data, setData, fileExplorerMode]);
 
     return (
         <DndContext.Consumer>

@@ -131,10 +131,11 @@ const TreeNodeComponent = <T,>({
     return (
         <div key={node.id} ref={ref} data-handler-id={handlerId} className="container">
             <div style={nodeStyle}>
-                {node.type === "folder" ? (
+                {node.children.length > 0 ? (
                     <>
-                        <div className="clipped">
+                        <div className="clippedFolder">
                             <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
+                            {node.type === "folder" ? <span>📁 </span> : <span>📄 </span>}
                             <span onClick={onClickHandler}>{renderNode ? renderNode(node.name) : node.name}</span>
                         </div>
 
@@ -156,7 +157,7 @@ const TreeNodeComponent = <T,>({
                             ))}
                     </>
                 ) : (
-                    <span className="clipped" onClick={onClickHandler}>📄 {renderNode ? renderNode(node.name) : node.name}</span>
+                    <span className="clippedFile" onClick={onClickHandler}>📄 {renderNode ? renderNode(node.name) : node.name}</span>
                 )}
             </div>
         </div>

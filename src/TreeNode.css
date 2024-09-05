@@ -3,9 +3,18 @@
     margin-left: 20px;
 }
 
-.clipped {
+.clippedFolder {
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    padding-inline-start: 4px;
+}
+
+.clippedFile {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-left: 20px;
 }
