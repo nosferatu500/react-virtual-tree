@@ -71,9 +71,9 @@ function App() {
         setSelectedNodes(nodes);
     };
 
-    const handleCanDrop = (dragSource: TNode<CustomData>, dropTarget: TNode<CustomData>) => {
+    const handleCanDrop = (draggedNodes: TNode<CustomData>[], dropTarget: TNode<CustomData>) => {
         // Prevent re-order
-        if (selectedNodes.some((dragSource) => (dragSource.parent === dropTarget.parent) || (dragSource.parent === dropTarget.id))) {
+        if (draggedNodes.some((dragSource) => (dragSource.parent === dropTarget.parent) || (dragSource.parent === dropTarget.id))) {
             return false;
         }
 

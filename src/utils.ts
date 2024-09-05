@@ -56,6 +56,7 @@ export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, tre
 
     if (!nodesToMove.length) return;
 
+    // FileExplorer rules
     for (const draggedNode of nodesToMove) {
         if (draggedNode.type === "file" && targetNode.type === "file") {
             if (draggedNode.parent !== targetNode.parent) {
@@ -75,6 +76,7 @@ export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, tre
         }
     }
 
+    // FileExplorer rules
     // Add into folder
     if (targetNode.type === "folder") {
         targetNode.children = targetNode.children || [];

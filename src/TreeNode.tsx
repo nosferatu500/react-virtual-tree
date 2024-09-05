@@ -27,8 +27,8 @@ interface Props<T> {
     allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
-    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
-    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
+    canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
+    onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     renderNode?: (text: string) => React.ReactNode;
 }
 
@@ -94,21 +94,17 @@ const TreeNodeComponent = <T,>({
 
             onMove(draggedItem.nodeIds, node);
 
-            if (onDropCallback) {
-                onDropCallback(draggedItem.nodes, node);
-            }
+            onDropCallback(draggedItem.nodes, node);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver({ shallow: true }),
             handlerId: monitor.getHandlerId(),
             canDrop: monitor.canDrop(),
         }),
-        canDrop: (_item, monitor) => {
+        canDrop: (item, monitor) => {
             if (monitor.isOver({ shallow: true })) {
-                const dragSource: { node: TNode<T> } = monitor.getItem();
-                const dropTarget = node;
                 if (customCanDrop) {
-                    return customCanDrop(dragSource.node, dropTarget);
+                    return customCanDrop(item.nodes, node);
                 }
 
                 return true;

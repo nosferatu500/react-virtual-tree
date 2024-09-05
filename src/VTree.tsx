@@ -13,7 +13,7 @@ interface VTreeProps<T> {
     allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
-    canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
+    canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void
     renderNode?: (text: string) => React.ReactNode;
@@ -47,6 +47,14 @@ export const VTree = <T,>({
         setSelectedNodes(nodes);
         setSelectedNodeIds(nodes.map((item) => item.id));
     }, [onSelectionChange]);
+
+    const handleOnDrop = useCallback((draggedNodes: TNode<T>[], dropTarget: TNode<T>) => {
+        if (onDrop) {
+            onDrop(draggedNodes, dropTarget);
+        }
+
+        handleNodeSelection([])
+    }, [onDrop, handleNodeSelection])
 
     const onClickNode = useCallback((event: React.MouseEvent, node: TNode<T>) => {
         if (event.metaKey || event.ctrlKey) {
@@ -151,7 +159,7 @@ export const VTree = <T,>({
                                         openAll={openAll}
                                         canDrag={canDrag}
                                         canDrop={canDrop}
-                                        onDrop={onDrop}
+                                        onDrop={handleOnDrop}
                                         renderNode={renderNode}
                                     />
                                 );
