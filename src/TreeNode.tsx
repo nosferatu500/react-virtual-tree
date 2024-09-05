@@ -29,6 +29,7 @@ interface Props<T = unknown> {
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
+    renderNode?: (text: string) => React.ReactNode;
 }
 
 export const TreeNode = <T,>({
@@ -42,6 +43,7 @@ export const TreeNode = <T,>({
     canDrag: customCanDrag,
     canDrop: customCanDrop,
     onDrop: onDropCallback,
+    renderNode,
 }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
 
@@ -137,7 +139,7 @@ export const TreeNode = <T,>({
                     <>
                         <div>
                             <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
-                            {node.name}
+                            {renderNode ? renderNode(node.name) : node.name}
                         </div>
 
                         {expanded &&
@@ -153,11 +155,12 @@ export const TreeNode = <T,>({
                                     canDrag={customCanDrag}
                                     canDrop={customCanDrop}
                                     onDrop={onDropCallback}
+                                    renderNode={renderNode}
                                 />
                             ))}
                     </>
                 ) : (
-                    <span>📄 {node.name}</span>
+                    <span>📄 {renderNode ? renderNode(node.name) : node.name}</span>
                 )}
             </div>
         </div>

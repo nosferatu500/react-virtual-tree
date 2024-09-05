@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useDragLayer, XYCoord } from "react-dnd";
 import { TNode } from "./TreeNode";
 import CustomDragPreview from "./CustomDragPreview";
@@ -40,7 +39,7 @@ const CustomDragLayer = () => {
         })
     );
 
-    const itemStyles = useMemo(() => getItemStyles(initialOffset, currentOffset), [initialOffset, currentOffset]);
+    const itemStyles = getItemStyles(initialOffset, currentOffset);
 
     // Do not render if not dragging
     if (!isDragging || !item) return null;

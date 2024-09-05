@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
@@ -9,13 +9,14 @@ interface VTreeProps<T> {
     data: TNode<T>[];
     setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>;
     onClick?: (event: React.MouseEvent, node: TNode<T>) => void;
+    containerHeight?: number;
     allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (dragSource: TNode<T>, dropTarget: TNode<T>) => boolean;
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void
-    containerHeight?: number;
+    renderNode?: (text: string) => React.ReactNode;
 }
 
 export const VTree = <T,>({
@@ -29,6 +30,7 @@ export const VTree = <T,>({
     onDrop,
     onSelectionChange,
     containerHeight = 500,
+    renderNode,
 }: VTreeProps<T>) => {
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [selectedNodes, setSelectedNodes] = useState<TNode<T>[]>([]);
@@ -41,9 +43,9 @@ export const VTree = <T,>({
         }
     }, [selectedNodes, onSelectionChange]);
 
-    const flattenedData = useMemo(() => flattenTree(data), [data]);
+    const flattenedData = flattenTree(data);
 
-    const onClickNode = useCallback((event: React.MouseEvent, node: TNode<T>) => {
+    const onClickNode = (event: React.MouseEvent, node: TNode<T>) => {
         if (event.metaKey || event.ctrlKey) {
 
             let result: TNode<T>[]
@@ -118,15 +120,15 @@ export const VTree = <T,>({
         if (onClickCallback) {
             onClickCallback(event, node);
         }
-    }, [flattenedData, lastSelectedNode, onClickCallback, selectedNodes]);
+    };
 
-    const handleMoveNode = useCallback((draggedNodeIds: string[], targetNode: TNode) => {
+    const handleMoveNode = (draggedNodeIds: string[], targetNode: TNode) => {
         if (draggedNodeIds.includes(targetNode.id)) return;
 
         const newTreeData = [...data];
         moveNode(draggedNodeIds, targetNode, newTreeData);
         setData(newTreeData);
-    }, [data, setData]);
+    };
 
     return (
         <DndContext.Consumer>
@@ -150,6 +152,7 @@ export const VTree = <T,>({
                                         canDrag={canDrag}
                                         canDrop={canDrop}
                                         onDrop={onDrop}
+                                        renderNode={renderNode}
                                     />
                                 );
                             }}

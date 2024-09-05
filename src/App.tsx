@@ -55,6 +55,10 @@ interface CustomData {
     ownData: string | null;
 }
 
+const RenderNode = (text: string): React.ReactNode => {
+    return <span style={{ color: "red"}}>{text}</span>
+}
+
 function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
     const [selectedNodes, setSelectedNodes] = useState<TNode<CustomData>[]>([]);
@@ -122,6 +126,7 @@ function App() {
                     canDrop={handleCanDrop}
                     onDrop={handleOnDrop}
                     onSelectionChange={handleSelectionChange}
+                    renderNode={RenderNode}
                 />
             </div>
         </>
