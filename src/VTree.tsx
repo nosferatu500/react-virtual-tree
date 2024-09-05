@@ -18,6 +18,7 @@ interface VTreeProps<T> {
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void
     renderNode?: (text: string) => React.ReactNode;
     fileExplorerMode?: boolean;
+    dataSetName: string;
 }
 
 export const VTree = <T,>({
@@ -33,6 +34,7 @@ export const VTree = <T,>({
     containerHeight = 500,
     renderNode,
     fileExplorerMode = true,
+    dataSetName,
 }: VTreeProps<T>) => {
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [selectedNodes, setSelectedNodes] = useState<TNode<T>[]>([]);
@@ -145,7 +147,7 @@ export const VTree = <T,>({
             {({ dragDropManager }) =>
                 dragDropManager ? (
                     <DndProvider manager={dragDropManager}>
-                        <CustomDragLayer />
+                        <CustomDragLayer dataSet={dataSetName} />
                         <VList id="vlist" style={{ height: containerHeight }} count={data.length}>
                             {(index) => {
                                 const item = data[index];
@@ -153,6 +155,7 @@ export const VTree = <T,>({
                                     <TreeNode
                                         key={item.id}
                                         node={item}
+                                        dataSet={dataSetName}
                                         selectedNodeIds={selectedNodeIds}
                                         selectedNodes={selectedNodes}
                                         onClickNode={onClickNode}

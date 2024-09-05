@@ -10,6 +10,7 @@ interface DragLayerProps<T> {
     isDragging: boolean;
     initialOffset: XYCoord | null;
     currentOffset: XYCoord | null;
+    itemType: any;
 }
 
 const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | null): React.CSSProperties => {
@@ -29,10 +30,11 @@ const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | n
     };
 };
 
-const CustomDragLayer = <T,>() => {
-    const { item, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps<T>>(
+const CustomDragLayer = <T,>({ dataSet }: { dataSet: string }) => {
+    const { item, itemType, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps<T>>(
         (monitor) => ({
             item: monitor.getItem(),
+            itemType: monitor.getItemType(),
             isDragging: monitor.isDragging(),
             initialOffset: monitor.getInitialSourceClientOffset(),
             currentOffset: monitor.getClientOffset(),
@@ -42,7 +44,7 @@ const CustomDragLayer = <T,>() => {
     const itemStyles = getItemStyles(initialOffset, currentOffset);
 
     // Do not render if not dragging
-    if (!isDragging || !item) return null;
+    if (!isDragging || !item || itemType !== dataSet) return null;
 
     return (
         <div style={itemStyles}>

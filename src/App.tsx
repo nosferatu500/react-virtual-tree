@@ -122,12 +122,13 @@ function App() {
             />
             <div className="card">
                 <VTree
-                    fileExplorerMode
+                    dataSetName="example_data_set"
+                    fileExplorerMode={false}
                     openAll={searchTerm !== ""}
                     data={filterTree(treeData, searchTerm)}
                     setData={setTreeData}
                     onClick={handleOnClick}
-                    // canDrag={handleCanDrag}
+                    canDrag={handleCanDrag}
                     canDrop={handleCanDrop}
                     onDrop={handleOnDrop}
                     onSelectionChange={handleSelectionChange}

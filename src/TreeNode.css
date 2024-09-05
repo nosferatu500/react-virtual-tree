@@ -18,3 +18,11 @@
     text-overflow: ellipsis;
     margin-left: 20px;
 }
+
+.placeholder-top {
+    border-top: 5px solid #ff1842 !important;
+}
+
+.placeholder-bottom {
+    border-bottom: 5px solid #ff1842 !important;
+}

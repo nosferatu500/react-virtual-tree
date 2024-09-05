@@ -13,11 +13,6 @@ export interface TNode<T> {
     data?: T;
 }
 
-const ItemTypes = {
-    FILE: "file",
-    FOLDER: "folder",
-};
-
 interface Props<T> {
     node: TNode<T>;
     onMove: (draggedNodeIds: string[], targetNode: TNode<T>) => void;
@@ -30,6 +25,7 @@ interface Props<T> {
     canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
     onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     renderNode?: (text: string) => React.ReactNode;
+    dataSet: string;
 }
 
 const TreeNodeComponent = <T,>({
@@ -44,6 +40,7 @@ const TreeNodeComponent = <T,>({
     canDrop: customCanDrop,
     onDrop: onDropCallback,
     renderNode,
+    dataSet,
 }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
 
@@ -64,7 +61,7 @@ const TreeNodeComponent = <T,>({
     }, []);
 
     const [{ isDragging }, drag, preview] = useDrag({
-        type: ItemTypes.FILE,
+        type: dataSet,
         item: {
             nodeIds: isSelected ? selectedNodeIds : [node.id],
             nodes: isSelected ? selectedNodes : [node],
@@ -87,8 +84,8 @@ const TreeNodeComponent = <T,>({
 
     drag(ref);
 
-    const [{ isOver, handlerId, canDrop }, drop] = useDrop({
-        accept: ItemTypes.FILE,
+    const [{ isOver, handlerId, canDrop, dropClassName }, drop] = useDrop({
+        accept: dataSet,
         drop: (draggedItem: { nodeIds: string[]; nodes: TNode<T>[] }, monitor) => {
             if (monitor.didDrop()) return;
 
@@ -101,6 +98,28 @@ const TreeNodeComponent = <T,>({
             handlerId: monitor.getHandlerId(),
             canDrop: monitor.canDrop(),
         }),
+        // collect: (monitor) => {
+        //     if (!ref.current || !monitor.isOver()) return { isOver: false, handlerId: null, canDrop: false, position: null };
+
+        //     const hoverBoundingRect = ref.current.getBoundingClientRect();
+        //     const clientOffset = monitor.getClientOffset();
+        //     const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        //     const hoverClientY = clientOffset!.y - hoverBoundingRect.top;
+
+        //     let position = null;
+        //     if (hoverClientY < hoverMiddleY) {
+        //         position = 'above';
+        //     } else {
+        //         position = 'below';
+        //     }
+
+        //     return {
+        //         isOver: monitor.isOver({ shallow: true }),
+        //         handlerId: monitor.getHandlerId(),
+        //         canDrop: monitor.canDrop(),
+        //         dropClassName: position === "above" ? "placeholder-top" : "placeholder-bottom",
+        //     }
+        // },
         canDrop: (item, monitor) => {
             if (monitor.isOver({ shallow: true })) {
                 if (customCanDrop) {
@@ -130,7 +149,7 @@ const TreeNodeComponent = <T,>({
 
     return (
         <div key={node.id} ref={ref} data-handler-id={handlerId} className="container">
-            <div style={nodeStyle}>
+            <div className={isOver ? dropClassName : ""} style={nodeStyle}>
                 {node.children.length > 0 ? (
                     <>
                         <div className="clippedFolder">
@@ -144,6 +163,7 @@ const TreeNodeComponent = <T,>({
                                 <TreeNode
                                     key={childNode.id}
                                     node={childNode}
+                                    dataSet={dataSet}
                                     selectedNodeIds={selectedNodeIds}
                                     selectedNodes={selectedNodes}
                                     onClickNode={onClickNode}
