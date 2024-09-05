@@ -57,9 +57,21 @@ export const moveNode = <T,>(draggedNodeIds: string[], targetNode: TNode<T>, tre
     if (!nodesToMove.length) return;
 
     for (const draggedNode of nodesToMove) {
-        if (draggedNode.parent !== targetNode.parent) {
-            draggedNode.prevParent = draggedNode.parent
-            draggedNode.parent = targetNode.parent
+        if (draggedNode.type === "file" && targetNode.type === "file") {
+            if (draggedNode.parent !== targetNode.parent) {
+                draggedNode.prevParent = draggedNode.parent
+                draggedNode.parent = targetNode.parent
+            }
+        } else if (draggedNode.type === "file" && targetNode.type === "folder") {
+            if (draggedNode.parent !== targetNode.id) {
+                draggedNode.prevParent = draggedNode.parent
+                draggedNode.parent = targetNode.id
+            }
+        } else if (draggedNode.type === "folder" && targetNode.type === "folder") {
+            if (draggedNode.parent !== targetNode.id) {
+                draggedNode.prevParent = draggedNode.parent
+                draggedNode.parent = targetNode.id
+            }
         }
     }
 

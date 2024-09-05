@@ -72,7 +72,10 @@ function App() {
     };
 
     const handleCanDrop = (dragSource: TNode<CustomData>, dropTarget: TNode<CustomData>) => {
-        if (dragSource.parent === dropTarget.parent) return false;
+        // Prevent re-order
+        if (selectedNodes.some((dragSource) => (dragSource.parent === dropTarget.parent) || (dragSource.parent === dropTarget.id))) {
+            return false;
+        }
 
         return true;
     };
@@ -120,7 +123,6 @@ function App() {
             <div className="card">
                 <VTree
                     openAll={searchTerm !== ""}
-                    containerHeight={200}
                     data={filterTree(treeData, searchTerm)}
                     setData={setTreeData}
                     onClick={handleOnClick}
