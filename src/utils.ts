@@ -69,7 +69,8 @@ export function findNode<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> |
         }
 
         if (item.children.length > 0) {
-            return findNode(nodeId, item.children);
+            const foundNode = findNode(nodeId, item.children);
+            if (foundNode) return foundNode;
         }
     }
     
