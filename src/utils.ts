@@ -62,6 +62,20 @@ export function findTopmostParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]
     return null;
 }
 
+export function findNode<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> | null {
+    for (const item of targetNodes) {
+        if (item.id === nodeId) {
+            return item;
+        }
+
+        if (item.children.length > 0) {
+            return findNode(nodeId, item.children);
+        }
+    }
+    
+    return null;
+}
+
 export function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> | null {
     for (let i = 0; i < targetNodes.length; i++) {
         const item = targetNodes[i];
