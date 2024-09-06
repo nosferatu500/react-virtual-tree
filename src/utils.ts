@@ -19,7 +19,7 @@ export function getAllDescendantIds<T>(node: TNode<T>): string[] {
     return ids;
 }
 
-function findParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]): TNode<T> | null {
+export function findParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]): TNode<T> | null {
     for (const item of nodes) {
         if (item.children.includes(targetNode)) {
             return item;
@@ -33,7 +33,36 @@ function findParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]): TNode<T> | 
     return null;
 }
 
-function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> | null {
+export function findTopmostParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]): TNode<T> | null {
+    const path: TNode<T>[] = [];
+
+    function findNodePath(currentNode: TNode<T>, target: TNode<T>): boolean {
+        path.push(currentNode);
+
+        if (currentNode === target) {
+            return true;
+        }
+
+        for (const child of currentNode.children) {
+            if (findNodePath(child, target)) {
+                return true;
+            }
+        }
+
+        path.pop();
+        return false;
+    }
+
+    for (const node of nodes) {
+        if (findNodePath(node, targetNode)) {
+            return path[0];
+        }
+    }
+
+    return null;
+}
+
+export function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> | null {
     for (let i = 0; i < targetNodes.length; i++) {
         const item = targetNodes[i];
 
@@ -47,6 +76,14 @@ function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T>
         }
     }
     return null;
+}
+
+export function insertNodeBelow<T>(node: TNode<T>, targetNode: TNode<T>, treeData: TNode<T>[]): void {
+    const parentNode = findParentNode(targetNode, treeData);
+    if (!parentNode) return;
+
+    const targetIndex = parentNode.children.indexOf(targetNode);
+    parentNode.children.splice(targetIndex + 1, 0, node);
 }
 
 export const moveNode = <T>(

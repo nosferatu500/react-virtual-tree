@@ -1,7 +1,7 @@
 {
   "name": "@nosferatu500/react-virtual-tree",
   "author": "Vitalii Shvetsov",
-  "version": "0.0.61",
+  "version": "0.0.65",
   "type": "module",
   "files": [
     "dist",
@@ -9,7 +9,7 @@
   ],
   "main": "./dist/react-virtual-tree.js",
   "module": "./dist/react-virtual-tree.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/types",
   "exports": {
     ".": {
       "import": "./dist/react-virtual-tree.js"
