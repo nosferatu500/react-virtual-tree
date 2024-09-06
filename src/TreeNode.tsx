@@ -194,7 +194,8 @@ const TreeNodeComponent = <T,>({
                     </>
                 ) : (
                     <span className="clippedFile" onClick={onClickHandler}>
-                        {node.type === "folder" ? <span>📁 </span> : <span>📄 </span>} {renderNode ? renderNode(node.name) : node.name}
+                        {node.type === "folder" ? <span>📁 </span> : <span>📄 </span>}{" "}
+                        {renderNode ? renderNode(node.name) : node.name}
                     </span>
                 )}
             </div>

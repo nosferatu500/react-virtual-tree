@@ -188,5 +188,3 @@ export const VTree = <T,>({
         </DndContext.Consumer>
     );
 };
-
-export type * from "./TreeNode";

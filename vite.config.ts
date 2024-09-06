@@ -9,25 +9,21 @@ export default defineConfig({
     react(),
     dts(
       {
-        include: ["src/VTree.tsx", "src/TreeNode.tsx", "src/utils.ts"],
+        include: ['src/**/*.{ts,tsx}'],
         rollupTypes: true,
         tsconfigPath: './tsconfig.app.json',
-        outDir: 'dist/types',
       }
     )
   ],
   build: {
     lib: {
-      name: "react-virtual-tree.js",
-      entry: [resolve(__dirname, 'src/VTree.tsx'), resolve(__dirname, 'src/utils.ts')],
+      entry: resolve(__dirname, 'src/main.ts'),
       formats: ['es'],
-      fileName: (_, entryName) => "VTree" === entryName ? 'react-virtual-tree.js' : "utils.js"
+      fileName: "react-virtual-tree.js"
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'virtua'],
-      output: {
-        intro: (chunk) => (chunk.name === 'VTree' ? 'import "./style.css";' : '')
-      }
+      output: {intro: 'import "./style.css";'}
     },
   },
 })
