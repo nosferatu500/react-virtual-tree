@@ -73,7 +73,7 @@ export function findNode<T>(nodeId: string, targetNodes: TNode<T>[]): TNode<T> |
             if (foundNode) return foundNode;
         }
     }
-    
+
     return null;
 }
 
@@ -116,14 +116,14 @@ export const moveNode = <T>(
 
     if (fileExplorerMode) {
         for (const draggedNode of nodesToMove) {
-            if (draggedNode.type === "file" && targetNode.type === "file") {
+            if (!draggedNode.isFolder && !targetNode.isFolder) {
                 if (draggedNode.parent !== targetNode.parent) {
                     draggedNode.prevParent = draggedNode.parent;
                     draggedNode.parent = targetNode.parent;
                 }
             } else if (
-                (draggedNode.type === "file" && targetNode.type === "folder") ||
-                (draggedNode.type === "folder" && targetNode.type === "folder")
+                (!draggedNode.isFolder && targetNode.isFolder) ||
+                (draggedNode.isFolder && targetNode.isFolder)
             ) {
                 if (draggedNode.parent !== targetNode.id) {
                     draggedNode.prevParent = draggedNode.parent;
@@ -142,7 +142,7 @@ export const moveNode = <T>(
 
     if (fileExplorerMode) {
         // Add into folder
-        if (targetNode.type === "folder") {
+        if (targetNode.isFolder) {
             nodesToMove.forEach((node) => targetNode.children.push(node));
         } else {
             // Add on the same level

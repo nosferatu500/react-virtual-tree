@@ -6,7 +6,7 @@ import "./TreeNode.css";
 export interface TNode<T> {
     id: string;
     name: string;
-    type: "folder" | "file";
+    isFolder: boolean;
     parent: string | null;
     prevParent?: string | null;
     children: TNode<T>[];
@@ -170,7 +170,7 @@ const TreeNodeComponent = <T,>({
                     <>
                         <div className="clippedFolder">
                             <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
-                            {node.type === "folder" ? <span>📁 </span> : <span>📄 </span>}
+                            {node.isFolder ? <span>📁 </span> : <span>📄 </span>}
                             <span onClick={onClickHandler}>{renderNode ? renderNode(node.name) : node.name}</span>
                         </div>
 
@@ -194,7 +194,7 @@ const TreeNodeComponent = <T,>({
                     </>
                 ) : (
                     <span className="clippedFile" onClick={onClickHandler}>
-                        {node.type === "folder" ? <span>📁 </span> : <span>📄 </span>}{" "}
+                        {node.isFolder ? <span>📁 </span> : <span>📄 </span>}{" "}
                         {renderNode ? renderNode(node.name) : node.name}
                     </span>
                 )}

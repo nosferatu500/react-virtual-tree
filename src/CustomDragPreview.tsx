@@ -9,7 +9,7 @@ interface CustomDragProps<T> {
 const CustomDragPreview = <T,>({ node, count }: CustomDragProps<T>) => {
     return (
         <div className="previewBox">
-            {node.type === "folder" ? "📁" : "📄"} {node.name}
+            {node.isFolder ? "📁" : "📄"} {node.name}
             {count > 1 && <div className="countBadge">{count}</div>}
         </div>
     );
