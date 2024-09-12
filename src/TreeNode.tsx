@@ -18,7 +18,7 @@ interface Props<T> {
     onMove: (draggedNodeIds: string[], targetNode: TNode<T>, drop: "above" | "below" | "child") => void;
     selectedNodeIds: string[];
     selectedNodes: TNode<T>[];
-    onClickNode: (event: React.MouseEvent, node: TNode<T>) => void;
+    onClickNode: (event: React.MouseEvent, node: TNode<T>, selectedNodes: TNode<T>[]) => void;
     allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
@@ -143,9 +143,9 @@ const TreeNodeComponent = <T,>({
     const onClickHandler = useCallback(
         (event: React.MouseEvent) => {
             event.stopPropagation();
-            onClickNode(event, node);
+            onClickNode(event, node, selectedNodes);
         },
-        [onClickNode, node]
+        [onClickNode, node, selectedNodes]
     );
 
     drop(ref);

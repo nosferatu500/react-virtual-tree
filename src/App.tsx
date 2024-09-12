@@ -96,8 +96,8 @@ function App() {
         console.log(dropTarget);
     };
 
-    const handleOnClick = () => {
-        console.log({ selectedNodes });
+    const handleOnClick = (event: React.MouseEvent, node: TNode<CustomData>, selected: TNode<CustomData>[]) => {
+        console.log({ selected });
     };
 
     const filterTree = (nodes: TNode<CustomData>[], term: string): TNode<CustomData>[] => {

@@ -8,7 +8,7 @@ import { flattenTree, getAllDescendantIds, moveNode } from "./utils";
 interface VTreeProps<T> {
     data: TNode<T>[];
     setData: React.Dispatch<React.SetStateAction<TNode<T>[]>>;
-    onClick?: (event: React.MouseEvent, node: TNode<T>) => void;
+    onClick?: (event: React.MouseEvent, node: TNode<T>, selectedNodes: TNode<T>[]) => void;
     containerHeight?: number;
     allwaysOpenRoot?: boolean;
     openAll?: boolean;
@@ -91,7 +91,7 @@ export const VTree = <T,>({
                 handleNodeSelection(result);
 
                 if (onClickCallback) {
-                    onClickCallback(event, node);
+                    onClickCallback(event, node, result);
                 }
 
                 return;
@@ -124,7 +124,7 @@ export const VTree = <T,>({
                 handleNodeSelection(result);
 
                 if (onClickCallback) {
-                    onClickCallback(event, node);
+                    onClickCallback(event, node, result);
                 }
 
                 return;
@@ -135,7 +135,7 @@ export const VTree = <T,>({
             setLastSelectedNode(node);
 
             if (onClickCallback) {
-                onClickCallback(event, node);
+                onClickCallback(event, node, [node]);
             }
         },
         [selectedNodes, lastSelectedNode, flattenedData, handleNodeSelection, onClickCallback]
