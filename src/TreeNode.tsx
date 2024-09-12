@@ -169,27 +169,33 @@ const TreeNodeComponent = <T,>({
         [onClickNode, node, selectedNodes]
     );
 
-    const handleNodeClick = useCallback((event: React.MouseEvent) => {
-        if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+    const handleNodeClick = useCallback(
+        (event: React.MouseEvent) => {
+            if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
 
-        // Delay the click action to differentiate it from a double-click
-        clickTimeoutRef.current = setTimeout(() => {
-            onClickHandler(event);
-        }, 200);
-    }, [onClickHandler]);
+            // Delay the click action to differentiate it from a double-click
+            clickTimeoutRef.current = setTimeout(() => {
+                onClickHandler(event);
+            }, 200);
+        },
+        [onClickHandler]
+    );
 
     const onDoubleClickHandler = useCallback(() => {
         clearTimeout(clickTimeoutRef.current);
         onDoubleClickNode(node);
-    }, [onDoubleClickNode, node])
+    }, [onDoubleClickNode, node]);
 
     const handleBlurCallback = useCallback(() => {
         handleBlur(node);
     }, [handleBlur, node]);
 
-    const handleKeyDownCallback = useCallback((event: React.KeyboardEvent) => {
-        handleKeyDown(event, node);
-    }, [handleKeyDown, node]);
+    const handleKeyDownCallback = useCallback(
+        (event: React.KeyboardEvent) => {
+            handleKeyDown(event, node);
+        },
+        [handleKeyDown, node]
+    );
 
     drop(ref);
 

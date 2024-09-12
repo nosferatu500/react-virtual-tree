@@ -167,28 +167,37 @@ export const VTree = <T,>({
         setNewName(event.target.value);
     }, []);
 
-    const handleRenameConfirm = useCallback((node: TNode<T>) => {
-        if (newName.trim()) {
-            const newTreeData = [...data];
-            renameNode(node.id, newName, newTreeData)
-            setData(newTreeData);
-        }
-        
-        if (onNodeRename) {
-            onNodeRename(node.id, newName);
-        }
-        setEditingNodeId(null);
-    }, [newName, onNodeRename, data, setData]);
+    const handleRenameConfirm = useCallback(
+        (node: TNode<T>) => {
+            if (newName.trim()) {
+                const newTreeData = [...data];
+                renameNode(node.id, newName, newTreeData);
+                setData(newTreeData);
+            }
 
-    const handleBlur = useCallback((node: TNode<T>) => {
-        handleRenameConfirm(node);
-    }, [handleRenameConfirm]);
+            if (onNodeRename) {
+                onNodeRename(node.id, newName);
+            }
+            setEditingNodeId(null);
+        },
+        [newName, onNodeRename, data, setData]
+    );
 
-    const handleKeyDown = useCallback((event: React.KeyboardEvent, node: TNode<T>) => {
-        if (event.key === 'Enter') {
+    const handleBlur = useCallback(
+        (node: TNode<T>) => {
             handleRenameConfirm(node);
-        }
-    }, [handleRenameConfirm]);
+        },
+        [handleRenameConfirm]
+    );
+
+    const handleKeyDown = useCallback(
+        (event: React.KeyboardEvent, node: TNode<T>) => {
+            if (event.key === "Enter") {
+                handleRenameConfirm(node);
+            }
+        },
+        [handleRenameConfirm]
+    );
 
     return (
         <DndContext.Consumer>

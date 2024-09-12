@@ -174,4 +174,3 @@ export const renameNode = <T>(nodeId: string, newName: string, treeData: TNode<T
 
     selectedNode.name = newName;
 };
-
