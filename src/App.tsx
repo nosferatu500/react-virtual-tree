@@ -100,7 +100,7 @@ function App() {
         console.log({ selected });
     };
 
-    const handleRenameNode = (_nodeId: string, newName: string) => {
+    const handleRenameNode = (_node: TNode<CustomData>, newName: string) => {
         console.log({ newName });
     };
 

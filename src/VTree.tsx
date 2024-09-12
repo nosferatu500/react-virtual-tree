@@ -17,7 +17,7 @@ interface VTreeProps<T> {
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void;
     renderNode?: (text: string) => React.ReactNode;
-    onNodeRename?: (nodeId: string, newName: string) => void;
+    onNodeRename?: (node: TNode<T>, newName: string) => void;
     fileExplorerMode?: boolean;
     dataSetName: string;
 }
@@ -169,14 +169,15 @@ export const VTree = <T,>({
 
     const handleRenameConfirm = useCallback(
         (node: TNode<T>) => {
-            if (newName.trim()) {
+            const trimmedName = newName.trim();
+            if (trimmedName && node.name !== trimmedName) {
                 const newTreeData = [...data];
-                renameNode(node.id, newName, newTreeData);
+                renameNode(node.id, trimmedName, newTreeData);
                 setData(newTreeData);
             }
 
             if (onNodeRename) {
-                onNodeRename(node.id, newName);
+                onNodeRename(node, trimmedName);
             }
             setEditingNodeId(null);
         },
@@ -194,6 +195,10 @@ export const VTree = <T,>({
         (event: React.KeyboardEvent, node: TNode<T>) => {
             if (event.key === "Enter") {
                 handleRenameConfirm(node);
+            }
+
+            if (event.key === "Escape") {
+                setEditingNodeId(null);
             }
         },
         [handleRenameConfirm]
