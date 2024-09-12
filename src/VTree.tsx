@@ -17,6 +17,7 @@ interface VTreeProps<T> {
     onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void;
     renderNode?: (text: string) => React.ReactNode;
+    onNodeRename?: (nodeId: string, newName: string) => void;
     fileExplorerMode?: boolean;
     dataSetName: string;
 }
@@ -35,11 +36,15 @@ export const VTree = <T,>({
     renderNode,
     fileExplorerMode = true,
     dataSetName,
+    onNodeRename,
 }: VTreeProps<T>) => {
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [selectedNodes, setSelectedNodes] = useState<TNode<T>[]>([]);
 
     const [lastSelectedNode, setLastSelectedNode] = useState<TNode<T> | null>(null);
+
+    const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
+    const [newName, setNewName] = useState<string>("");
 
     const flattenedData = useMemo(() => flattenTree(data), [data]);
 
@@ -152,6 +157,33 @@ export const VTree = <T,>({
         [data, setData, fileExplorerMode]
     );
 
+    const onDoubleClickNode = (node: TNode<T>) => {
+        setEditingNodeId(node.id);
+        setNewName(node.name);
+    };
+
+    const handleInputChange = (event: React.ChangeEvent) => {
+        // @ts-expect-error update types
+        setNewName(event.target.value);
+    };
+
+    const handleRenameConfirm = (node: TNode<T>) => {
+        if (onNodeRename && newName.trim()) {
+            onNodeRename(node.id, newName);
+        }
+        setEditingNodeId(null);
+    };
+
+    const handleBlur = (node: TNode<T>) => {
+        handleRenameConfirm(node);
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent, node: TNode<T>) => {
+        if (event.key === 'Enter') {
+            handleRenameConfirm(node);
+        }
+    };
+
     return (
         <DndContext.Consumer>
             {({ dragDropManager }) =>
@@ -176,6 +208,12 @@ export const VTree = <T,>({
                                         canDrop={canDrop}
                                         onDrop={handleOnDrop}
                                         renderNode={renderNode}
+                                        editingNodeId={editingNodeId}
+                                        onDoubleClickNode={onDoubleClickNode}
+                                        handleInputChange={handleInputChange}
+                                        handleBlur={handleBlur}
+                                        newName={newName}
+                                        handleKeyDown={handleKeyDown}
                                     />
                                 );
                             }}

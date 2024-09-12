@@ -96,7 +96,7 @@ function App() {
         console.log(dropTarget);
     };
 
-    const handleOnClick = (event: React.MouseEvent, node: TNode<CustomData>, selected: TNode<CustomData>[]) => {
+    const handleOnClick = (_event: React.MouseEvent, _node: TNode<CustomData>, selected: TNode<CustomData>[]) => {
         console.log({ selected });
     };
 

@@ -26,6 +26,12 @@ interface Props<T> {
     onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     renderNode?: (text: string) => React.ReactNode;
     dataSet: string;
+    editingNodeId?: string;
+    onDoubleClickNode: (node: TNode<T>) => void;
+    handleInputChange: (event: React.ChangeEvent) => void;
+    handleBlur: (node: TNode<T>) => void;
+    newName: string;
+    handleKeyDown: (event: React.KeyboardEvent, node: TNode<T>) => void;
 }
 
 const TreeNodeComponent = <T,>({
@@ -41,10 +47,18 @@ const TreeNodeComponent = <T,>({
     onDrop: onDropCallback,
     renderNode,
     dataSet,
+    editingNodeId,
+    onDoubleClickNode,
+    handleInputChange,
+    handleBlur,
+    newName,
+    handleKeyDown,
 }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
 
     const [dropPosition, setDropPosition] = useState<string | null>(null);
+
+    const clickTimeoutRef = useRef<NodeJS.Timeout>();
 
     useEffect(() => {
         if (node.id === "root" && allwaysOpenRoot) {
@@ -53,6 +67,13 @@ const TreeNodeComponent = <T,>({
             setExpanded(openAll ?? false);
         }
     }, [openAll, allwaysOpenRoot, node.id]);
+
+    useEffect(() => {
+        // Cleanup the timer on component unmount
+        return () => {
+            clearTimeout(clickTimeoutRef.current);
+        };
+    }, []);
 
     const isSelected = useMemo(() => selectedNodeIds.includes(node.id), [selectedNodeIds, node.id]);
 
@@ -148,6 +169,28 @@ const TreeNodeComponent = <T,>({
         [onClickNode, node, selectedNodes]
     );
 
+    const handleNodeClick = useCallback((event: React.MouseEvent) => {
+        if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+
+        // Delay the click action to differentiate it from a double-click
+        clickTimeoutRef.current = setTimeout(() => {
+            onClickHandler(event);
+        }, 200);
+    }, [onClickHandler]);
+
+    const onDoubleClickHandler = useCallback(() => {
+        clearTimeout(clickTimeoutRef.current);
+        onDoubleClickNode(node);
+    }, [onDoubleClickNode, node])
+
+    const handleBlurCallback = useCallback(() => {
+        handleBlur(node);
+    }, [handleBlur, node]);
+
+    const handleKeyDownCallback = useCallback((event: React.KeyboardEvent) => {
+        handleKeyDown(event, node);
+    }, [handleKeyDown, node]);
+
     drop(ref);
 
     const nodeStyle: CSSProperties = {
@@ -171,7 +214,20 @@ const TreeNodeComponent = <T,>({
                         <div className="clippedFolder">
                             <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
                             {node.isFolder ? <span>📁 </span> : <span>📄 </span>}
-                            <span onClick={onClickHandler}>{renderNode ? renderNode(node.name) : node.name}</span>
+                            <span onClick={handleNodeClick} onDoubleClick={onDoubleClickHandler}>
+                                {editingNodeId === node.id ? (
+                                    <input
+                                        type="text"
+                                        value={newName}
+                                        onChange={handleInputChange}
+                                        onBlur={handleBlurCallback}
+                                        onKeyDown={handleKeyDownCallback}
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <span>{renderNode ? renderNode(node.name) : node.name}</span>
+                                )}
+                            </span>
                         </div>
 
                         {expanded &&
@@ -189,13 +245,32 @@ const TreeNodeComponent = <T,>({
                                     canDrop={customCanDrop}
                                     onDrop={onDropCallback}
                                     renderNode={renderNode}
+                                    editingNodeId={editingNodeId}
+                                    onDoubleClickNode={onDoubleClickNode}
+                                    handleInputChange={handleInputChange}
+                                    handleBlur={handleBlur}
+                                    newName={newName}
+                                    handleKeyDown={handleKeyDown}
                                 />
                             ))}
                     </>
                 ) : (
-                    <span className="clippedFile" onClick={onClickHandler}>
+                    <span className="clippedFile" onClick={handleNodeClick}>
                         {node.isFolder ? <span>📁 </span> : <span>📄 </span>}{" "}
-                        {renderNode ? renderNode(node.name) : node.name}
+                        <span onDoubleClick={onDoubleClickHandler}>
+                            {editingNodeId === node.id ? (
+                                <input
+                                    type="text"
+                                    value={newName}
+                                    onChange={handleInputChange}
+                                    onBlur={handleBlurCallback}
+                                    onKeyDown={handleKeyDownCallback}
+                                    autoFocus
+                                />
+                            ) : (
+                                <span>{renderNode ? renderNode(node.name) : node.name}</span>
+                            )}
+                        </span>
                     </span>
                 )}
             </div>
