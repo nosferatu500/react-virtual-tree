@@ -167,3 +167,11 @@ export const moveNode = <T>(
         }
     }
 };
+
+export const renameNode = <T>(nodeId: string, newName: string, treeData: TNode<T>[]) => {
+    const selectedNode = findNode(nodeId, treeData);
+    if (!selectedNode) return;
+
+    selectedNode.name = newName;
+};
+

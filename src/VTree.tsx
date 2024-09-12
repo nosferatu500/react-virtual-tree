@@ -3,7 +3,7 @@ import { VList } from "virtua";
 import { TNode, TreeNode } from "./TreeNode";
 import { DndContext, DndProvider } from "react-dnd";
 import CustomDragLayer from "./CustomDragLayer";
-import { flattenTree, getAllDescendantIds, moveNode } from "./utils";
+import { flattenTree, getAllDescendantIds, moveNode, renameNode } from "./utils";
 
 interface VTreeProps<T> {
     data: TNode<T>[];
@@ -157,32 +157,38 @@ export const VTree = <T,>({
         [data, setData, fileExplorerMode]
     );
 
-    const onDoubleClickNode = (node: TNode<T>) => {
+    const onDoubleClickNode = useCallback((node: TNode<T>) => {
         setEditingNodeId(node.id);
         setNewName(node.name);
-    };
+    }, []);
 
-    const handleInputChange = (event: React.ChangeEvent) => {
+    const handleInputChange = useCallback((event: React.ChangeEvent) => {
         // @ts-expect-error update types
         setNewName(event.target.value);
-    };
+    }, []);
 
-    const handleRenameConfirm = (node: TNode<T>) => {
-        if (onNodeRename && newName.trim()) {
+    const handleRenameConfirm = useCallback((node: TNode<T>) => {
+        if (newName.trim()) {
+            const newTreeData = [...data];
+            renameNode(node.id, newName, newTreeData)
+            setData(newTreeData);
+        }
+        
+        if (onNodeRename) {
             onNodeRename(node.id, newName);
         }
         setEditingNodeId(null);
-    };
+    }, [newName, onNodeRename, data, setData]);
 
-    const handleBlur = (node: TNode<T>) => {
+    const handleBlur = useCallback((node: TNode<T>) => {
         handleRenameConfirm(node);
-    };
+    }, [handleRenameConfirm]);
 
-    const handleKeyDown = (event: React.KeyboardEvent, node: TNode<T>) => {
+    const handleKeyDown = useCallback((event: React.KeyboardEvent, node: TNode<T>) => {
         if (event.key === 'Enter') {
             handleRenameConfirm(node);
         }
-    };
+    }, [handleRenameConfirm]);
 
     return (
         <DndContext.Consumer>

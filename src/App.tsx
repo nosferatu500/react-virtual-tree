@@ -100,6 +100,10 @@ function App() {
         console.log({ selected });
     };
 
+    const handleRenameNode = (_nodeId: string, newName: string) => {
+        console.log({ newName });
+    };
+
     const filterTree = (nodes: TNode<CustomData>[], term: string): TNode<CustomData>[] => {
         if (!term) return nodes;
 
@@ -137,6 +141,7 @@ function App() {
                     onDrop={handleOnDrop}
                     onSelectionChange={handleSelectionChange}
                     renderNode={renderNode}
+                    onNodeRename={handleRenameNode}
                 />
             </div>
             <div>Selected: {selectedNodes[0]?.name}</div>
