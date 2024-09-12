@@ -11,11 +11,25 @@
     padding-inline-start: 4px;
 }
 
+.unclippedFolder {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-inline-start: 4px;
+}
+
 .clippedFile {
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-left: 20px;
+}
+
+.unclippedFile {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
     margin-left: 20px;
 }
 

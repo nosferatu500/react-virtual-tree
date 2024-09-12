@@ -217,7 +217,7 @@ const TreeNodeComponent = <T,>({
             <div className={isOver ? placeholderStyle : ""} style={nodeStyle}>
                 {node.children.length > 0 ? (
                     <>
-                        <div className="clippedFolder">
+                        <div className={editingNodeId === node.id ? "unclippedFolder" : "clippedFolder"}>
                             <span onClick={toggleExpand}>{expanded ? "▼ " : "▶ "}</span>
                             {node.isFolder ? <span>📁 </span> : <span>📄 </span>}
                             <span onClick={handleNodeClick} onDoubleClick={onDoubleClickHandler}>
@@ -261,7 +261,7 @@ const TreeNodeComponent = <T,>({
                             ))}
                     </>
                 ) : (
-                    <span className="clippedFile" onClick={handleNodeClick}>
+                    <span className={editingNodeId === node.id ? "unclippedFile" : "clippedFile"}  onClick={handleNodeClick}>
                         {node.isFolder ? <span>📁 </span> : <span>📄 </span>}{" "}
                         <span onDoubleClick={onDoubleClickHandler}>
                             {editingNodeId === node.id ? (
