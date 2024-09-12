@@ -223,6 +223,7 @@ const TreeNodeComponent = <T,>({
                             <span onClick={handleNodeClick} onDoubleClick={onDoubleClickHandler}>
                                 {editingNodeId === node.id ? (
                                     <input
+                                        id="renameFolder"
                                         type="text"
                                         value={newName}
                                         onChange={handleInputChange}
@@ -266,6 +267,7 @@ const TreeNodeComponent = <T,>({
                         <span onDoubleClick={onDoubleClickHandler}>
                             {editingNodeId === node.id ? (
                                 <input
+                                    id="renameFile"
                                     type="text"
                                     value={newName}
                                     onChange={handleInputChange}

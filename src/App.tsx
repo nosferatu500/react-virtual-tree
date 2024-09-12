@@ -123,6 +123,7 @@ function App() {
         <>
             <h1>React Virtual Tree</h1>
             <input
+                id="searchField"
                 type="text"
                 placeholder="Search nodes..."
                 value={searchTerm}
