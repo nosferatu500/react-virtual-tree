@@ -26,6 +26,7 @@ interface Props<T> {
     onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
     renderNode?: (text: string) => React.ReactNode;
     dataSet: string;
+    canAccept: string[];
     editingNodeId?: string;
     onDoubleClickNode: (node: TNode<T>) => void;
     handleInputChange: (event: React.ChangeEvent) => void;
@@ -53,6 +54,7 @@ const TreeNodeComponent = <T,>({
     handleBlur,
     newName,
     handleKeyDown,
+    canAccept,
 }: Props<T>) => {
     const [expanded, setExpanded] = useState<boolean>(openAll ?? false);
 
@@ -108,7 +110,7 @@ const TreeNodeComponent = <T,>({
     drag(ref);
 
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
-        accept: dataSet,
+        accept: canAccept,
         drop: (
             draggedItem: { nodeIds: string[]; nodes: TNode<T>[]; dropPosition: "above" | "below" | "child" },
             monitor
@@ -243,6 +245,7 @@ const TreeNodeComponent = <T,>({
                                     key={childNode.id}
                                     node={childNode}
                                     dataSet={dataSet}
+                                    canAccept={canAccept}
                                     selectedNodeIds={selectedNodeIds}
                                     selectedNodes={selectedNodes}
                                     onClickNode={onClickNode}

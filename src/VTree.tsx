@@ -20,6 +20,7 @@ interface VTreeProps<T> {
     onNodeRename?: (node: TNode<T>, newName: string) => void;
     fileExplorerMode?: boolean;
     dataSetName: string;
+    allowInteractWith?: string[]
 }
 
 export const VTree = <T,>({
@@ -37,6 +38,7 @@ export const VTree = <T,>({
     fileExplorerMode = true,
     dataSetName,
     onNodeRename,
+    allowInteractWith,
 }: VTreeProps<T>) => {
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [selectedNodes, setSelectedNodes] = useState<TNode<T>[]>([]);
@@ -47,6 +49,10 @@ export const VTree = <T,>({
     const [newName, setNewName] = useState<string>("");
 
     const flattenedData = useMemo(() => flattenTree(data), [data]);
+
+    const canAccept: string[] = useMemo(() => {
+        return allowInteractWith ? [dataSetName, ...allowInteractWith] : [dataSetName]
+    }, [dataSetName, allowInteractWith]);
 
     const handleNodeSelection = useCallback(
         (nodes: TNode<T>[]) => {
@@ -218,6 +224,7 @@ export const VTree = <T,>({
                                         key={item.id}
                                         node={item}
                                         dataSet={dataSetName}
+                                        canAccept={canAccept}
                                         selectedNodeIds={selectedNodeIds}
                                         selectedNodes={selectedNodes}
                                         onClickNode={onClickNode}

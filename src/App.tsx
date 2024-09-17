@@ -47,9 +47,58 @@ const initialTreeData: TNode<CustomData>[] = [
             },
             { id: "3", name: "package.json", isFolder: false, parent: "root", children: [], data: { ownData: "root" } },
         ],
-        data: { ownData: null },
+        data: { ownData: "root" },
     },
 ];
+
+const initialTreeData2: TNode<CustomData>[] = [
+    {
+        id: "root2",
+        name: "root",
+        isFolder: true,
+        parent: null,
+        children: [
+            {
+                id: "12",
+                name: "src",
+                isFolder: true,
+                parent: "root2",
+                children: [
+                    { id: "1.12", name: "index.js", isFolder: false, parent: "12", children: [] },
+                    { id: "1.22", name: "App.js", isFolder: false, parent: "12", children: [] },
+                    { id: "1.32", name: "main.jsx", isFolder: false, parent: "12", children: [] },
+                    {
+                        id: "1.42",
+                        name: "components",
+                        isFolder: true,
+                        parent: "12",
+                        children: [
+                            { id: "1.4.12", name: "Header.js", isFolder: false, parent: "1.42", children: [] },
+                            { id: "1.4.22", name: "Footer.js", isFolder: false, parent: "1.42", children: [] },
+                        ],
+                    },
+                ],
+                data: { ownData: "root2" },
+            },
+            {
+                id: "22",
+                name: "stories",
+                isFolder: true,
+                parent: "root2",
+                children: [
+                    { id: "2.12", name: "button.css", isFolder: false, parent: "22", children: [] },
+                    { id: "2.22", name: "Button.stories.ts", isFolder: false, parent: "22", children: [] },
+                    { id: "2.32", name: "Button.tsx", isFolder: false, parent: "22", children: [] },
+                    { id: "2.42", name: "Configure.mdx", isFolder: false, parent: "22", children: [] },
+                ],
+                data: { ownData: "root2" },
+            },
+            { id: "32", name: "package.json", isFolder: false, parent: "root2", children: [], data: { ownData: "root2" } },
+        ],
+        data: { ownData: "root2" },
+    },
+];
+
 
 interface CustomData {
     ownData: string | null;
@@ -61,6 +110,7 @@ const renderNode = (text: string): React.ReactNode => {
 
 function App() {
     const [treeData, setTreeData] = useState<TNode<CustomData>[]>(initialTreeData);
+    const [treeData2, setTreeData2] = useState<TNode<CustomData>[]>(initialTreeData2);
     const [selectedNodes, setSelectedNodes] = useState<TNode<CustomData>[]>([]);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -129,7 +179,7 @@ function App() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <div className="card">
+            <div style={{ display: "flex", flexDirection: "row", height: 300 }}>
                 <VTree
                     dataSetName="example_data_set"
                     fileExplorerMode={false}
@@ -143,6 +193,21 @@ function App() {
                     onSelectionChange={handleSelectionChange}
                     renderNode={renderNode}
                     onNodeRename={handleRenameNode}
+                />
+                <VTree
+                    dataSetName="example_data_set2"
+                    fileExplorerMode={false}
+                    openAll={searchTerm !== ""}
+                    data={filterTree(treeData2, searchTerm)}
+                    setData={setTreeData2}
+                    onClick={handleOnClick}
+                    canDrag={handleCanDrag}
+                    canDrop={handleCanDrop}
+                    onDrop={handleOnDrop}
+                    onSelectionChange={handleSelectionChange}
+                    renderNode={renderNode}
+                    onNodeRename={handleRenameNode}
+                    allowInteractWith={["example_data_set"]}
                 />
             </div>
             <div>Selected: {selectedNodes[0]?.name}</div>
