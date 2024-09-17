@@ -29,7 +29,7 @@ interface Props<T> {
     canAccept: string[];
     editingNodeId?: string;
     onDoubleClickNode: (node: TNode<T>) => void;
-    handleInputChange: (event: React.ChangeEvent) => void;
+    handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleBlur: (node: TNode<T>) => void;
     newName: string;
     handleKeyDown: (event: React.KeyboardEvent, node: TNode<T>) => void;
@@ -265,7 +265,10 @@ const TreeNodeComponent = <T,>({
                             ))}
                     </>
                 ) : (
-                    <span className={editingNodeId === node.id ? "unclippedFile" : "clippedFile"}  onClick={handleNodeClick}>
+                    <span
+                        className={editingNodeId === node.id ? "unclippedFile" : "clippedFile"}
+                        onClick={handleNodeClick}
+                    >
                         {node.isFolder ? <span>📁 </span> : <span>📄 </span>}{" "}
                         <span onDoubleClick={onDoubleClickHandler}>
                             {editingNodeId === node.id ? (

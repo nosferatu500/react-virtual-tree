@@ -93,12 +93,18 @@ const initialTreeData2: TNode<CustomData>[] = [
                 ],
                 data: { ownData: "root2" },
             },
-            { id: "32", name: "package.json", isFolder: false, parent: "root2", children: [], data: { ownData: "root2" } },
+            {
+                id: "32",
+                name: "package.json",
+                isFolder: false,
+                parent: "root2",
+                children: [],
+                data: { ownData: "root2" },
+            },
         ],
         data: { ownData: "root2" },
     },
 ];
-
 
 interface CustomData {
     ownData: string | null;

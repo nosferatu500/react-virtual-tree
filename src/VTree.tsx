@@ -20,7 +20,7 @@ interface VTreeProps<T> {
     onNodeRename?: (node: TNode<T>, newName: string) => void;
     fileExplorerMode?: boolean;
     dataSetName: string;
-    allowInteractWith?: string[]
+    allowInteractWith?: string[];
 }
 
 export const VTree = <T,>({
@@ -51,7 +51,7 @@ export const VTree = <T,>({
     const flattenedData = useMemo(() => flattenTree(data), [data]);
 
     const canAccept: string[] = useMemo(() => {
-        return allowInteractWith ? [dataSetName, ...allowInteractWith] : [dataSetName]
+        return allowInteractWith ? [dataSetName, ...allowInteractWith] : [dataSetName];
     }, [dataSetName, allowInteractWith]);
 
     const handleNodeSelection = useCallback(
@@ -168,8 +168,7 @@ export const VTree = <T,>({
         setNewName(node.name);
     }, []);
 
-    const handleInputChange = useCallback((event: React.ChangeEvent) => {
-        // @ts-expect-error update types
+    const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setNewName(event.target.value);
     }, []);
 

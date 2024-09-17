@@ -10,7 +10,7 @@ interface DragLayerProps<T> {
     isDragging: boolean;
     initialOffset: XYCoord | null;
     currentOffset: XYCoord | null;
-    itemType: any;
+    itemType: string | symbol | null;
 }
 
 const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | null): React.CSSProperties => {
