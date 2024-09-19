@@ -155,8 +155,8 @@ function App() {
         console.warn("DO SOMETHING!!!");
         console.log(draggedNodes);
         console.log(dropTarget);
-        console.log(treeId);
-        console.log(currentTreeId);
+        console.log({treeId});
+        console.log({currentTreeId});
     };
 
     const handleOnClick = (_event: React.MouseEvent, _node: TNode<CustomData>, selected: TNode<CustomData>[]) => {

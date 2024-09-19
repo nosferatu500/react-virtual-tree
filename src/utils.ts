@@ -107,26 +107,40 @@ export const moveNode = <T>(
     treeData: TNode<T>[],
     fileExplorerMode = true,
     drop: string,
-    treeId: string,
-    currentTreeId: string
+    sourceTreeId: string,
+    destinationTreeId: string
 ) => {
-    const nodesToMove: TNode<T>[] = draggedNodes
+    const nodesToMove: TNode<T>[] = []
+
+    if (sourceTreeId === destinationTreeId) {
+        const result: TNode<T>[] = draggedNodes
         .map((item) => findNodeAndRemove(item.id, treeData))
         .filter((node): node is TNode<T> => node !== null);
 
-    if (!nodesToMove.length) return;
+        if (!result.length) return;
 
-    if (fileExplorerMode) {
-        for (const draggedNode of nodesToMove) {
-            if (!draggedNode.isFolder && !targetNode.isFolder) {
-                if (draggedNode.parent !== targetNode.parent) {
-                    draggedNode.prevParent = draggedNode.parent;
-                    draggedNode.parent = targetNode.parent;
+        nodesToMove.push(...result);
+
+        // Update parents data
+        if (fileExplorerMode) {
+            for (const draggedNode of nodesToMove) {
+                if (!draggedNode.isFolder && !targetNode.isFolder) {
+                    if (draggedNode.parent !== targetNode.parent) {
+                        draggedNode.prevParent = draggedNode.parent;
+                        draggedNode.parent = targetNode.parent;
+                    }
+                } else if (
+                    (!draggedNode.isFolder && targetNode.isFolder) ||
+                    (draggedNode.isFolder && targetNode.isFolder)
+                ) {
+                    if (draggedNode.parent !== targetNode.id) {
+                        draggedNode.prevParent = draggedNode.parent;
+                        draggedNode.parent = targetNode.id;
+                    }
                 }
-            } else if (
-                (!draggedNode.isFolder && targetNode.isFolder) ||
-                (draggedNode.isFolder && targetNode.isFolder)
-            ) {
+            }
+        } else {
+            for (const draggedNode of nodesToMove) {
                 if (draggedNode.parent !== targetNode.id) {
                     draggedNode.prevParent = draggedNode.parent;
                     draggedNode.parent = targetNode.id;
@@ -134,9 +148,25 @@ export const moveNode = <T>(
             }
         }
     } else {
-        for (const draggedNode of nodesToMove) {
-            if (draggedNode.parent !== targetNode.id) {
-                draggedNode.prevParent = draggedNode.parent;
+        nodesToMove.push(...draggedNodes);
+
+        // Update parents data
+        if (fileExplorerMode) {
+            for (const draggedNode of nodesToMove) {
+                if (!draggedNode.isFolder && !targetNode.isFolder) {
+                    draggedNode.prevParent = targetNode.parent;
+                    draggedNode.parent = targetNode.parent;
+                } else if (
+                    (!draggedNode.isFolder && targetNode.isFolder) ||
+                    (draggedNode.isFolder && targetNode.isFolder)
+                ) {
+                    draggedNode.prevParent = targetNode.id;
+                    draggedNode.parent = targetNode.id;
+                }
+            }
+        } else {
+            for (const draggedNode of nodesToMove) {
+                draggedNode.prevParent = targetNode.id;
                 draggedNode.parent = targetNode.id;
             }
         }
