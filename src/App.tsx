@@ -5,103 +5,85 @@ import { VTree } from "./VTree";
 
 const initialTreeData: TNode<CustomData>[] = [
     {
-        id: "root",
-        name: "root",
+        id: "1",
+        name: "src",
         isFolder: true,
-        parent: null,
+        parent: "root",
         children: [
+            { id: "1.1", name: "index.js", isFolder: false, parent: "1", children: [] },
+            { id: "1.2", name: "App.js", isFolder: false, parent: "1", children: [] },
+            { id: "1.3", name: "main.jsx", isFolder: false, parent: "1", children: [] },
             {
-                id: "1",
-                name: "src",
+                id: "1.4",
+                name: "components",
                 isFolder: true,
-                parent: "root",
+                parent: "1",
                 children: [
-                    { id: "1.1", name: "index.js", isFolder: false, parent: "1", children: [] },
-                    { id: "1.2", name: "App.js", isFolder: false, parent: "1", children: [] },
-                    { id: "1.3", name: "main.jsx", isFolder: false, parent: "1", children: [] },
-                    {
-                        id: "1.4",
-                        name: "components",
-                        isFolder: true,
-                        parent: "1",
-                        children: [
-                            { id: "1.4.1", name: "Header.js", isFolder: false, parent: "1.4", children: [] },
-                            { id: "1.4.2", name: "Footer.js", isFolder: false, parent: "1.4", children: [] },
-                        ],
-                    },
+                    { id: "1.4.1", name: "Header.js", isFolder: false, parent: "1.4", children: [] },
+                    { id: "1.4.2", name: "Footer.js", isFolder: false, parent: "1.4", children: [] },
                 ],
-                data: { ownData: "root" },
             },
-            {
-                id: "2",
-                name: "stories",
-                isFolder: true,
-                parent: "root",
-                children: [
-                    { id: "2.1", name: "button.css", isFolder: false, parent: "2", children: [] },
-                    { id: "2.2", name: "Button.stories.ts", isFolder: false, parent: "2", children: [] },
-                    { id: "2.3", name: "Button.tsx", isFolder: false, parent: "2", children: [] },
-                    { id: "2.4", name: "Configure.mdx", isFolder: false, parent: "2", children: [] },
-                ],
-                data: { ownData: "root" },
-            },
-            { id: "3", name: "package.json", isFolder: false, parent: "root", children: [], data: { ownData: "root" } },
         ],
         data: { ownData: "root" },
     },
+    {
+        id: "2",
+        name: "stories",
+        isFolder: true,
+        parent: "root",
+        children: [
+            { id: "2.1", name: "button.css", isFolder: false, parent: "2", children: [] },
+            { id: "2.2", name: "Button.stories.ts", isFolder: false, parent: "2", children: [] },
+            { id: "2.3", name: "Button.tsx", isFolder: false, parent: "2", children: [] },
+            { id: "2.4", name: "Configure.mdx", isFolder: false, parent: "2", children: [] },
+        ],
+        data: { ownData: "root" },
+    },
+    { id: "3", name: "package.json", isFolder: false, parent: "root", children: [], data: { ownData: "root" } },
 ];
 
 const initialTreeData2: TNode<CustomData>[] = [
     {
-        id: "root2",
-        name: "root",
+        id: "12",
+        name: "src",
         isFolder: true,
-        parent: null,
+        parent: "root2",
         children: [
+            { id: "1.12", name: "index.js", isFolder: false, parent: "12", children: [] },
+            { id: "1.22", name: "App.js", isFolder: false, parent: "12", children: [] },
+            { id: "1.32", name: "main.jsx", isFolder: false, parent: "12", children: [] },
             {
-                id: "12",
-                name: "src",
+                id: "1.42",
+                name: "components",
                 isFolder: true,
-                parent: "root2",
+                parent: "12",
                 children: [
-                    { id: "1.12", name: "index.js", isFolder: false, parent: "12", children: [] },
-                    { id: "1.22", name: "App.js", isFolder: false, parent: "12", children: [] },
-                    { id: "1.32", name: "main.jsx", isFolder: false, parent: "12", children: [] },
-                    {
-                        id: "1.42",
-                        name: "components",
-                        isFolder: true,
-                        parent: "12",
-                        children: [
-                            { id: "1.4.12", name: "Header.js", isFolder: false, parent: "1.42", children: [] },
-                            { id: "1.4.22", name: "Footer.js", isFolder: false, parent: "1.42", children: [] },
-                        ],
-                    },
+                    { id: "1.4.12", name: "Header.js", isFolder: false, parent: "1.42", children: [] },
+                    { id: "1.4.22", name: "Footer.js", isFolder: false, parent: "1.42", children: [] },
                 ],
-                data: { ownData: "root2" },
-            },
-            {
-                id: "22",
-                name: "stories",
-                isFolder: true,
-                parent: "root2",
-                children: [
-                    { id: "2.12", name: "button.css", isFolder: false, parent: "22", children: [] },
-                    { id: "2.22", name: "Button.stories.ts", isFolder: false, parent: "22", children: [] },
-                    { id: "2.32", name: "Button.tsx", isFolder: false, parent: "22", children: [] },
-                    { id: "2.42", name: "Configure.mdx", isFolder: false, parent: "22", children: [] },
-                ],
-                data: { ownData: "root2" },
-            },
-            {
-                id: "32",
-                name: "package.json",
-                isFolder: false,
-                parent: "root2",
-                children: [],
-                data: { ownData: "root2" },
             },
         ],
+        data: { ownData: "root2" },
+    },
+    {
+        id: "22",
+        name: "stories",
+        isFolder: true,
+        parent: "root2",
+        children: [
+            { id: "2.12", name: "button.css", isFolder: false, parent: "22", children: [] },
+            { id: "2.22", name: "Button.stories.ts", isFolder: false, parent: "22", children: [] },
+            { id: "2.32", name: "Button.tsx", isFolder: false, parent: "22", children: [] },
+            { id: "2.42", name: "Configure.mdx", isFolder: false, parent: "22", children: [] },
+        ],
+        data: { ownData: "root2" },
+    },
+    {
+        id: "32",
+        name: "package.json",
+        isFolder: false,
+        parent: "root2",
+        children: [],
         data: { ownData: "root2" },
     },
 ];
@@ -131,7 +113,7 @@ function App() {
         // Prevent re-order
         if (
             draggedNodes.some(
-                (dragSource) => dragSource.parent === dropTarget.parent || dragSource.parent === dropTarget.id
+                (dragSource) => dragSource.parent === dropTarget.parent
             )
         ) {
             return false;

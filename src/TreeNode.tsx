@@ -69,7 +69,7 @@ const TreeNodeComponent = <T,>({
     const clickTimeoutRef = useRef<NodeJS.Timeout>();
 
     useEffect(() => {
-        if (node.id === "root" && allwaysOpenRoot) {
+        if (allwaysOpenRoot) {
             setExpanded(true);
         } else {
             setExpanded(openAll ?? false);
