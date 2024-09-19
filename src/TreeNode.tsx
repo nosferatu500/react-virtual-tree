@@ -95,7 +95,10 @@ const TreeNodeComponent = <T,>({
         type: dataSet,
         item: {
             nodes: isSelected ? selectedNodes : [node],
-            node: node,
+            preview: {
+                isFolder: node.isFolder,
+                name: node.name
+            },
             count: selectedNodeIds.length,
             treeId: dataSet,
         },

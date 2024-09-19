@@ -1,10 +1,12 @@
 import { useDragLayer, XYCoord } from "react-dnd";
-import { TNode } from "./TreeNode";
 import CustomDragPreview from "./CustomDragPreview";
 
-interface DragLayerProps<T> {
+interface DragLayerProps {
     item: {
-        node: TNode<T>;
+        preview: {
+            isFolder: boolean;
+            name: string;
+        };
         count: number;
     };
     isDragging: boolean;
@@ -30,8 +32,8 @@ const getItemStyles = (initialOffset: XYCoord | null, currentOffset: XYCoord | n
     };
 };
 
-const CustomDragLayer = <T,>({ dataSet }: { dataSet: string }) => {
-    const { item, itemType, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps<T>>((monitor) => ({
+const CustomDragLayer = ({ dataSet }: { dataSet: string }) => {
+    const { item, itemType, isDragging, initialOffset, currentOffset } = useDragLayer<DragLayerProps>((monitor) => ({
         item: monitor.getItem(),
         itemType: monitor.getItemType(),
         isDragging: monitor.isDragging(),
@@ -46,7 +48,7 @@ const CustomDragLayer = <T,>({ dataSet }: { dataSet: string }) => {
 
     return (
         <div style={itemStyles}>
-            <CustomDragPreview node={item.node} count={item.count} />
+            <CustomDragPreview node={item.preview} count={item.count} />
         </div>
     );
 };
