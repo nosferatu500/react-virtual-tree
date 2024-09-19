@@ -110,12 +110,12 @@ export const moveNode = <T>(
     sourceTreeId: string,
     destinationTreeId: string
 ) => {
-    const nodesToMove: TNode<T>[] = []
+    const nodesToMove: TNode<T>[] = [];
 
     if (sourceTreeId === destinationTreeId) {
         const result: TNode<T>[] = draggedNodes
-        .map((item) => findNodeAndRemove(item.id, treeData))
-        .filter((node): node is TNode<T> => node !== null);
+            .map((item) => findNodeAndRemove(item.id, treeData))
+            .filter((node): node is TNode<T> => node !== null);
 
         if (!result.length) return;
 
