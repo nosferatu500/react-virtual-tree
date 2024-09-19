@@ -30,6 +30,7 @@ export function findParentNode<T>(targetNode: TNode<T>, nodes: TNode<T>[]): TNod
             if (parentNode) return parentNode;
         }
     }
+    // null for root
     return null;
 }
 
@@ -93,16 +94,18 @@ export function findNodeAndRemove<T>(nodeId: string, targetNodes: TNode<T>[]): T
     return null;
 }
 
-export function insertNodeBelow<T>(node: TNode<T>, targetNode: TNode<T>, treeData: TNode<T>[]): void {
+export function insertNodeBelow<T>(node: TNode<T>, targetNode: TNode<T>, treeData: TNode<T>[]) {
     const parentNode = findParentNode(targetNode, treeData);
     if (!parentNode) {
         const targetIndex = treeData.indexOf(targetNode);
         treeData.splice(targetIndex + 1, 0, node);
-        return;
+        return null;
     }
 
     const targetIndex = parentNode.children.indexOf(targetNode);
     parentNode.children.splice(targetIndex + 1, 0, node);
+
+    return undefined;
 }
 
 export const moveNode = <T>(
@@ -186,7 +189,7 @@ export const moveNode = <T>(
             if (!parentNode) {
                 const targetIndex = treeData.indexOf(targetNode);
                 nodesToMove.forEach((node, i) => treeData.splice(targetIndex + 1 + i, 0, node));
-                return;
+                return null;
             }
 
             const targetIndex = parentNode.children.indexOf(targetNode);
@@ -203,7 +206,7 @@ export const moveNode = <T>(
                 const targetIndex = treeData.indexOf(targetNode);
                 const offset = drop === "below" ? 1 : 0;
                 nodesToMove.forEach((node, i) => treeData.splice(targetIndex + offset + i, 0, node));
-                return;
+                return null;
             }
 
             const targetIndex = parentNode.children.indexOf(targetNode);
