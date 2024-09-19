@@ -14,7 +14,7 @@ interface VTreeProps<T> {
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
-    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
+    onDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>, treeId: string, currentTreeId: string) => void;
     onSelectionChange?: (selectedNodes: TNode<T>[]) => void;
     renderNode?: (text: string) => React.ReactNode;
     onNodeRename?: (node: TNode<T>, newName: string) => void;
@@ -67,9 +67,9 @@ export const VTree = <T,>({
     );
 
     const handleOnDrop = useCallback(
-        (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => {
+        (draggedNodes: TNode<T>[], dropTarget: TNode<T>, treeId: string, currentTreeId: string) => {
             if (onDrop) {
-                onDrop(draggedNodes, dropTarget);
+                onDrop(draggedNodes, dropTarget, treeId, currentTreeId);
             }
 
             handleNodeSelection([]);
@@ -153,11 +153,11 @@ export const VTree = <T,>({
     );
 
     const handleMoveNode = useCallback(
-        (draggedNodeIds: string[], targetNode: TNode<T>, drop: string) => {
-            if (draggedNodeIds.includes(targetNode.id)) return;
+        (draggedNodes: TNode<T>[], targetNode: TNode<T>, drop: string, treeId: string, currentTreeId: string) => {
+            if (draggedNodes.includes(targetNode)) return;
 
             const newTreeData = [...data];
-            moveNode(draggedNodeIds, targetNode, newTreeData, fileExplorerMode, drop);
+            moveNode(draggedNodes, targetNode, newTreeData, fileExplorerMode, drop, treeId, currentTreeId);
             setData(newTreeData);
         },
         [data, setData, fileExplorerMode]

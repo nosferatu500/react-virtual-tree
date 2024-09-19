@@ -102,14 +102,16 @@ export function insertNodeBelow<T>(node: TNode<T>, targetNode: TNode<T>, treeDat
 }
 
 export const moveNode = <T>(
-    draggedNodeIds: string[],
+    draggedNodes: TNode<T>[],
     targetNode: TNode<T>,
     treeData: TNode<T>[],
     fileExplorerMode = true,
-    drop: string
+    drop: string,
+    treeId: string,
+    currentTreeId: string
 ) => {
-    const nodesToMove: TNode<T>[] = draggedNodeIds
-        .map((id) => findNodeAndRemove(id, treeData))
+    const nodesToMove: TNode<T>[] = draggedNodes
+        .map((item) => findNodeAndRemove(item.id, treeData))
         .filter((node): node is TNode<T> => node !== null);
 
     if (!nodesToMove.length) return;

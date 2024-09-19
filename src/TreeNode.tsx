@@ -15,7 +15,13 @@ export interface TNode<T> {
 
 interface Props<T> {
     node: TNode<T>;
-    onMove: (draggedNodeIds: string[], targetNode: TNode<T>, drop: "above" | "below" | "child") => void;
+    onMove: (
+        draggedNodes: TNode<T>[],
+        targetNode: TNode<T>,
+        drop: "above" | "below" | "child",
+        treeId: string,
+        currentTreeId: string
+    ) => void;
     selectedNodeIds: string[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>, selectedNodes: TNode<T>[]) => void;
@@ -23,7 +29,7 @@ interface Props<T> {
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
-    onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => void;
+    onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>, treeId: string, currentTreeId: string) => void;
     renderNode?: (text: string) => React.ReactNode;
     dataSet: string;
     canAccept: string[];
@@ -88,10 +94,10 @@ const TreeNodeComponent = <T,>({
     const [{ isDragging }, drag, preview] = useDrag({
         type: dataSet,
         item: {
-            nodeIds: isSelected ? selectedNodeIds : [node.id],
             nodes: isSelected ? selectedNodes : [node],
             node: node,
             count: selectedNodeIds.length,
+            treeId: dataSet,
         },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
@@ -112,14 +118,14 @@ const TreeNodeComponent = <T,>({
     const [{ isOver, handlerId, canDrop }, drop] = useDrop({
         accept: canAccept,
         drop: (
-            draggedItem: { nodeIds: string[]; nodes: TNode<T>[]; dropPosition: "above" | "below" | "child" },
+            draggedItem: { nodes: TNode<T>[]; dropPosition: "above" | "below" | "child"; treeId: string },
             monitor
         ) => {
             if (monitor.didDrop()) return;
 
-            onMove(draggedItem.nodeIds, node, draggedItem.dropPosition);
+            onMove(draggedItem.nodes, node, draggedItem.dropPosition, draggedItem.treeId, dataSet);
 
-            onDropCallback(draggedItem.nodes, node);
+            onDropCallback(draggedItem.nodes, node, draggedItem.treeId, dataSet);
 
             setDropPosition(null);
         },
