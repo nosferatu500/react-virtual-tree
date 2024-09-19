@@ -25,7 +25,6 @@ interface Props<T> {
     selectedNodeIds: string[];
     selectedNodes: TNode<T>[];
     onClickNode: (event: React.MouseEvent, node: TNode<T>, selectedNodes: TNode<T>[]) => void;
-    allwaysOpenRoot?: boolean;
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
@@ -47,7 +46,6 @@ const TreeNodeComponent = <T,>({
     selectedNodes,
     onClickNode,
     onMove,
-    allwaysOpenRoot,
     openAll,
     canDrag: customCanDrag,
     canDrop: customCanDrop,
@@ -69,12 +67,8 @@ const TreeNodeComponent = <T,>({
     const clickTimeoutRef = useRef<NodeJS.Timeout>();
 
     useEffect(() => {
-        if (allwaysOpenRoot) {
-            setExpanded(true);
-        } else {
-            setExpanded(openAll ?? false);
-        }
-    }, [openAll, allwaysOpenRoot, node.id]);
+        setExpanded(openAll ?? false);
+    }, [openAll, node.id]);
 
     useEffect(() => {
         // Cleanup the timer on component unmount
