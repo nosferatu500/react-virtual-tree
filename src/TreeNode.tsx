@@ -124,9 +124,6 @@ const TreeNodeComponent = <T,>({
 
             const onMoveResult = onMove(draggedItem.nodes, node, draggedItem.dropPosition, draggedItem.treeId, dataSet);
 
-            console.log({onMoveResult})
-            console.log(draggedItem.dropPosition)
-
             const droppedOnRoot = onMoveResult === null && draggedItem.dropPosition !== "child";
 
             onDropCallback(draggedItem.nodes, node, draggedItem.treeId, dataSet, droppedOnRoot);
