@@ -30,7 +30,13 @@ interface Props<T> {
     openAll?: boolean;
     canDrag?: (dragSource: TNode<T>) => boolean;
     canDrop?: (draggedNodes: TNode<T>[], dropTarget: TNode<T>) => boolean;
-    onDrop: (draggedNodes: TNode<T>[], dropTarget: TNode<T>, treeId: string, currentTreeId: string, droppedOnRoot: boolean) => void;
+    onDrop: (
+        draggedNodes: TNode<T>[],
+        dropTarget: TNode<T>,
+        treeId: string,
+        currentTreeId: string,
+        droppedOnRoot: boolean
+    ) => void;
     renderNode?: (text: string) => React.ReactNode;
     dataSet: string;
     canAccept: string[];
