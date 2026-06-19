@@ -19,7 +19,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       formats: ['es'],
-      fileName: "react-virtual-tree.js"
+      fileName: "react-virtual-tree"
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'virtua'],

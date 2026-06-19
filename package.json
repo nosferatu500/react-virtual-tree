@@ -12,14 +12,16 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/react-virtual-tree.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public"
   },
   "engines": {
-    "node": ">=20.9"
+    "node": ">=24"
   },
   "scripts": {
     "dev": "vite",
